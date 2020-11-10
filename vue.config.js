@@ -24,7 +24,7 @@ module.exports = {
         '@': resolve('src'),
         'api': resolve('src/api'),
         'mock': resolve('src/mock'),
-        'mixins': resolve('src/mixins'),
+        'common': resolve('src/common'),
         'assets': resolve('src/assets'),
         'config': resolve('src/config'),
         'components': resolve('src/components'),
@@ -48,4 +48,21 @@ module.exports = {
         return args
       })
   },
+  css: {
+    loaderOptions: {
+      less: {
+        globalVars: {
+          hack: `true; @import '~@/styles/variables.less';`
+        },
+        // 定制主题
+        modifyVars: {
+          'primary-color': '#3b8ccb',
+          'link-color': '#3b8ccb',
+          'info-color': '#3b8ccb',
+          'border-radius-base': '4px',
+        },
+        javascriptEnabled: true,
+      }
+    }
+  }
 }
