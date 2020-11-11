@@ -1,29 +1,21 @@
 <template>
-  <!-- eslint-disable -->
-  <div class="app-wrapper">
-    <div class="main-container">
-      <header class="header-container">
-        <app-top />
-        <!-- <navbar /> -->
-      </header>
-      <!-- <breadcrumb v-if="breadcrumbVisible" class="breadcrumb-container" /> -->
+  <a-layout>
+    <a-layout-header :style="{ position: 'fixed', zIndex: 1, width: '100%' }">
+      <app-top />
+      <!-- <nav-bar /> -->
+    </a-layout-header>
+    <a-layout-content :style="{ padding: '0 50px', marginTop: '64px' }">
       <app-main />
-      <!-- <app-footer /> -->
-    </div>
-    <!-- <back-top :visible="backTopvisible" /> -->
-  </div>
+    </a-layout-content>
+    <a-layout-footer>
+      <app-footer />
+    </a-layout-footer>
+  </a-layout>
 </template>
 
 <script>
 /* eslint-disable */
-import {
-  AppMain,
-  Navbar,
-  AppFooter,
-  AppTop,
-  Breadcrumb,
-  BackTop
-} from "./components";
+import { AppMain, Navbar, AppFooter, AppTop, Breadcrumb, BackTop } from "./components";
 
 export default {
   name: "LayoutDefault",
@@ -39,13 +31,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-// @import "~@/styles/index.less";
-
-.app-wrapper {
-  // .clearfix;
-  // .relative;
+.ant-layout-header {
+  background: #fff;
+  height: auto;
 }
-
 .main-container {
   padding-top: 133px;
 }

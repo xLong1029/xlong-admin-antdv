@@ -2,7 +2,7 @@
   <section id="appMain" class="app-main">
     <div class="wrapper-container">
       <router-view v-slot="{ Component }">
-        <transition name="fade-transform" mode="out-in">
+        <transition mode="out-in" name="fade-transform">
           <component :is="Component" />
         </transition>
       </router-view>
@@ -22,20 +22,11 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .app-main {
   // margin-top: 133px;
   // min-height: calc(100vh - 80px);
   position: relative;
   overflow: hidden;
-}
-</style>
-
-<style lang="less">
-// fix css style bug in open el-dialog
-.el-popup-parent--hidden {
-  .fixed-header {
-    padding-right: 15px;
-  }
 }
 </style>

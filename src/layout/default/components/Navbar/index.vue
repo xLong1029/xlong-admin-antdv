@@ -4,11 +4,10 @@
     <div class="wrapper-container flex">
       <div class="logo-container flex" @click="toBDC">
         <img class="logo" :src="logo" />
-        <!-- <span>多测合一信息化管理</span> -->
       </div>
       <!-- 导航 -->
       <div class="nav-list-container hidden-xs-only">
-        <el-menu
+        <!-- <el-menu
           :default-active="activeMenu"
           class="nav-list"
           mode="horizontal"
@@ -23,28 +22,38 @@
             :item="route"
             :base-path="route.path"
           />
-        </el-menu>
-      </div>
-      <div class="nav-list-icon hidden-sm-and-up" @click="showNavListXS()">
-        <i class="el-icon-menu"></i>
-      </div>
-      <div class="nav-list-xs">
-        <el-menu
-          :default-active="activeMenu"
-          class="nav-list"
-          mode="horizontal"
-          :background-color="variables.menuBg"
-          :text-color="variables.menuText"
-          :active-text-color="variables.menuActiveText"
-        >
-          <nav-item
-            class="nav-list-menu"
-            v-for="(route, index) in permissionRoutes"
-            :key="'route.path' + index"
-            :item="route"
-            :base-path="route.path"
-          />
-        </el-menu>
+        </el-menu>-->
+
+        <a-menu v-model:selectedKeys="activeMenu" mode="horizontal">
+          <!-- <a-menu-item key="mail">
+            <mail-outlined />Navigation One
+          </a-menu-item>
+          <a-menu-item key="app" disabled>
+            <appstore-outlined />Navigation Two
+          </a-menu-item> -->
+          <!-- <a-sub-menu>
+            <template #title>
+              <span class="submenu-title-wrapper">
+                <setting-outlined />Navigation Three - Submenu
+              </span>
+            </template>
+            <a-menu-item-group title="Item 1">
+              <a-menu-item key="setting:1">Option 1</a-menu-item>
+              <a-menu-item key="setting:2">Option 2</a-menu-item>
+            </a-menu-item-group>
+            <a-menu-item-group title="Item 2">
+              <a-menu-item key="setting:3">Option 3</a-menu-item>
+              <a-menu-item key="setting:4">Option 4</a-menu-item>
+            </a-menu-item-group>
+          </a-sub-menu> -->
+          <!-- <a-menu-item key="alipay">
+            <a
+              href="https://antdv.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Navigation Four - Link</a>
+          </a-menu-item> -->
+        </a-menu>
       </div>
     </div>
   </div>

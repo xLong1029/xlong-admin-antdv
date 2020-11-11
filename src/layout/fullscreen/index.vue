@@ -1,10 +1,5 @@
 <template>
-  <!-- eslint-disable -->
   <div class="app-wrapper">
-    <!-- <transition name="fade-transform" mode="out-in"> -->
-    <!-- <router-view :key="key" /> -->
-    <!-- </transition> -->
-
     <router-view v-slot="{ Component }">
       <transition>
         <component :is="Component" />
@@ -14,7 +9,6 @@
 </template>
 
 <script>
-/* eslint-disable */
 import { mapState } from "vuex";
 
 export default {
@@ -26,12 +20,3 @@ export default {
   }
 };
 </script>
-
-<style lang="less" scoped>
-// @import "~@/styles/index.less";
-
-.app-wrapper {
-  // .clearfix;
-  // .relative;
-}
-</style>

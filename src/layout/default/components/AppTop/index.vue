@@ -1,5 +1,4 @@
 <template>
-  <!-- eslint-disable -->
   <div class="top-container fixed flex">
     <div class="wrapper-container flex">
       <div class="top-container-left">
@@ -80,34 +79,6 @@ export default {
   &-right {
     &-item {
       margin-left: 10px;
-
-      .el-icon-s-custom {
-        margin-right: 2px;
-      }
-    }
-  }
-}
-
-.user-info {
-  &-title {
-    padding-top: 5px;
-    padding-bottom: 10px;
-    border-bottom: @border;
-
-    .url-btn {
-      &:hover {
-        color: @primary-color;
-      }
-    }
-  }
-
-  &-list {
-    &-item {
-      margin: 10px 0;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
     }
   }
 }

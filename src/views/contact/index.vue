@@ -1,6 +1,5 @@
 <template>
-  <!-- eslint-disable -->
-  <div class="contact-container overspread-page">
+  <div class="contact-container">
     联系我们
   </div>
 </template>
@@ -20,5 +19,7 @@ export default {
 <style lang="less" scoped>
 .contact-container {
   text-align: center;
+  background: #000;
+  position: relative;
 }
 </style>

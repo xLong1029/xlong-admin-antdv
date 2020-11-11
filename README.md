@@ -1,4 +1,4 @@
-# xlong-admin-ant-design-vue
+# xlong-admin-antdv
 
 ## Project setup
 ```

@@ -1,29 +1,5 @@
 <template>
-  <!-- eslint-disable -->
-  <el-breadcrumb class="app-breadcrumb-container" separator="/">
-    <div class="wrapper-container">
-      <div class="app-breadcrumb-content">
-        <div class="app-breadcrumb-content-wrapper">
-          <span class="fl">当前位置：</span>
-          <el-breadcrumb-item v-for="(item,index) in levelList" :key="item.path">
-            <span
-              v-if="item.redirect==='noRedirect'||index==levelList.length-1"
-              class="no-redirect"
-            >{{ item.meta.title }}</span>
-            <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
-          </el-breadcrumb-item>
-        </div>
-        <el-button
-          v-if="$route.meta.needBack"
-          class="fr back-btn"
-          style="min-width: 80px; margin-top: 14px;"
-          size="small"
-          type="default"
-          @click="$router.go(-1)"
-        >返回</el-button>
-      </div>
-    </div>
-  </el-breadcrumb>
+  <div></div>
 </template>
 
 <script>

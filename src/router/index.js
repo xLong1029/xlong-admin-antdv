@@ -29,7 +29,7 @@ export const constantRoutes = [
         path: "home",
         component: () => import("@/views/home/index"),
         name: "Home",
-        meta: { title: "主页", icon: "el-icon-s-home" }
+        meta: { title: "首页", icon: "el-icon-s-home" }
       },
       {
         path: "contact",
@@ -69,7 +69,7 @@ export const asyncRoutes = requireRouter.keys().map(fileName => {
 });
 
 export function resetRouter() {
-  const newRouter = createRouter();
+  const newRouter = initRouter();
   router.matcher = newRouter.matcher; // reset router
 }
 
@@ -78,7 +78,7 @@ export const initRouter = () =>
     history: createWebHashHistory(),
     scrollBehavior: () => ({ y: 0 }),
     routes: [...constantRoutes]
-  });
+});
 
 
 const router = initRouter();

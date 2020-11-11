@@ -8,7 +8,7 @@ function resolve(dir) {
 
 // 相关配置请参考 https://cli.vuejs.org/config/
 module.exports = {
-  publicPath: production ? '/xlong-admin-ant-design-vue/' : '/',
+  publicPath: production ? '/xlong-admin-antdv/' : '/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -44,7 +44,7 @@ module.exports = {
       .plugin('html')
       .tap(args => {
         // 修改配置名称
-        args[0].title= 'XLONG家里蹲管理系统';
+        args[0].title= 'XLONG家里蹲信息管理系统';
         return args
       })
   },

@@ -1,24 +1,10 @@
 <template>
-  <!-- eslint-disable -->
-  <div class="about-container overspread-page">
+  <div class="about">
     关于我们
   </div>
 </template>
-
 <script>
-/* eslint-disable */
-
 export default {
-  name: "About",
-  data() {
-    return {
-      qrcode: require("assets/images/qrcode.jpg")
-    };
-  }
+  name: "About"
 };
 </script>
-<style lang="less" scoped>
-.about-container {
-  text-align: center;
-}
-</style>
