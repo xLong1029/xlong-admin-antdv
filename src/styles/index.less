@@ -1,4 +1,7 @@
 @import "./transition.less";
+@import "~ant-design-vue/dist/antd.less";
+@import "./antd-ui.less";
+
 
 body {
     margin: 0;
@@ -71,15 +74,57 @@ each(@display, {
 
 );
 
-@fontSzie: 12, 14, 16, 18, 20, 22, 24, 26, 28, 30;
-
-each(@fontSzie, {
+each(range(12, 30, 2), {
         .font-@{value} {
-            font-size: @value + px !important;
+            font-size: (@value * 1px) !important;
         }
     }
 
 );
+
+each(range(5, 100, 5), {
+        .pl-@{value} {
+            padding-left: (@value * 1px) !important;
+        }
+
+        .pr-@{value} {
+            padding-right: (@value * 1px) !important;
+        }
+
+        .pt-@{value} {
+            padding-top: (@value * 1px) !important;
+        }
+
+        .pb-@{value} {
+            padding-bottom: (@value * 1px) !important;
+        }
+
+        .ml-@{value} {
+            margin-left: (@value * 1px) !important;
+        }
+
+        .mr-@{value} {
+            margin-right: (@value * 1px) !important;
+        }
+
+        .mt-@{value} {
+            margin-top: (@value * 1px) !important;
+        }
+
+        .mb-@{value} {
+            margin-bottom: (@value * 1px) !important;
+        }
+    }
+
+);
+
+.mt-0 {
+    margin-top: 0 !important;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}
 
 // 满屏页面
 .overspread-page {

@@ -3,10 +3,10 @@
   <footer class="footer-container">
     <div class="wrapper-container">
       <a-row :gutter="10" type="flex" justify="space-between">
-        <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+        <a-col :xs="24" :sm="24" :md="18" :lg="18" :xl="18">
           <div class="footer-info">
-            <div class="contact flex mt-5">
-              <div class="contact-item mr-30">
+            <a-row :gutter="10" class="contact flex">
+              <a-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="contact-item">
                 <p>QQ：381612175</p>
                 <p>
                   github：
@@ -15,8 +15,8 @@
                     target="_blank"
                   >https://github.com/xLong1029/</a>
                 </p>
-              </div>
-              <div class="contact-item">
+              </a-col>
+              <a-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="contact-item">
                 <p>
                   站酷主页：
                   <a
@@ -31,11 +31,11 @@
                     target="_blank"
                   >http://i.ui.cn/ucenter/358591.html</a>
                 </p>
-              </div>
-            </div>
+              </a-col>
+            </a-row>
           </div>
         </a-col>
-        <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+        <a-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
           <div class="footer-qrcode">
             <ul class="qrcode-list flex">
               <li class="qrcode-list-item flex" v-for="(item, index) in qrcodeList" :key="index">
@@ -69,21 +69,24 @@ export default {
 };
 </script>
 
-<style lang="less">
-.ant-layout-footer {
-  padding: 0;
-}
-
+<style lang="less" scoped>
 .footer-container {
   background: #292f38;
-  padding: 15px 0 20px 0;
+  padding: 15px 0;
   color: #87919f;
   font-size: 12px;
 }
 
+.contact {
+  margin-top: 20px;
+  &-item {
+    p {
+      margin-bottom: 20px;
+    }
+  }
+}
+
 .qrcode-list {
-  margin-right: 10px;
-  margin-top: 10px;
   justify-content: flex-end;
   &-item {
     flex-direction: column;
@@ -98,6 +101,26 @@ export default {
 
     &__title {
       margin-top: 10px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .contact{
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .qrcode-list {
+    justify-content: center;
+    &-item {
+      width: 120px;
+
+      &__img {
+        width: 120px;
+        height: 120px;
+      }
     }
   }
 }
