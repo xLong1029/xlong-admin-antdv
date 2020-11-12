@@ -5,6 +5,9 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
+// 路由权限
+import "./permission.js";
+
 import BmobServer from "./bmob/bmob-server";
 BmobServer.Init();
 

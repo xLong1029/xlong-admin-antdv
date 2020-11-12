@@ -1,5 +1,5 @@
 <template>
-  <div class="top-container fixed flex">
+  <div class="top-container flex">
     <div class="wrapper-container flex">
       <div class="top-container-left">
         <span class="link flex" @click="showDevMoadl">
@@ -8,11 +8,11 @@
         </span>
       </div>
       <div class="top-container-right">
-        <span class="top-container-right-item link" @click="toPage('About')">
+        <span class="top-container-right-item link" @click="toPage('/about')">
           关于我们
           <RightOutlined />
         </span>
-        <span class="top-container-right-item link" @click="toPage('Contact')">
+        <span class="top-container-right-item link" @click="toPage('/contact')">
           联系方式
           <RightOutlined />
         </span>
@@ -22,20 +22,23 @@
 </template>
 
 <script>
-/* eslint-disable */
-import { mapGetters } from "vuex";
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { createVNode } from 'vue';
+import { getCurrentInstance } from "vue";
 import common from "common/index.js";
 
 export default {
   name: "AppTop",
   setup() {
-    const { showDevMoadl, toPage } = common();
+    const { showDevMoadl } = common();
+
+    const { ctx } = getCurrentInstance();
+    const toPage = path => {
+      ctx.$router.push({ path });
+    };
+
     return {
       showDevMoadl,
       toPage
-    }
+    };
   }
 };
 </script>
@@ -48,13 +51,6 @@ export default {
   color: #999;
   font-size: 12px;
   border-bottom: #eee 1px solid;
-
-  &.fixed {
-    position: fixed;
-    z-index: 10;
-    top: 0;
-    left: 0;
-  }
 
   .wrapper-container {
     justify-content: space-between;

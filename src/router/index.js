@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { createRouter, createWebHashHistory } from "vue-router";
-/* LayoutDefault */
 import LayoutDefault from "@/layout/default";
 
 export const constantRoutes = [
@@ -68,19 +67,25 @@ export const asyncRoutes = requireRouter.keys().map(fileName => {
   return requireRouter(fileName).default || requireRouter(fileName);
 });
 
+/**
+ * 清空路由
+ * Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+ */
 export function resetRouter() {
   const newRouter = initRouter();
   router.matcher = newRouter.matcher; // reset router
 }
 
+/**
+ * 初始化路由
+ */
 export const initRouter = () =>
   createRouter({
     history: createWebHashHistory(),
     scrollBehavior: () => ({ y: 0 }),
     routes: [...constantRoutes]
-});
+  });
 
 
 const router = initRouter();
-
 export default router;

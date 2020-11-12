@@ -3,12 +3,12 @@ import {
   getToken,
   setToken,
   removeToken
-} from 'utils/auth'
-import { strToArr } from 'utils'
-import Api from 'api/user'
+} from 'utils/auth';
+import { strToArr } from 'utils';
+import Api from 'api/user';
 import {
   resetRouter
-} from 'router'
+} from 'router';
 
 // 清空账户信息
 function clearAccount(_commit) {

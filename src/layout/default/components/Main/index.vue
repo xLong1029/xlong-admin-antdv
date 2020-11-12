@@ -11,21 +11,14 @@
 </template>
 
 <script>
-/* eslint-disable */
 export default {
-  name: "AppMain",
-  computed: {
-    key() {
-      return this.$route.path;
-    }
-  }
+  name: "AppMain"
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .app-main {
-  // margin-top: 133px;
-  // min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 301px);
   position: relative;
   overflow: hidden;
 }

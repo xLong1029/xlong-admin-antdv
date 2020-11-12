@@ -21,9 +21,9 @@ import {
   AppNavBar,
   AppFooter,
   AppTop,
-  Breadcrumb
-  // BackTop
-} from "./components/index.js";
+  Breadcrumb,
+  BackTop
+} from "./components";
 
 export default {
   name: "LayoutDefault",
@@ -32,8 +32,8 @@ export default {
     AppNavBar,
     AppFooter,
     AppTop,
-    Breadcrumb
-    // BackTop
+    Breadcrumb,
+    BackTop
   }
 };
 </script>
@@ -41,7 +41,7 @@ export default {
 <style lang="less" scoped>
 .ant-layout-header {
   background: #fff;
-  height: 120px;
+  height: auto;
   line-height: inherit;
   padding: 0;
 }

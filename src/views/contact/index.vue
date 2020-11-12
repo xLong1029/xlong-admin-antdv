@@ -18,8 +18,5 @@ export default {
 </script>
 <style lang="less" scoped>
 .contact-container {
-  text-align: center;
-  background: #000;
-  position: relative;
 }
 </style>

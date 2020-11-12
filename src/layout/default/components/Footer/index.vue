@@ -52,20 +52,19 @@
 
 <script>
 /* eslint-disable */
-
 export default {
   name: "AppFooter",
-  data() {
+  setup() {
+    const qrcodeList = [
+      {
+        imgUrl: require("assets/images/qrcode.jpg"),
+        title: "xLong设计"
+      }
+    ];
     return {
-      qrcodeList: [
-        {
-          imgUrl: require("assets/images/qrcode.jpg"),
-          title: "xLong设计"
-        }
-      ]
+      qrcodeList
     };
-  },
-  methods: {}
+  }
 };
 </script>
 
@@ -78,7 +77,7 @@ export default {
 }
 
 .contact {
-  margin-top: 20px;
+  margin-top: 25px;
   &-item {
     p {
       margin-bottom: 20px;
@@ -106,7 +105,7 @@ export default {
 }
 
 @media (max-width: 576px) {
-  .contact{
+  .contact {
     text-align: center;
   }
 }

@@ -1,7 +1,7 @@
 /* eslint-disable */
-import { asyncRoutes, constantRoutes } from "@/router";
-import router from "@/router/index.js";
-import { initRouter } from "@/router";
+import { resetRouter, asyncRoutes, constantRoutes } from "@/router/index.js";
+
+console.log(111, constantRoutes);
 
 /**
  * 使用meta.role判断当前用户是否具有权限访问
@@ -12,6 +12,7 @@ function hasPermission(route, roles) {
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.includes(role));
   } else {
+    console.log(222);
     return true;
   }
 }
@@ -37,16 +38,8 @@ export function filterAsyncRoutes(routes, roles) {
   return res;
 }
 
-/**
- *  清空路由
- */
-export function resetRouter() {
-  const newRouter = initRouter();
-  router.matcher = newRouter.matcher;
-}
-
 const state = {
-  routes: [],
+  routes: constantRoutes,
   addRoutes: []
 }
 const mutations = {

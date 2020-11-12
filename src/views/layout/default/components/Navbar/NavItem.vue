@@ -1,27 +1,31 @@
 <template>
+  <!-- eslint-disable -->
   <div v-if="!item.hidden">
-    <!-- {{ item }} -->
     <div
       v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow"
-      class="nav-list__item"
+      class="nav-list-menu__item"
       :class="{ 'right': item.right }"
     >
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <a-menu-item
-          :key="onlyOneChild.name"
+        <el-menu-item
+          :index="resolvePath(onlyOneChild.path)"
           :class="{'submenu-title-noDropdown':!isNest}"
         >
-        <span>{{ onlyOneChild.meta.title }}</span>
-        </a-menu-item>
+          <item
+            :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"
+            :title="onlyOneChild.meta.title"
+          />
+        </el-menu-item>
       </app-link>
     </div>
 
-    <!-- <el-submenu
+    <el-submenu
       v-else
       ref="subMenu"
       :index="resolvePath(item.path)"
       popper-append-to-body
-      class="nav-list__item"
+      @click.native="toPath(item)"
+      class="nav-list-menu__item"
       :class="{ 'right': item.right }"
     >
       <template slot="title">
@@ -33,9 +37,9 @@
         :is-nest="true"
         :item="child"
         :base-path="resolvePath(child.path)"
-        class="nest-menu"
+        class="nav-list-submenu"
       />
-    </el-submenu> -->
+    </el-submenu>
   </div>
 </template>
 
@@ -43,11 +47,12 @@
 /* eslint-disable */
 import path from "path";
 import { isExternal } from "@/utils/validate";
+import Item from "./Item";
 import AppLink from "./Link";
 
 export default {
   name: "NavItem",
-  components: { AppLink },
+  components: { Item, AppLink },
   props: {
     // route object
     item: {
@@ -107,7 +112,75 @@ export default {
         return this.basePath;
       }
       return path.resolve(this.basePath, routePath);
+    },
+    toPath(item) {
+      if (!item.meta.directLink) return;
+      this.$router.push({ path: item.path });
     }
   }
 };
 </script>
+
+<style lang="less">
+@mixin nav-list-item-lighthight {
+  i {
+    font-weight: normal !important;
+    color: @menuActiveText !important;
+  }
+  span {
+    color: @menuActiveText;
+  }
+}
+
+.nav-list {
+  &-container {
+    .nav-list {
+      > div {
+        float: left;
+      }
+      &__item {
+        float: left;
+
+        &.right {
+          float: right;
+        }
+      }
+    }
+  }
+
+  // 一级菜单高亮设置
+  &-menu {
+    .nav-list-menu__item {
+      // 无下拉框一级菜单高亮
+      .el-menu-item.is-active {
+        @include nav-list-item-lighthight;
+      }
+
+      &.is-active {
+        @include nav-list-item-lighthight;
+      }
+    }
+  }
+
+  // 二级菜单样式设置
+  &-submenu {
+    .nav-list-menu__item {
+      .el-menu-item {
+        background: #2e363f;
+
+        &.is-active{
+          color: @subMenuActiveText !important;
+        }
+      }
+
+      // 二级菜单高亮
+      &.is-active{
+        .el-submenu__title{
+          color: @subMenuActiveText !important;
+          background: #1b1f23 !important;
+        }
+      }
+    }
+  }
+}
+</style>
