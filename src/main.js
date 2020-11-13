@@ -13,7 +13,11 @@ BmobServer.Init();
 
 // 按需加载antd组件
 import Antd from "ant-design-vue";
+
+// 全局样式
 import "./styles/index.less";
+// 字体样式
+import "./assets/font/iconfont.css";
 
 // 按需使用图标
 import { MailOutlined, RightOutlined } from "@ant-design/icons-vue";

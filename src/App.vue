@@ -1,8 +1,6 @@
 <template>
   <a-config-provider :locale="locale">
-    <!-- <a-spin tip="系统初始化，请稍后..."> -->
-      <router-view />
-    <!-- </a-spin> -->
+    <router-view />
   </a-config-provider>
 </template>
 

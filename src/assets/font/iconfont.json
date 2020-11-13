@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "348298",
+      "name": "book",
+      "font_class": "book",
+      "unicode": "ea0c",
+      "unicode_decimal": 59916
+    },
+    {
+      "icon_id": "3216618",
+      "name": "浏览器",
+      "font_class": "liulanqi",
+      "unicode": "e68f",
+      "unicode_decimal": 59023
+    },
+    {
       "icon_id": "725731",
       "name": "用户",
       "font_class": "yonghu",

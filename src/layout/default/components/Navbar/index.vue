@@ -10,11 +10,11 @@
         <a-menu :selectedKeys="currentMenu" mode="horizontal">
           <!-- <a-menu-item v-for="route in permissionRoutes" :key="route.name">{{ route.path }}</a-menu-item> -->
           <nav-item
-          v-for="route in permissionRoutes"
-          :key="route.name"
-          :item="route"
-          :base-path="route.path"
-        />
+            v-for="route in permissionRoutes"
+            :key="route.name"
+            :item="route"
+            :base-path="route.path"
+          />
         </a-menu>
       </div>
     </div>
@@ -58,14 +58,16 @@ export default {
     //   }
     // );
 
-    const permissionRoutes = computed(() => ctx.$store.getters.permissionRoutes);
+    const permissionRoutes = computed(
+      () => ctx.$store.getters.permissionRoutes
+    );
 
     return {
       logo,
       toPage,
       currentMenu,
       // activeMenu,
-      permissionRoutes
+      permissionRoutes,
     };
   }
 };

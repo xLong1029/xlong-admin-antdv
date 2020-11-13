@@ -1,19 +1,17 @@
 <template>
+  <!-- eslint-disable -->
   <div v-if="!item.hidden">
     <!-- {{ item }} -->
     <div
       v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow"
       class="nav-list__item"
-      :class="{ 'right': item.right }"
+      :class="{ right: item.right }"
     >
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <a-menu-item
-          :key="onlyOneChild.name"
-          :class="{'submenu-title-noDropdown':!isNest}"
-        >
-        <span>{{ onlyOneChild.meta.title }}</span>
+      <!-- <app-link v-if="onlyOneChild.meta" :key="onlyOneChild.name" :to="resolvePath(onlyOneChild.path)"> -->
+        <a-menu-item :key="onlyOneChild.name" :class="{'submenu-title-noDropdown':!isNest}">
+          <span>{{ onlyOneChild.meta.title }}</span>
         </a-menu-item>
-      </app-link>
+      <!-- </app-link> -->
     </div>
 
     <!-- <el-submenu
@@ -35,7 +33,7 @@
         :base-path="resolvePath(child.path)"
         class="nest-menu"
       />
-    </el-submenu> -->
+    </el-submenu>-->
   </div>
 </template>
 
