@@ -4,9 +4,9 @@
       <strong class="mr-10">欢迎使用</strong>
       {{ systemTitle }}
     </h1>
-    <p
-      class="home-subtitle mt-20"
-    >为了实现对XXX牛逼的服务质量，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真）。</p>
+    <p class="home-subtitle mt-20">
+      为了实现对XXX牛逼的服务质量，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真）。
+    </p>
     <div class="home-content mt-40">
       <div class="banner-user">
         <a-row :gutter="10">
@@ -14,7 +14,10 @@
             <!-- 轮播图 -->
             <div class="banner-container">
               <a-carousel autoplay>
-                <div v-for="(item, index) in bannerList" :key="'banner' + index">
+                <div
+                  v-for="(item, index) in bannerList"
+                  :key="'banner' + index"
+                >
                   <img class="banner__img" :src="item.imgUrl" />
                 </div>
               </a-carousel>
@@ -23,21 +26,28 @@
           <a-col :xs="24" :sm="24" :md="8" :lg="6" :xl="6">
             <!-- 登录部分 -->
             <div class="login-container">
-              <div class="login-title">{{ realName ? "欢迎您" : "用户登录" }}</div>
+              <div class="login-title">
+                {{ realName ? "欢迎您" : "用户登录" }}
+              </div>
               <template v-if="realName">
                 <div class="login-content">
                   <p>尊敬的{{ realName }}：</p>
                   <p class="welcome">您已登录{{ systemTitle }}，欢迎使用。</p>
                 </div>
                 <div class="login-btn-container">
-                  <a-button type="primary" @click="showDevMoadl()" class="mr-10">修改密码</a-button>
+                  <a-button type="primary" @click="showDevMoadl()" class="mr-10"
+                    >修改密码</a-button
+                  >
                   <a-button @click="logout()">退出登录</a-button>
                 </div>
               </template>
               <template v-else>
                 <div class="login-content mt-10">
                   <a-form :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }">
-                    <a-form-item label="手机号码" v-bind="validateInfos.username">
+                    <a-form-item
+                      label="手机号码"
+                      v-bind="validateInfos.username"
+                    >
                       <a-input
                         v-model:value="modelRef.username"
                         placeholder="请输入手机号码"
@@ -53,11 +63,23 @@
                     </a-form-item>
                   </a-form>
                   <div class="password-container flex">
-                    <a-checkbox v-model:checked="remeberPwd" class="password-remember">记住密码</a-checkbox>
-                    <span class="password-forget" @click="showDevMoadl()">忘记密码？</span>
+                    <a-checkbox
+                      v-model:checked="remeberPwd"
+                      class="password-remember"
+                      >记住密码</a-checkbox
+                    >
+                    <span class="password-forget" @click="showDevMoadl()"
+                      >忘记密码？</span
+                    >
                   </div>
                   <div class="login-btn-container">
-                    <a-button type="primary" @click="onSubmit" :loading="loading" class="mr-10">登录</a-button>
+                    <a-button
+                      type="primary"
+                      @click="onSubmit"
+                      :loading="loading"
+                      class="mr-10"
+                      >登录</a-button
+                    >
                     <a-button @click="showDevMoadl()">注册</a-button>
                   </div>
                 </div>
@@ -71,28 +93,23 @@
         <a-row :gutter="10">
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" class="flex">
             <div class="guide-container">
-              <h4>
-                <i class="iconfont icon-book"></i>操作手册下载地址
-              </h4>
+              <h4><i class="iconfont icon-book"></i>操作手册下载地址</h4>
               <div>
-                <a
-                  target="_blank"
-                  type="primary"
-                  @click="openOperationManual()"
-                >{{ systemTitle }}操作手册</a>
+                <a target="_blank" type="primary" @click="openOperationManual()"
+                  >{{ systemTitle }}操作手册</a
+                >
               </div>
             </div>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" class="flex">
             <div class="browser-container">
-              <h4>
-                <i class="iconfont icon-liulanqi"></i>网页推荐使用浏览器
-              </h4>
+              <h4><i class="iconfont icon-liulanqi"></i>网页推荐使用浏览器</h4>
               <div>
                 <a
                   href="https://www.google.cn/intl/zh-CN/chrome/?standalone=1"
                   target="_blank"
-                >下载谷歌浏览器</a>
+                  >下载谷歌浏览器</a
+                >
               </div>
             </div>
           </a-col>
@@ -136,7 +153,6 @@ export default {
     const { ctx } = getCurrentInstance();
 
     const realName = computed(() => ctx.$store.getters.realName);
-    const hasToken = computed(() => ctx.$store.getters.token);
 
     const bannerList = [
       {
@@ -176,15 +192,16 @@ export default {
     }
 
     watch(
-      () => [remeberPwd.value, hasToken],
-      ([newRemeberPwd, newHasToken], [oldRemeberPwd, oldHasToken]) => {
-        // console.log(newRemeberPwd, newHasToken, oldRemeberPwd, oldHasToken);
+      () => [remeberPwd.value, ctx.$store.getters.token],
+      ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
+        // console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
         if (!newRemeberPwd && getLocalS("username")) {
           delLocalS("username");
           delLocalS("password");
         }
 
-        if (!newHasToken) {
+        // 退出登录
+        if (!newRemeberPwd && !newToken) {
           modelRef.username = "";
           modelRef.password = "";
         }

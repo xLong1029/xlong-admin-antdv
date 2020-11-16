@@ -103,7 +103,6 @@ export default {
         await ctx.$store.dispatch("permission/generateRoutes", null);
         ctx.$message.success("您已退出该系统");
         ctx.$router.push({ name: "Home" });
-        // TODO:在首页退出登录的时候，若未己住密码，要清空登录框的输入值，需要监听用户是否已登录
       } catch (err) {
         console.log(err);
         ctx.$router.push({ name: "Home" });
