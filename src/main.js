@@ -20,7 +20,12 @@ import "./styles/index.less";
 import "./assets/font/iconfont.css";
 
 // 按需使用图标
-import { MailOutlined, RightOutlined } from "@ant-design/icons-vue";
+import {
+  MailOutlined,
+  UserOutlined,
+  LogoutOutlined,
+  RightOutlined
+} from "@ant-design/icons-vue";
 
 const app = createApp(App);
 app.config.productionTip = false;
@@ -32,6 +37,8 @@ app
 
 app
   .component(MailOutlined.name, MailOutlined)
+  .component(UserOutlined.name, UserOutlined)
+  .component(LogoutOutlined.name, LogoutOutlined)
   .component(RightOutlined.name, RightOutlined);
 
 app.mount("#app");

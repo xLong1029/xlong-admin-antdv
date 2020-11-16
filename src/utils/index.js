@@ -495,3 +495,17 @@ export function compareDate(dateOne, dateTwo) {
     return false
   }
 }
+
+/**
+ * 获取页面标题
+ *
+ * @param {*} pageTitle 页面标题
+ */
+export function getPageTitle(pageTitle) {
+  const title = process.env.VUE_APP_SYSYTEM_TITLE || "信息管理系统";
+
+  if (pageTitle) {
+    return `${pageTitle} - ${title}`;
+  }
+  return `${title}`;
+}

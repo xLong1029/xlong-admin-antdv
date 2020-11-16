@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { asyncRoutes, constantRoutes, resetRouter } from "router";
-import router from 'router';
+import router from "router";
 
 /**
  * 使用meta.role判断当前用户是否具有权限访问
@@ -8,6 +8,7 @@ import router from 'router';
  * @param roles
  */
 function hasPermission(route, roles) {
+  if (!roles) return false;
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.includes(role));
   } else {
@@ -39,13 +40,13 @@ export function filterAsyncRoutes(routes, roles) {
 const state = {
   routes: constantRoutes,
   addRoutes: []
-}
+};
 const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes;
     state.routes = constantRoutes.concat(routes);
   }
-}
+};
 
 const actions = {
   // 生成路由
@@ -61,13 +62,13 @@ const actions = {
 
       commit("SET_ROUTES", accessedRoutes);
       resolve(accessedRoutes);
-    })
+    });
   }
-}
+};
 
 export default {
   namespaced: true,
   state,
   mutations,
   actions
-}
+};

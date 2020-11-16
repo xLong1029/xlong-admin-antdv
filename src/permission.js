@@ -2,7 +2,7 @@ import router from "./router";
 import store from "./store";
 import { message } from "ant-design-vue";
 import { getToken } from "utils/auth";
-import getPageTitle from "utils/get-page-title";
+import { getPageTitle } from "utils";
 
 const whiteList = ["/home", "/about", "/contact", "/404"]; // 重定向白名单
 
@@ -32,7 +32,7 @@ router.beforeEach(async (to, from, next) => {
         // 获取用户信息
         const { roles } = await store.dispatch("user/getInfo");
 
-        console.log(`Get role's value, and the user's roles is ${roles}.`)
+        console.log(`Get role's value, and the user's roles is ${roles}.`);
 
         // 获取可通过的路由
         await store.dispatch("permission/generateRoutes", roles);
