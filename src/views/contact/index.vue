@@ -29,12 +29,7 @@
 
 <script>
 export default {
-  name: "Contact",
-  data() {
-    return {
-      qrcode: require("assets/images/qrcode.jpg")
-    };
-  }
+  name: "Contact"
 };
 </script>
 <style lang="less" scoped>

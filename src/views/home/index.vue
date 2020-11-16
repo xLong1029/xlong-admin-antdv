@@ -1,13 +1,13 @@
 <template>
   <div class="home-container">
     <h1 class="home-title">
-      <strong style="margin-right:10px">欢迎使用</strong>
+      <strong class="mr-10">欢迎使用</strong>
       {{ systemTitle }}
     </h1>
-    <p class="home-subtitle">
+    <p class="home-subtitle mt-20">
       为了实现对XXX牛逼的服务质量，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真）。
     </p>
-    <div class="home-content">
+    <div class="home-content mt-40">
       <div class="banner-user">
         <a-row :gutter="10">
           <a-col :xs="24" :sm="24" :md="16" :lg="18" :xl="18">
@@ -248,7 +248,6 @@ export default {
   }
 
   &-content {
-    margin-top: 30px;
     .banner-user {
       justify-content: space-between;
       overflow: hidden;
