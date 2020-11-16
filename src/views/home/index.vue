@@ -2,7 +2,7 @@
   <div class="home-container">
     <h1 class="home-title">
       <strong style="margin-right:10px">欢迎使用</strong>
-      XLONG家里蹲信息化管理系统
+      {{ systemTitle }}
     </h1>
     <p class="home-subtitle">
       为了实现对XXX牛逼的服务质量，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真）。
@@ -32,14 +32,10 @@
               <template v-if="realName">
                 <div class="login-content">
                   <p>尊敬的{{ realName }}：</p>
-                  <p class="welcome">
-                    您已登录南宁市多测合一信息化管理，欢迎使用。
-                  </p>
+                  <p class="welcome">您已登录{{ systemTitle }}，欢迎使用。</p>
                 </div>
                 <div class="login-btn-container">
-                  <a-button
-                    type="primary"
-                    @click="$router.push({ path: '/user/info' })"
+                  <a-button type="primary" @click="showDevMoadl()"
                     >修改密码</a-button
                   >
                   <a-button type="warning" @click="logout">退出登录</a-button>
@@ -47,26 +43,29 @@
               </template>
               <template v-else>
                 <div class="login-content mt-10">
-                  <a-form
-                    :model="loginForm"
-                    :label-col="{ span: 24 }"
-                    :wrapper-col="{ span: 24 }"
-                  >
-                    <a-form-item label="手机号码">
+                  <a-form :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }">
+                    <a-form-item
+                      label="手机号码"
+                      v-bind="validateInfos.username"
+                    >
                       <a-input
-                        :value="loginForm.username"
+                        v-model:value="modelRef.username"
                         placeholder="请输入手机号码"
+                        @keyup.enter="onSubmit"
                       />
                     </a-form-item>
-                    <a-form-item label="密码">
-                      <a-input
-                        :value="loginForm.password"
+                    <a-form-item label="密码" v-bind="validateInfos.password">
+                      <a-input-password
+                        v-model:value="modelRef.password"
                         placeholder="请输入密码"
+                        @keyup.enter="onSubmit"
                       />
                     </a-form-item>
                   </a-form>
                   <div class="password-container flex">
-                    <a-checkbox v-model="remeberPwd" class="password-remember"
+                    <a-checkbox
+                      v-model:checked="remeberPwd"
+                      class="password-remember"
                       >记住密码</a-checkbox
                     >
                     <span class="password-forget" @click="showDevMoadl()"
@@ -76,14 +75,12 @@
                   <div class="login-btn-container">
                     <a-button
                       type="primary"
-                      @click="submitLogin('loginForm')"
-                      :loading="loginLoading"
+                      @click="onSubmit"
+                      :loading="loading"
                       class="mr-10"
                       >登录</a-button
                     >
-                    <a-button type="warning" @click="showDevMoadl()"
-                      >注册</a-button
-                    >
+                    <a-button @click="showDevMoadl()">注册</a-button>
                   </div>
                 </div>
               </template>
@@ -99,7 +96,7 @@
               <h4><i class="iconfont icon-book"></i>操作手册下载地址</h4>
               <div>
                 <a target="_blank" type="primary" @click="openOperationManual()"
-                  >XLONG家里蹲信息化管理系统操作手册</a
+                  >{{ systemTitle }}操作手册</a
                 >
               </div>
             </div>
@@ -124,13 +121,17 @@
 </template>
 
 <script>
-import { computed, getCurrentInstance } from "vue";
+import { computed, getCurrentInstance, reactive, toRaw, ref, watch } from "vue";
+import { useForm } from "@ant-design-vue/use";
 import common from "common/index.js";
+import { setLocalS, getLocalS, delLocalS, encrypt, decrypt } from "utils";
 
 export default {
   name: "Home",
   setup() {
     const { showDevMoadl } = common();
+
+    const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
     const { ctx } = getCurrentInstance();
 
@@ -148,31 +149,84 @@ export default {
       }
     ];
 
-    const loginForm = {
+    const loading = ref(false);
+
+    const modelRef = reactive({
       username: "",
       password: ""
-    };
+    });
 
-    const remeberPwd = false;
+    const rulesRef = reactive({
+      username: [
+        { required: true, message: "请输入手机号码", trigger: "blur" }
+      ],
+      password: [{ required: true, message: "请输入密码", trigger: "blur" }]
+    });
+
+    const { validate, validateInfos } = useForm(modelRef, rulesRef);
+
+    const remeberPwd = ref(false);
+    // 判断本地存储用户名是否存在
+    if (getLocalS("username")) {
+      // 获取本地存储的用户名和密码
+      modelRef.username = getLocalS("username");
+      modelRef.password = decrypt(getLocalS("password"));
+      remeberPwd.value = true;
+    }
+
+    watch(
+      () => remeberPwd.value,
+      val => {
+        if (!val && getLocalS("username")) {
+          delLocalS("username");
+          delLocalS("password");
+        }
+      }
+    );
+
+    const onSubmit = e => {
+      e.preventDefault();
+      validate()
+        .then(async () => {
+          const params = toRaw(modelRef);
+          try {
+            loading.value = true;
+            const userInfo = await ctx.$store.dispatch("user/login", params);
+            if (remeberPwd.value) {
+              // 本地存储用户名和密码
+              setLocalS("username", params.username);
+              setLocalS("password", encrypt(params.password));
+            }
+            ctx.$message.success(
+              `尊敬的${userInfo.realName}，欢迎使用${systemTitle}`
+            );
+            loading.value = false;
+          } catch (err) {
+            ctx.$message.error(err.error ? err.error : err);
+            loading.value = false;
+          }
+        })
+        .catch(err => {
+          console.log("error", err);
+        });
+    };
 
     const openOperationManual = () => {
       showDevMoadl();
     };
 
-    const loginLoading = false;
-    const submitLogin = () => {
-      showDevMoadl();
-    };
-
     return {
       realName,
+      systemTitle,
       bannerList,
       showDevMoadl,
       openOperationManual,
-      loginForm,
+      modelRef,
+      rulesRef,
       remeberPwd,
-      loginLoading,
-      submitLogin
+      loading,
+      onSubmit,
+      validateInfos
     };
   }
 };

@@ -15,7 +15,6 @@
 </template>
 
 <script>
-/* eslint-disable */
 import {
   AppMain,
   AppNavBar,
@@ -44,6 +43,7 @@ export default {
   height: 120px;
   line-height: inherit;
   padding: 0;
+  z-index: 99 !important;
 }
 .main-container {
   padding-top: 133px;

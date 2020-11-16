@@ -1,42 +1,34 @@
 /* eslint-disable */
+import Api from 'api/user';
+import { resetRouter } from 'router';
+import { strToArr } from 'utils';
 import {
   getToken,
-  setToken,
-  removeToken
+  removeToken,
+  setToken
 } from 'utils/auth';
-import { strToArr } from 'utils';
-import Api from 'api/user';
-import {
-  resetRouter
-} from 'router';
+
+const defaultUser = {
+  id: 0,
+  avatar: '',
+  gender: '',
+  username: '',
+  realName: '',
+  nickName: '',
+  roles: []
+};
 
 // 清空账户信息
 function clearAccount(_commit) {
   removeToken();
   resetRouter();
   _commit('SET_TOKEN', null);
-  _commit('SET_USER', {
-    id: 0,
-    avatar: '',
-    gender: '',
-    username: '',
-    realName: '',
-    nickName: '',
-    roles: []
-  });
+  _commit('SET_USER', {...defaultUser});
 }
 
 const state = {
   token: getToken(),
-  user: {
-    id: 0,
-    avatar: '',
-    gender: '',
-    username: '',
-    realName: '',
-    nickName: '',
-    roles: []
-  }
+  user: {...defaultUser}
 }
 
 const mutations = {
@@ -51,9 +43,7 @@ const mutations = {
 const actions = {
   // 获取用户信息
   getInfo({
-    commit,
-    state
-  }) {
+    commit  }) {
     return new Promise((resolve, reject) => {
       const token = getToken();
 
@@ -61,18 +51,16 @@ const actions = {
         .then(res => {
           // 登录成功
           if (res.code == 200) {
-            const info = res.data;
-            const avatar = info.userFace ? info.userFace : null;
-            const roles = info.role ? strToArr(info.role, ',') : null;
+            const { realName, username, nickName, gender, objectId, userFace , role} = res.data;
 
             const data = {
-              avatar,
-              roles,
-              realName: info.realName,
-              username: info.username,
-              nickName: info.nickName,              
-              gender: info.gender,
-              id: info.objectId
+              avatar: userFace ? userFace : null,
+              roles: role ? strToArr(role, ',') : null,
+              realName,
+              username,
+              nickName,              
+              gender,
+              id: objectId
             }
 
             commit('SET_USER', data);
@@ -93,10 +81,9 @@ const actions = {
 
   // 登出
   logout({
-    commit,
-    state
+    commit
   }) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       clearAccount(commit);
       resolve();
     })
@@ -104,19 +91,17 @@ const actions = {
 
   // 登录
   login({
-    commit,
-    state
+    commit
   }, from) {
     return new Promise((resolve, reject) => {
       Api.Login(from)
         .then(res => {
-          if (res.code == 200) {
-            const result = res.data;
-
+          const { code, data } = res;
+          if (code == 200) {
             // 存储token
-            setToken(result.token);
-            commit("SET_TOKEN", result.token);
-            resolve(res);
+            setToken(data.token);
+            commit("SET_TOKEN", data.token);
+            resolve(data);
           } else reject(res);
         })
         .catch(err => reject(err));
