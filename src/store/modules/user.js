@@ -1,6 +1,6 @@
 /* eslint-disable */
 import Api from 'api/user';
-import { resetRouter } from 'router';
+import { resetRouter } from "router";
 import { strToArr } from 'utils';
 import {
   getToken,
@@ -49,11 +49,12 @@ const actions = {
 
       Api.GetUser(token)
         .then(res => {
+          const { code, data } = res;
           // 登录成功
-          if (res.code == 200) {
-            const { realName, username, nickName, gender, objectId, userFace , role} = res.data;
+          if (code == 200) {
+            const { realName, username, nickName, gender, objectId, userFace , role} = data;
 
-            const data = {
+            const info = {
               avatar: userFace ? userFace : null,
               roles: role ? strToArr(role, ',') : null,
               realName,
@@ -63,8 +64,8 @@ const actions = {
               id: objectId
             }
 
-            commit('SET_USER', data);
-            resolve(data);
+            commit('SET_USER', info);
+            resolve(info);
           }
           // 登录失败
           else {

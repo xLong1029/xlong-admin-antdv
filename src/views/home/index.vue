@@ -35,10 +35,10 @@
                   <p class="welcome">您已登录{{ systemTitle }}，欢迎使用。</p>
                 </div>
                 <div class="login-btn-container">
-                  <a-button type="primary" @click="showDevMoadl()"
+                  <a-button type="primary" @click="showDevMoadl()" class="mr-10"
                     >修改密码</a-button
                   >
-                  <a-button type="warning" @click="logout">退出登录</a-button>
+                  <a-button @click="showDevMoadl()">退出登录</a-button>
                 </div>
               </template>
               <template v-else>
@@ -124,7 +124,14 @@
 import { computed, getCurrentInstance, reactive, toRaw, ref, watch } from "vue";
 import { useForm } from "@ant-design-vue/use";
 import common from "common/index.js";
-import { setLocalS, getLocalS, delLocalS, encrypt, decrypt } from "utils";
+import {
+  setLocalS,
+  getLocalS,
+  delLocalS,
+  encrypt,
+  decrypt,
+  strToArr
+} from "utils";
 
 export default {
   name: "Home",
@@ -197,6 +204,30 @@ export default {
               setLocalS("username", params.username);
               setLocalS("password", encrypt(params.password));
             }
+
+            const {
+              realName,
+              username,
+              nickName,
+              gender,
+              objectId,
+              userFace,
+              role
+            } = userInfo;
+
+            const info = {
+              avatar: userFace ? userFace : null,
+              roles: role ? strToArr(role, ",") : null,
+              realName,
+              username,
+              nickName,
+              gender,
+              id: objectId
+            };
+
+            // 更新用户信息
+            ctx.$store.commit("user/SET_USER", info);
+
             ctx.$message.success(
               `尊敬的${userInfo.realName}，欢迎使用${systemTitle}`
             );

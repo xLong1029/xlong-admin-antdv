@@ -1,7 +1,6 @@
 /* eslint-disable */
-import { resetRouter, asyncRoutes, constantRoutes } from "@/router/index.js";
-
-console.log(111, constantRoutes);
+import { asyncRoutes, constantRoutes, resetRouter } from "router";
+import router from 'router';
 
 /**
  * 使用meta.role判断当前用户是否具有权限访问
@@ -12,7 +11,6 @@ function hasPermission(route, roles) {
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.includes(role));
   } else {
-    console.log(222);
     return true;
   }
 }
@@ -54,10 +52,13 @@ const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
       resetRouter();
+
       const accessedRoutes = filterAsyncRoutes(asyncRoutes, roles);
       // 404重定向配置放结尾
       accessedRoutes.push({ path: "*", redirect: "/404", hidden: true });
-      router.addRoutes(accessedRoutes);
+
+      router.addRoute(accessedRoutes);
+
       commit("SET_ROUTES", accessedRoutes);
       resolve(accessedRoutes);
     })

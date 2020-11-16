@@ -1,22 +1,22 @@
 /* eslint-disable */
-import { createRouter, createWebHashHistory } from "vue-router";
 import LayoutDefault from "@/layout/default";
+import { createRouter, createWebHashHistory } from "vue-router";
 
 export const constantRoutes = [
   {
-    path: '/redirect',
+    path: "/redirect",
     component: LayoutDefault,
     hidden: true,
     children: [
       {
-        path: '/redirect/:path*',
-        component: () => import('@/views/redirect/index')
+        path: "/redirect/:path*",
+        component: () => import("@/views/redirect/index")
       }
     ]
   },
   {
-    path: '/404',
-    component: () => import('@/views/error-page/404'),
+    path: "/404",
+    component: () => import("@/views/error-page/404"),
     hidden: true
   },
   {
@@ -35,17 +35,17 @@ export const constantRoutes = [
         component: () => import("@/views/contact/index"),
         name: "Contact",
         hidden: true,
-        meta: { title: "联系我们" },
+        meta: { title: "联系我们" }
       },
       {
         path: "about",
         component: () => import("@/views/about/index"),
         name: "About",
         hidden: true,
-        meta: { title: "关于我们" },
+        meta: { title: "关于我们" }
       }
     ]
-  },
+  }
 ];
 
 /* Router Modules */
@@ -68,15 +68,6 @@ export const asyncRoutes = requireRouter.keys().map(fileName => {
 });
 
 /**
- * 清空路由
- * Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
- */
-export function resetRouter() {
-  const newRouter = initRouter();
-  router.matcher = newRouter.matcher; // reset router
-}
-
-/**
  * 初始化路由
  */
 export const initRouter = () =>
@@ -86,6 +77,15 @@ export const initRouter = () =>
     routes: [...constantRoutes]
   });
 
-
 const router = initRouter();
+
+/**
+ * 重置路由
+ * Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+ */
+export function resetRouter() {
+  const newRouter = initRouter();
+  router.matcher = newRouter.matcher; // reset router
+}
+
 export default router;
