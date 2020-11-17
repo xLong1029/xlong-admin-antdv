@@ -56,9 +56,12 @@ const actions = {
 
       const accessedRoutes = filterAsyncRoutes(asyncRoutes, roles);
       // 404重定向配置放结尾
-      accessedRoutes.push({ path: "*", redirect: "/404", hidden: true });
-
-      router.addRoute(accessedRoutes);
+      accessedRoutes.push({ path: "/:catchAll(.*)", redirect: "/404", hidden: true });
+      
+      // 动态添加路由，从前面插入
+      accessedRoutes.forEach(e => {
+        router.addRoute(e);
+      })
 
       commit("SET_ROUTES", accessedRoutes);
       resolve(accessedRoutes);

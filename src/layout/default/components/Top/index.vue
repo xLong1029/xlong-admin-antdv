@@ -56,7 +56,7 @@
                 </ul>
               </div>
             </template>
-            <span class="top-container-right-item link">
+            <span class="top-container-right-item link mr-5">
               <UserOutlined />
               {{ user.realName }}
             </span>

@@ -1,5 +1,4 @@
 import LayoutDefault from "@/layout/default";
-import LayoutRouterView from "@/layout/router-view";
 
 const router = {
   path: "/user",
@@ -14,7 +13,8 @@ const router = {
       path: "index",
       component: () => import("@/views/user/index"),
       name: "UserCenter",
-      hidden: true
+      hidden: true,
+      meta: { title: "用户中心" }
     },
     {
       path: "info",
@@ -25,23 +25,12 @@ const router = {
       }
     },
     {
-      path: "account-manage",
-      component: LayoutRouterView,
-      redirect: "/user/account-manage/index",
+      path: "change-password",
+      component: () => import("@/views/user/change-password/index"),
+      name: "ChangePassword",
       meta: {
-        title: "账户管理"
-      },
-      children: [
-        {
-          component: () => import("@/views/user/account-manage/index"),
-          name: "AccountManage",
-          meta: {
-            title: "账户管理",
-            icon: "iconfont icon-yonghu",
-            roles: ["admin"]
-          }
-        }
-      ]
+        title: "修改密码"
+      }
     }
   ]
 };

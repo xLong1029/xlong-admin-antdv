@@ -1,4 +1,7 @@
 const getters = {
+  pageLoading: state => state.app.pageLoading,
+  sysLoading: state => state.app.sysLoading,
+  currentEnv: state => state.app.currentEnv,
   token: state => state.user.token,
   user: state => state.user.user,
   avatar: state => state.user.user.avatar,

@@ -5,12 +5,12 @@
       {{ systemTitle }}
     </h1>
     <p class="home-subtitle mt-20">
-      为了实现对XXX牛逼的服务质量，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真）。
+      为了实现对XXX信息化服务的牛逼功能，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真）。
     </p>
-    <div class="home-content mt-40">
+    <div class="home-content mt-20">
       <div class="banner-user">
         <a-row :gutter="10">
-          <a-col :xs="24" :sm="24" :md="16" :lg="18" :xl="18">
+          <a-col :xs="24" :sm="24" :md="16" :lg="18" :xl="18" class="mt-20">
             <!-- 轮播图 -->
             <div class="banner-container">
               <a-carousel autoplay>
@@ -23,7 +23,7 @@
               </a-carousel>
             </div>
           </a-col>
-          <a-col :xs="24" :sm="24" :md="8" :lg="6" :xl="6">
+          <a-col :xs="24" :sm="24" :md="8" :lg="6" :xl="6" class="mt-20">
             <!-- 登录部分 -->
             <div class="login-container">
               <div class="login-title">
@@ -32,10 +32,20 @@
               <template v-if="realName">
                 <div class="login-content">
                   <p>尊敬的{{ realName }}：</p>
-                  <p class="welcome">您已登录{{ systemTitle }}，欢迎使用。</p>
+                  <p class="welcome">
+                    您好，欢迎使用{{ systemTitle }}，进入
+                    <router-link
+                      style="text-decoration: underline"
+                      to="/user/index"
+                      >用户中心</router-link
+                    >。
+                  </p>
                 </div>
                 <div class="login-btn-container">
-                  <a-button type="primary" @click="showDevMoadl()" class="mr-10"
+                  <a-button
+                    type="primary"
+                    @click="toPage('/user/change-password')"
+                    class="mr-10"
                     >修改密码</a-button
                   >
                   <a-button @click="logout()">退出登录</a-button>
@@ -91,25 +101,34 @@
       <!-- 操作指南 -->
       <div class="operation-guide mt-20">
         <a-row :gutter="10">
-          <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" class="flex">
-            <div class="guide-container">
-              <h4><i class="iconfont icon-book"></i>操作手册下载地址</h4>
-              <div>
-                <a target="_blank" type="primary" @click="openOperationManual()"
-                  >{{ systemTitle }}操作手册</a
-                >
+          <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+            <div class="operation-guide__item">
+              <div class="guide-container">
+                <h4><i class="iconfont icon-book"></i>操作手册下载地址</h4>
+                <div>
+                  <a
+                    target="_blank"
+                    type="primary"
+                    @click="openOperationManual()"
+                    >{{ systemTitle }}操作手册</a
+                  >
+                </div>
               </div>
             </div>
           </a-col>
-          <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" class="flex">
-            <div class="browser-container">
-              <h4><i class="iconfont icon-liulanqi"></i>网页推荐使用浏览器</h4>
-              <div>
-                <a
-                  href="https://www.google.cn/intl/zh-CN/chrome/?standalone=1"
-                  target="_blank"
-                  >下载谷歌浏览器</a
-                >
+          <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+            <div class="operation-guide__item">
+              <div class="browser-container">
+                <h4>
+                  <i class="iconfont icon-liulanqi"></i>网页推荐使用浏览器
+                </h4>
+                <div>
+                  <a
+                    href="https://www.google.cn/intl/zh-CN/chrome/?standalone=1"
+                    target="_blank"
+                    >下载谷歌浏览器</a
+                  >
+                </div>
               </div>
             </div>
           </a-col>
@@ -148,9 +167,9 @@ export default {
   setup() {
     const { showDevMoadl } = common();
 
-    const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
-
     const { ctx } = getCurrentInstance();
+
+    const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
     const realName = computed(() => ctx.$store.getters.realName);
 
@@ -168,6 +187,7 @@ export default {
 
     const loading = ref(false);
 
+    // 表单
     const modelRef = reactive({
       username: "",
       password: ""
@@ -191,6 +211,7 @@ export default {
       remeberPwd.value = true;
     }
 
+    // 监听己住密码与token的改变
     watch(
       () => [remeberPwd.value, ctx.$store.getters.token],
       ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
@@ -208,6 +229,7 @@ export default {
       }
     );
 
+    // 登录
     const onSubmit = e => {
       e.preventDefault();
       validate()
@@ -242,6 +264,9 @@ export default {
               id: objectId
             };
 
+            // 获取可通过的路由
+            await ctx.$store.dispatch("permission/generateRoutes", userInfo);
+
             // 更新用户信息
             ctx.$store.commit("user/SET_USER", info);
 
@@ -259,10 +284,12 @@ export default {
         });
     };
 
+    // 打开操作手册
     const openOperationManual = () => {
       showDevMoadl();
     };
 
+    // 退出登录
     const logout = () => {
       Modal.confirm({
         title: "确认退出该系统吗？",
@@ -286,6 +313,11 @@ export default {
       });
     };
 
+    // 跳转页面
+    const toPage = path => {
+      ctx.$router.push({ path });
+    };
+
     return {
       realName,
       systemTitle,
@@ -298,7 +330,8 @@ export default {
       loading,
       onSubmit,
       validateInfos,
-      logout
+      logout,
+      toPage
     };
   }
 };
@@ -398,7 +431,12 @@ export default {
     .operation-guide {
       width: 900px;
       margin: auto;
-      ::v-deep(.ant-col) {
+      // ::v-deep(.ant-col) {
+      //   justify-content: center;
+      // }
+
+      &__item {
+        display: flex;
         justify-content: center;
       }
     }
@@ -436,5 +474,11 @@ hr {
   margin: 15px 0;
   border-top: #ddd 1px solid;
   border-bottom: #fff 1px solid;
+}
+
+@media (max-width: 950px) {
+  .operation-guide__item {
+    display: block !important;
+  }
 }
 </style>

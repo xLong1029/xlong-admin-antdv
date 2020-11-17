@@ -7,14 +7,15 @@
       </div>
       <!-- 导航 -->
       <div class="nav-list-container">
-        <a-menu :selectedKeys="currentMenu" mode="horizontal">
-          <!-- <a-menu-item v-for="route in permissionRoutes" :key="route.name">{{ route.path }}</a-menu-item> -->
+        <a-menu v-model:selectedKeys="currentMenu" mode="horizontal">
+          <!-- <a-menu-item v-for="route in permissionRoutes" :key="route.path">{{ route.path }}</a-menu-item> -->
+          <!-- <div v-for="(route, index) in permissionRoutes" :key="index">{{ route}}</div> -->
           <nav-item
             v-for="route in permissionRoutes"
-            :key="route.name"
+            :key="route.path"
             :item="route"
             :base-path="route.path"
-          />
+          >{{ route }}</nav-item>
         </a-menu>
       </div>
     </div>
@@ -33,41 +34,37 @@ export default {
   setup() {
     const logo = require("@/assets/images/logo.jpg");
 
-    let currentMenu = ref([]);
-
     const { ctx } = getCurrentInstance();
-
-    const toPage = path => {
-      ctx.$router.push({ path });
-    };
-
-    // let activeMenu = computed(() => {
-    //   const route = ctx.$router.currentRoute.value;
-    //   const { meta, name } = route;
-
-    //   if (meta.activeMenu) {
-    //     return [meta.activeMenu];
-    //   }
-    //   return [name];
-    // });
-
-    // watch(
-    //   () => activeMenu.value,
-    //   val => {
-    //     console.log(`activeMenu is ${val}`);
-    //   }
-    // );
 
     const permissionRoutes = computed(
       () => ctx.$store.getters.permissionRoutes
     );
 
+    const currentMenu = ref([]);
+
+    // 获取当前激活菜单
+    const getActiveMenu = () => {
+      const route = ctx.$router.currentRoute.value;
+      const { meta, matched, path } = route;
+
+      if (meta.activeMenu) {
+        return [meta.activeMenu];
+      }
+
+      return matched[0].children.length > 1 ? [path] : [matched[0].path];
+    };
+
+    currentMenu.value = getActiveMenu();
+
+    const toPage = path => {
+      ctx.$router.push({ path });
+    };
+
     return {
       logo,
-      toPage,
-      currentMenu,
-      // activeMenu,
       permissionRoutes,
+      currentMenu,
+      toPage
     };
   }
 };
@@ -85,5 +82,9 @@ export default {
 .logo {
   width: 150px;
   cursor: pointer;
+}
+
+/deep/ .ant-menu-horizontal {
+  border-bottom: none;
 }
 </style>

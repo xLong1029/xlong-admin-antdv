@@ -21,6 +21,7 @@ router.beforeEach(async (to, from, next) => {
       // 用户未登录
       if (!hasToken) {
         if (whiteList.indexOf(to.path) !== -1) {
+          store.dispatch("app/setSysLoading", false);
           next();
         }
         // 重定向到home进行登录
@@ -36,6 +37,9 @@ router.beforeEach(async (to, from, next) => {
 
         // 获取可通过的路由
         await store.dispatch("permission/generateRoutes", roles);
+
+        // 取消系统加载
+        store.dispatch("app/setSysLoading", false);
 
         // hack方法以确保addroutes是完整的
         // 设置replace:true，这样导航就不会留下历史记录

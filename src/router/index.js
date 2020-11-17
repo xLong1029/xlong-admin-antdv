@@ -4,17 +4,6 @@ import { createRouter, createWebHashHistory } from "vue-router";
 
 export const constantRoutes = [
   {
-    path: "/redirect",
-    component: LayoutDefault,
-    hidden: true,
-    children: [
-      {
-        path: "/redirect/:path*",
-        component: () => import("@/views/redirect/index")
-      }
-    ]
-  },
-  {
     path: "/404",
     component: () => import("@/views/error-page/404"),
     hidden: true
@@ -43,7 +32,12 @@ export const constantRoutes = [
         name: "About",
         hidden: true,
         meta: { title: "关于我们" }
-      }
+      },
+      {
+        path: "redirect/:path*",
+        component: () => import("@/views/redirect/index"),
+        hidden: true,
+      },
     ]
   }
 ];
@@ -77,15 +71,14 @@ export const initRouter = () =>
     routes: [...constantRoutes]
   });
 
-const router = initRouter();
+let router = initRouter();
 
 /**
  * 重置路由
  * Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
  */
 export function resetRouter() {
-  const newRouter = initRouter();
-  router.matcher = newRouter.matcher; // reset router
+  router = initRouter();
 }
 
 export default router;
