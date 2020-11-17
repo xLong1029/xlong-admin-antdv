@@ -7,21 +7,17 @@
           <span>意见反馈</span>
         </span>
       </div>
-      <div class="top-container-right">
-        <span class="top-container-right-item link" @click="toPage('/about')">
+      <div class="top-container-right flex">
+        <span class="top-container-right-item link mr-10" @click="toPage('/about')">
           关于我们
-          <RightOutlined />
         </span>
-        <span class="top-container-right-item link" @click="toPage('/contact')">
+        |
+        <span class="top-container-right-item link mr-10" @click="toPage('/contact')">
           联系方式
-          <RightOutlined />
         </span>
         <template v-if="user.realName">
-          <a-popover
-            placement="bottom"
-            trigger="hover"
-            class="account-info-popover"
-          >
+          |
+          <a-popover placement="bottom" trigger="hover" class="account-info-popover">
             <template #content>
               <div class="user-info-container">
                 <div class="user-info-title">
@@ -33,40 +29,26 @@
                 </div>
                 <ul class="user-info-list mt-10">
                   <li class="user-info-list-item">账号：{{ user.username }}</li>
-                  <li class="user-info-list-item">
-                    真实姓名：{{ user.realName }}
-                  </li>
+                  <li class="user-info-list-item">真实姓名：{{ user.realName }}</li>
                   <li class="user-info-list-item">
                     当前角色：
-                    <a-tag v-if="user.roles.indexOf('admin') >= 0" color="blue"
-                      >超级管理员</a-tag
-                    >
-                    <a-tag
-                      v-if="user.roles.indexOf('manage') >= 0"
-                      color="green"
-                      >系统管理员</a-tag
-                    >
-                    <a-tag
-                      v-if="user.roles.indexOf('editor') >= 0"
-                      color="orange"
-                      >普通用户</a-tag
-                    >
+                    <a-tag v-if="user.roles.indexOf('admin') >= 0" color="blue">超级管理员</a-tag>
+                    <a-tag v-if="user.roles.indexOf('manage') >= 0" color="green">系统管理员</a-tag>
+                    <a-tag v-if="user.roles.indexOf('editor') >= 0" color="orange">普通用户</a-tag>
                     <span v-if="!user.roles.length">-</span>
                   </li>
                 </ul>
               </div>
             </template>
-            <span class="top-container-right-item link mr-5">
-              <UserOutlined />
+            <div class="top-container-right-item link mr-5 flex">
+              <span v-if="user.avatar" class="user-avatar mr-5">
+                <img :src="user.avatar" />
+              </span>
+              <UserOutlined v-else />
               {{ user.realName }}
-            </span>
+            </div>
           </a-popover>
-          <a-popconfirm
-            placement="bottomRight"
-            ok-text="确认"
-            cancel-text="取消"
-            @confirm="logout"
-          >
+          <a-popconfirm placement="bottomRight" ok-text="确认" cancel-text="取消" @confirm="logout">
             <template #title>
               <p>确认退出系统?</p>
             </template>
@@ -149,6 +131,7 @@ export default {
   }
 
   &-right {
+    align-items: center;
     &-item {
       margin-left: 10px;
     }
@@ -179,6 +162,19 @@ export default {
         margin-bottom: 0;
       }
     }
+  }
+}
+
+.user-avatar {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  overflow: hidden;
+
+  img{
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

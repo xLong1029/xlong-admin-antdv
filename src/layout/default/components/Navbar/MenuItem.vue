@@ -1,5 +1,6 @@
 <template>
   <a-menu-item @click.capture="handleLink">
+    <i v-if="item.meta.icon" :class="item.meta.icon" class="mr-5"></i>
     <span>{{ item.meta.title }}</span>
   </a-menu-item>
 </template>

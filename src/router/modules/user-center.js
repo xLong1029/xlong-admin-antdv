@@ -6,6 +6,7 @@ const router = {
   redirect: "/user/index",
   meta: {
     title: "用户中心",
+    icon: "iconfont icon-user2",
     directLink: true
   },
   children: [

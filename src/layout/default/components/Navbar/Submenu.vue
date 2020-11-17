@@ -1,6 +1,7 @@
 <template>
   <a-sub-menu @click.capture="handleLink(item)">
     <template #title>
+      <i v-if="item.meta.icon" :class="item.meta.icon" class="mr-5"></i>
       <span>{{ item.meta.title }}</span>
     </template>
     <slot />
