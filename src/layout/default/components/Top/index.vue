@@ -8,16 +8,26 @@
         </span>
       </div>
       <div class="top-container-right flex">
-        <span class="top-container-right-item link mr-10" @click="toPage('/about')">
+        <span
+          class="top-container-right-item link mr-10"
+          @click="onToPage('/about')"
+        >
           关于我们
         </span>
         |
-        <span class="top-container-right-item link mr-10" @click="toPage('/contact')">
+        <span
+          class="top-container-right-item link mr-10"
+          @click="onToPage('/contact')"
+        >
           联系方式
         </span>
         <template v-if="user.realName">
           |
-          <a-popover placement="bottom" trigger="hover" class="account-info-popover">
+          <a-popover
+            placement="bottom"
+            trigger="hover"
+            class="account-info-popover"
+          >
             <template #content>
               <div class="user-info-container">
                 <div class="user-info-title">
@@ -29,12 +39,24 @@
                 </div>
                 <ul class="user-info-list mt-10">
                   <li class="user-info-list-item">账号：{{ user.username }}</li>
-                  <li class="user-info-list-item">真实姓名：{{ user.realName }}</li>
+                  <li class="user-info-list-item">
+                    真实姓名：{{ user.realName }}
+                  </li>
                   <li class="user-info-list-item">
                     当前角色：
-                    <a-tag v-if="user.roles.indexOf('admin') >= 0" color="blue">超级管理员</a-tag>
-                    <a-tag v-if="user.roles.indexOf('manage') >= 0" color="green">系统管理员</a-tag>
-                    <a-tag v-if="user.roles.indexOf('editor') >= 0" color="orange">普通用户</a-tag>
+                    <a-tag v-if="user.roles.indexOf('admin') >= 0" color="blue"
+                      >超级管理员</a-tag
+                    >
+                    <a-tag
+                      v-if="user.roles.indexOf('manage') >= 0"
+                      color="green"
+                      >系统管理员</a-tag
+                    >
+                    <a-tag
+                      v-if="user.roles.indexOf('editor') >= 0"
+                      color="orange"
+                      >普通用户</a-tag
+                    >
                     <span v-if="!user.roles.length">-</span>
                   </li>
                 </ul>
@@ -44,11 +66,16 @@
               <span v-if="user.avatar" class="user-avatar mr-5">
                 <img :src="user.avatar" />
               </span>
-              <UserOutlined v-else />
+              <UserOutlined v-else class="mr-5" />
               {{ user.realName }}
             </div>
           </a-popover>
-          <a-popconfirm placement="bottomRight" ok-text="确认" cancel-text="取消" @confirm="logout">
+          <a-popconfirm
+            placement="bottomRight"
+            ok-text="确认"
+            cancel-text="取消"
+            @confirm="logout"
+          >
             <template #title>
               <p>确认退出系统?</p>
             </template>
@@ -69,13 +96,13 @@ import common from "common/index.js";
 export default {
   name: "AppTop",
   setup() {
-    const { showDevMoadl } = common();
-
     const { ctx } = getCurrentInstance();
+
+    const { showDevMoadl } = common();
 
     const user = computed(() => ctx.$store.getters.user);
 
-    const toPage = path => {
+    const onToPage = path => {
       ctx.$router.push({ path });
     };
 
@@ -93,7 +120,7 @@ export default {
 
     return {
       showDevMoadl,
-      toPage,
+      onToPage,
       user,
       logout
     };
@@ -172,7 +199,7 @@ export default {
   border-radius: 11px;
   overflow: hidden;
 
-  img{
+  img {
     width: 100%;
     height: 100%;
   }

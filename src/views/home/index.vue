@@ -44,7 +44,7 @@
                 <div class="login-btn-container">
                   <a-button
                     type="primary"
-                    @click="toPage('/user/change-password')"
+                    @click="onToPage('/user/change-password')"
                     class="mr-10"
                     >修改密码</a-button
                   >
@@ -53,20 +53,23 @@
               </template>
               <template v-else>
                 <div class="login-content mt-10">
-                  <a-form :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }">
-                    <a-form-item
-                      label="手机号码"
-                      v-bind="validateInfos.username"
-                    >
+                  <a-form
+                    ref="loginForm"
+                    :model="form"
+                    :rules="rules"
+                    :label-col="{ span: 24 }"
+                    :wrapper-col="{ span: 24 }"
+                  >
+                    <a-form-item label="手机号码" name="username">
                       <a-input
-                        v-model:value="modelRef.username"
+                        v-model:value="form.username"
                         placeholder="请输入手机号码"
                         @keyup.enter="onSubmit"
                       />
                     </a-form-item>
-                    <a-form-item label="密码" v-bind="validateInfos.password">
+                    <a-form-item label="密码" name="password">
                       <a-input-password
-                        v-model:value="modelRef.password"
+                        v-model:value="form.password"
                         placeholder="请输入密码"
                         @keyup.enter="onSubmit"
                       />
@@ -149,7 +152,7 @@ import {
   watch,
   createVNode
 } from "vue";
-import { useForm } from "@ant-design-vue/use";
+// import { useForm } from "@ant-design-vue/use";
 import { Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import common from "common/index.js";
@@ -165,9 +168,9 @@ import {
 export default {
   name: "Home",
   setup() {
-    const { showDevMoadl } = common();
-
     const { ctx } = getCurrentInstance();
+
+    const { showDevMoadl } = common();
 
     const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
@@ -188,26 +191,24 @@ export default {
     const loading = ref(false);
 
     // 表单
-    const modelRef = reactive({
+    const form = reactive({
       username: "",
       password: ""
     });
 
-    const rulesRef = reactive({
+    const rules = reactive({
       username: [
         { required: true, message: "请输入手机号码", trigger: "blur" }
       ],
       password: [{ required: true, message: "请输入密码", trigger: "blur" }]
     });
 
-    const { validate, validateInfos } = useForm(modelRef, rulesRef);
-
     const remeberPwd = ref(false);
     // 判断本地存储用户名是否存在
     if (getLocalS("username")) {
       // 获取本地存储的用户名和密码
-      modelRef.username = getLocalS("username");
-      modelRef.password = decrypt(getLocalS("password"));
+      form.username = getLocalS("username");
+      form.password = decrypt(getLocalS("password"));
       remeberPwd.value = true;
     }
 
@@ -223,18 +224,18 @@ export default {
 
         // 退出登录
         if (!newRemeberPwd && !newToken) {
-          modelRef.username = "";
-          modelRef.password = "";
+          form.username = "";
+          form.password = "";
         }
       }
     );
 
     // 登录
-    const onSubmit = e => {
-      e.preventDefault();
-      validate()
+    const onSubmit = () => {
+      ctx.$refs.loginForm
+        .validate()
         .then(async () => {
-          const params = toRaw(modelRef);
+          const params = toRaw(form);
           try {
             loading.value = true;
             const userInfo = await ctx.$store.dispatch("user/login", params);
@@ -302,8 +303,12 @@ export default {
             ctx.$message.success("您已退出该系统");
 
             if (!remeberPwd.value) {
-              modelRef.username = "";
-              modelRef.password = "";
+              form.username = "";
+              form.password = "";
+
+              console.log(ctx.$refs.loginForm);
+              // 清除校验
+              ctx.$refs.loginForm.clearValidate();
             }
           } catch (err) {
             console.log(err);
@@ -314,7 +319,7 @@ export default {
     };
 
     // 跳转页面
-    const toPage = path => {
+    const onToPage = path => {
       ctx.$router.push({ path });
     };
 
@@ -324,14 +329,13 @@ export default {
       bannerList,
       showDevMoadl,
       openOperationManual,
-      modelRef,
-      rulesRef,
+      form,
+      rules,
       remeberPwd,
       loading,
       onSubmit,
-      validateInfos,
       logout,
-      toPage
+      onToPage
     };
   }
 };

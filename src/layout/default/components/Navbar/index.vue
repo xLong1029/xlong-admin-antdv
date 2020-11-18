@@ -2,7 +2,7 @@
   <!-- eslint-disable -->
   <div class="navbar-container fixed">
     <div class="wrapper-container flex">
-      <div class="logo-container" @click="toPage('/home')">
+      <div class="logo-container" @click="onToPage('/home')">
         <img class="logo" :src="logo" />
       </div>
       <!-- 导航 -->
@@ -32,9 +32,9 @@ export default {
   name: "AppNavBar",
   components: { NavItem },
   setup() {
-    const logo = require("@/assets/images/logo.jpg");
-
     const { ctx } = getCurrentInstance();
+
+    const logo = require("@/assets/images/logo.jpg");
 
     const permissionRoutes = computed(
       () => ctx.$store.getters.permissionRoutes
@@ -56,7 +56,7 @@ export default {
 
     currentMenu.value = getActiveMenu();
 
-    const toPage = path => {
+    const onToPage = path => {
       ctx.$router.push({ path });
     };
 
@@ -64,7 +64,7 @@ export default {
       logo,
       permissionRoutes,
       currentMenu,
-      toPage
+      onToPage
     };
   }
 };

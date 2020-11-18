@@ -33,10 +33,10 @@ export default {
       default: ""
     }
   },
-  setup() {    
-    let currentItem = ref(null);
-
+  setup() {
     const { ctx } = getCurrentInstance();
+
+    let currentItem = ref(null);
 
     // 通过判断获取当前菜单组件
     const getComponent = (children = [], parent) => {

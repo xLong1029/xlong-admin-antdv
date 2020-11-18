@@ -14,10 +14,10 @@ import { logInfo } from "utils";
 
 export default {
   setup() {
-    const locale = zhCN;
-
     // vue 实例
     const { ctx } = getCurrentInstance();
+
+    const locale = zhCN;
 
     // 通过计算属性获取store的值
     const currentEnv = computed(() => ctx.$store.getters.currentEnv);
