@@ -4,7 +4,7 @@
       v-if="alertVisible"
       :message="`尊敬的${realName}：`"
       :description="
-        `您好！欢迎您使用${systemTitle}，我们将在这里为您提供便捷的在线服务。`
+        `您好！欢迎您使用${systemTitle}，我们将在这里为您提供便捷的在线服务。(这里只展示2个菜单内容，其他的可自行扩展)`
       "
       type="info"
       closable
@@ -20,13 +20,13 @@
         :gutter="60"
         class="list"
         :class="{
-          'column-two': list.length % 2 === 0,
-          'column-three': list.length % 3 === 0,
-          'column-four': list.length % 4 === 0
+          'column-two': filterList.length % 2 === 0,
+          'column-three': filterList.length % 3 === 0,
+          'column-four': filterList.length % 4 === 0
         }"
       >
         <a-col
-          v-for="(item, index) in list"
+          v-for="(item, index) in filterList"
           :key="index"
           :xs="24"
           :sm="12"
@@ -55,16 +55,15 @@ export default {
   setup() {
     const { ctx } = getCurrentInstance();
 
-    const listItemNumInRow = ref(6);
-
-    const list = [
+    const menuList = [
       {
         icon: "user1",
         title: "个人信息",
         visible: true,
         desc: "可以查看或变更您的个人信息。",
         outLink: false,
-        url: "/user/info"
+        url: "/user/info",
+        roles: null
       },
       {
         icon: "mima",
@@ -72,13 +71,19 @@ export default {
         visible: true,
         desc: "可以变更您的账号密码。",
         outLink: false,
-        url: "/user/change-password"
+        url: "/user/change-password",
+        roles: null
       }
     ];
 
     const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
     const realName = computed(() => ctx.$store.getters.realName);
+    const roles = computed(() => ctx.$store.getters.roles);
+
+    const listItemNumInRow = ref(6);
+
+    const filterList = ref([]);
 
     const alertVisible = ref(true);
 
@@ -93,10 +98,36 @@ export default {
       }
     };
 
+    // 获取权限列表
+    const getFilterListByRoles = roles => {
+
+      if (!roles || !roles.length) {
+        return [menuList[0]];
+      }
+      return menuList.filter(e => {
+        console.log(e);
+        if (!e.roles) return true;
+
+        const hasPermission = roles.some(role => e.roles.includes(role));
+        if (hasPermission) {
+          return e;
+        }
+      });
+    };
+
+    // 监听list变化
     watch(
-      () => list.value,
+      () => menuList.value,
       val => {
         listItemNumInRow.value = getListItemNumInRow(val);
+      }
+    );
+
+    // 监听角色变化
+    watch(
+      () => ctx.$store.getters.roles,
+      val => {
+        filterList.value = getFilterListByRoles(val);
       }
     );
 
@@ -104,14 +135,15 @@ export default {
       alertVisible.value = false;
     };
 
-    listItemNumInRow.value = getListItemNumInRow(list);
+    listItemNumInRow.value = getListItemNumInRow(menuList);
+    filterList.value = getFilterListByRoles(roles.value);
 
     return {
       realName,
       systemTitle,
       alertVisible,
       handleAlertClose,
-      list,
+      filterList,
       listItemNumInRow
     };
   }
