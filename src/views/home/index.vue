@@ -27,11 +27,11 @@
             <!-- 登录部分 -->
             <div class="login-container">
               <div class="login-title">
-                {{ realName ? "欢迎您" : "用户登录" }}
+                {{ nickName ? "欢迎您" : "用户登录" }}
               </div>
-              <template v-if="realName">
+              <template v-if="nickName">
                 <div class="login-content">
-                  <p>尊敬的{{ realName }}：</p>
+                  <p>尊敬的{{ nickName }}：</p>
                   <p class="welcome">
                     您好，欢迎使用{{ systemTitle }}，进入
                     <router-link
@@ -174,7 +174,7 @@ export default {
 
     const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
-    const realName = computed(() => ctx.$store.getters.realName);
+    const nickName = computed(() => ctx.$store.getters.nickName);
 
     const bannerList = [
       {
@@ -246,9 +246,9 @@ export default {
             }
 
             const {
-              realName,
-              username,
               nickName,
+              username,
+              realName,
               gender,
               objectId,
               userFace,
@@ -258,9 +258,9 @@ export default {
             const info = {
               avatar: userFace ? userFace : null,
               roles: role ? strToArr(role, ",") : null,
-              realName,
-              username,
               nickName,
+              username,
+              realName,
               gender,
               id: objectId
             };
@@ -272,7 +272,7 @@ export default {
             ctx.$store.commit("user/SET_USER", info);
 
             ctx.$message.success(
-              `尊敬的${userInfo.realName}，欢迎使用${systemTitle}`
+              `尊敬的${userInfo.nickName}，欢迎使用${systemTitle}`
             );
             loading.value = false;
           } catch (err) {
@@ -318,7 +318,7 @@ export default {
     };
 
     return {
-      realName,
+      nickName,
       systemTitle,
       bannerList,
       showDevMoadl,

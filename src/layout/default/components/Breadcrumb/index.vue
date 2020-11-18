@@ -4,25 +4,32 @@
       <div class="breadcrumb-container-wrapper">
         <span class="fl">当前位置：</span>
         <a-breadcrumb>
-          <a-breadcrumb-item v-for="(item, index) in levelList" :ket="item.path">
+          <a-breadcrumb-item
+            v-for="(item, index) in levelList"
+            :key="item.path"
+          >
             <span
               v-if="
                 item.redirect === 'noRedirect' || index == levelList.length - 1
               "
               class="no-redirect"
-            >{{ item.meta.title }}</span>
-            <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
+              >{{ item.meta.title }}</span
+            >
+            <a v-else @click.prevent="handleLink(item)">
+              {{ item.meta.title }}
+            </a>
           </a-breadcrumb-item>
         </a-breadcrumb>
       </div>
-      <a-button v-if="$route.meta.needBack" class="back-btn fr" @click="goBack">返回</a-button>
+      <a-button v-if="$route.meta.needBack" class="back-btn fr" @click="goBack"
+        >返回</a-button
+      >
     </div>
   </div>
 </template>
 
 <script>
 import { getCurrentInstance, ref, watch } from "vue";
-import pathToRegexp from "path-to-regexp";
 import common from "common";
 
 export default {

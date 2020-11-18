@@ -21,7 +21,7 @@
         >
           联系方式
         </span>
-        <template v-if="user.realName">
+        <template v-if="user.nickName">
           |
           <a-popover
             placement="bottom"
@@ -67,7 +67,7 @@
                 <img :src="user.avatar" />
               </span>
               <user-outlined v-else class="mr-5" />
-              {{ user.realName }}
+              {{ user.nickName }}
             </div>
           </a-popover>
           <a-popconfirm
