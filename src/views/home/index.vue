@@ -44,7 +44,7 @@
                 <div class="login-btn-container">
                   <a-button
                     type="primary"
-                    @click="onToPage('/user/change-password')"
+                    @click="toPage('/user/change-password')"
                     class="mr-10"
                     >修改密码</a-button
                   >
@@ -155,7 +155,7 @@ import {
 // import { useForm } from "@ant-design-vue/use";
 import { Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
-import common from "common/index.js";
+import common from "common";
 import {
   setLocalS,
   getLocalS,
@@ -170,7 +170,7 @@ export default {
   setup() {
     const { ctx } = getCurrentInstance();
 
-    const { showDevMoadl } = common();
+    const { showDevMoadl, toPage } = common();
 
     const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
@@ -306,7 +306,6 @@ export default {
               form.username = "";
               form.password = "";
 
-              console.log(ctx.$refs.loginForm);
               // 清除校验
               ctx.$refs.loginForm.clearValidate();
             }
@@ -316,11 +315,6 @@ export default {
         },
         onCancel() {}
       });
-    };
-
-    // 跳转页面
-    const onToPage = path => {
-      ctx.$router.push({ path });
     };
 
     return {
@@ -335,7 +329,7 @@ export default {
       loading,
       onSubmit,
       logout,
-      onToPage
+      toPage
     };
   }
 };

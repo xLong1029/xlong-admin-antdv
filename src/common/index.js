@@ -1,4 +1,5 @@
 import { Modal } from "ant-design-vue";
+import router from "router";
 
 export default function() {
   function showDevMoadl() {
@@ -9,7 +10,17 @@ export default function() {
     });
   }
 
+  function goBack() {
+    router.go(-1);
+  }
+
+  function toPage(path) {
+    router.push({ path });
+  }
+
   return {
-    showDevMoadl
+    showDevMoadl,
+    goBack,
+    toPage
   };
 }

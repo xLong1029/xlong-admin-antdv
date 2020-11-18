@@ -1,21 +1,18 @@
 <template>
-  <!-- eslint-disable -->
   <div class="navbar-container fixed">
     <div class="wrapper-container flex">
-      <div class="logo-container" @click="onToPage('/home')">
+      <div class="logo-container" @click="toPage('/home')">
         <img class="logo" :src="logo" />
       </div>
       <!-- 导航 -->
       <div class="nav-list-container">
         <a-menu v-model:selectedKeys="currentMenu" mode="horizontal">
-          <!-- <a-menu-item v-for="route in permissionRoutes" :key="route.path">{{ route.path }}</a-menu-item> -->
-          <!-- <div v-for="(route, index) in permissionRoutes" :key="index">{{ route}}</div> -->
           <nav-item
             v-for="route in permissionRoutes"
             :key="route.path"
             :item="route"
             :base-path="route.path"
-          >{{ route }}</nav-item>
+          />
         </a-menu>
       </div>
     </div>
@@ -25,7 +22,7 @@
 <script>
 /* eslint-disable */
 import { ref, computed, watch, getCurrentInstance } from "vue";
-import common from "common/index.js";
+import common from "common";
 import NavItem from "./NavItem";
 
 export default {
@@ -33,6 +30,8 @@ export default {
   components: { NavItem },
   setup() {
     const { ctx } = getCurrentInstance();
+
+    const { toPage } = common();
 
     const logo = require("@/assets/images/logo.jpg");
 
@@ -55,16 +54,27 @@ export default {
     };
 
     currentMenu.value = getActiveMenu();
+    
+    // 监听路由变化
+    watch(
+      () => ctx.$router.currentRoute.value,
+      val => {
+        currentMenu.value = getActiveMenu();
+      }
+    );
 
-    const onToPage = path => {
-      ctx.$router.push({ path });
-    };
+    //  watch(
+    //   () => currentMenu.value,
+    //   val => {
+    //     console.log(val);
+    //   }
+    // );
 
     return {
       logo,
       permissionRoutes,
       currentMenu,
-      onToPage
+      toPage
     };
   }
 };

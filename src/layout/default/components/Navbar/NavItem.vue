@@ -38,6 +38,16 @@ export default {
 
     let currentItem = ref(null);
 
+    const resolvePath = (routePath) => {
+      if (isExternal(routePath)) {
+        return routePath;
+      }
+      if (isExternal(ctx.basePath)) {
+        return ctx.basePath;
+      }
+      return path.resolve(ctx.basePath, routePath);
+    }
+
     // 通过判断获取当前菜单组件
     const getComponent = (children = [], parent) => {
       // console.log(children, parent);
@@ -61,26 +71,15 @@ export default {
       }
 
       if (showingChildren.length === 0) {
-        currentItem.value = { ...parent, path: "", noShowingChildren: true };
+        currentItem.value = { ...parent , noShowingChildren: true };
         return "MenuItem";
       }
       currentItem.value = { ...parent};
+
       return "Submenu";
     };
 
     const menuComponent = getComponent(ctx.item.children, ctx.item);
-
-    // console.log(currentItem.value);
-
-    const resolvePath = (routePath) => {
-      if (isExternal(routePath)) {
-        return routePath;
-      }
-      if (isExternal(ctx.basePath)) {
-        return ctx.basePath;
-      }
-      return path.resolve(ctx.basePath, routePath);
-    }
 
     return {
       menuComponent,

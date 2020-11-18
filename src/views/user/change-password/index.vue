@@ -28,9 +28,13 @@
           @keyup.enter="onSubmit"
         />
       </a-form-item>
-      <a-form-item :wrapper-col="{ span: wrapperColSpan, offset: labelColSpan }">
-        <a-button @click="onGoBack()" class="mr-10">返回</a-button>
-        <a-button type="primary" @click="onSubmit" :loading="loading">提交修改</a-button>
+      <a-form-item
+        :wrapper-col="{ span: wrapperColSpan, offset: labelColSpan }"
+      >
+        <a-button @click="goBack" class="mr-10">返回</a-button>
+        <a-button type="primary" @click="onSubmit" :loading="loading"
+          >提交修改</a-button
+        >
       </a-form-item>
     </a-form>
   </div>
@@ -40,11 +44,16 @@
 import { getCurrentInstance, reactive, toRaw, ref, computed } from "vue";
 import { validPassword, isEqual } from "utils/validate";
 import Api from "api/user";
+import common from "common";
 
 export default {
   name: "ChangePassword",
   setup() {
     const { ctx } = getCurrentInstance();
+
+    const token = computed(() => ctx.$store.getters.token);
+
+    const { goBack } = common();
 
     const labelColSpan = 6;
     const wrapperColSpan = 18;
@@ -77,22 +86,24 @@ export default {
     };
 
     const rules = reactive({
-      oldPassword: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
+      oldPassword: [
+        { required: true, message: "请输入旧密码", trigger: "blur" }
+      ],
       newPassword: [
         {
           required: true,
-          validator: validateNewPassword, trigger: "blur"
+          validator: validateNewPassword,
+          trigger: "blur"
         }
       ],
       rePassword: [
         {
           required: true,
-          validator: validateComfirPassword, trigger: "blur"
+          validator: validateComfirPassword,
+          trigger: "blur"
         }
       ]
     });
-
-    const token = computed(() => ctx.$store.getters.token);
 
     // 登录
     const onSubmit = () => {
@@ -134,10 +145,6 @@ export default {
         });
     };
 
-    const onGoBack = () => {
-      ctx.$router.go(-1);
-    };
-
     return {
       labelColSpan,
       wrapperColSpan,
@@ -145,7 +152,7 @@ export default {
       rules,
       loading,
       onSubmit,
-      onGoBack
+      goBack
     };
   }
 };

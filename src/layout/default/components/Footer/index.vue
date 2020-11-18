@@ -1,35 +1,45 @@
 <template>
-  <!-- eslint-disable -->
   <footer class="footer-container">
     <div class="wrapper-container">
       <a-row :gutter="10" type="flex" justify="space-between">
         <a-col :xs="24" :sm="24" :md="18" :lg="18" :xl="18">
           <div class="footer-info">
             <a-row :gutter="10" class="contact flex">
-              <a-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="contact-item">
+              <a-col
+                :xs="24"
+                :sm="12"
+                :md="12"
+                :lg="12"
+                :xl="12"
+                class="contact-item"
+              >
                 <p>QQ：381612175</p>
                 <p>
                   github：
-                  <a
-                    href="https://github.com/xLong1029/"
-                    target="_blank"
-                  >https://github.com/xLong1029/</a>
+                  <a href="https://github.com/xLong1029/" target="_blank"
+                    >https://github.com/xLong1029/</a
+                  >
                 </p>
               </a-col>
-              <a-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="contact-item">
+              <a-col
+                :xs="24"
+                :sm="12"
+                :md="12"
+                :lg="12"
+                :xl="12"
+                class="contact-item"
+              >
                 <p>
                   站酷主页：
-                  <a
-                    href="http://xlong.zcool.com.cn/"
-                    target="_blank"
-                  >http://xlong.zcool.com.cn/</a>
+                  <a href="http://xlong.zcool.com.cn/" target="_blank"
+                    >http://xlong.zcool.com.cn/</a
+                  >
                 </p>
                 <p>
                   UI中国：
-                  <a
-                    href="http://i.ui.cn/ucenter/358591.html"
-                    target="_blank"
-                  >http://i.ui.cn/ucenter/358591.html</a>
+                  <a href="http://i.ui.cn/ucenter/358591.html" target="_blank"
+                    >http://i.ui.cn/ucenter/358591.html</a
+                  >
                 </p>
               </a-col>
             </a-row>
@@ -38,7 +48,11 @@
         <a-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
           <div class="footer-qrcode">
             <ul class="qrcode-list flex">
-              <li class="qrcode-list-item flex" v-for="(item, index) in qrcodeList" :key="index">
+              <li
+                class="qrcode-list-item flex"
+                v-for="(item, index) in qrcodeList"
+                :key="index"
+              >
                 <img class="qrcode-list-item__img" :src="item.imgUrl" />
                 <span class="qrcode-list-item__title">{{ item.title }}</span>
               </li>

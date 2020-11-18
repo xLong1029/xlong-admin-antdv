@@ -3,21 +3,21 @@
     <div class="wrapper-container flex">
       <div class="top-container-left">
         <span class="link flex" @click="showDevMoadl">
-          <MailOutlined />
+          <mail-outlined />
           <span>意见反馈</span>
         </span>
       </div>
       <div class="top-container-right flex">
         <span
           class="top-container-right-item link mr-10"
-          @click="onToPage('/about')"
+          @click="toPage('/about')"
         >
           关于我们
         </span>
         |
         <span
           class="top-container-right-item link mr-10"
-          @click="onToPage('/contact')"
+          @click="toPage('/contact')"
         >
           联系方式
         </span>
@@ -34,7 +34,7 @@
                   <span>用户信息</span>
                   <router-link to="/user/info" class="url-btn fr">
                     账户设置
-                    <RightOutlined />
+                    <right-outlined />
                   </router-link>
                 </div>
                 <ul class="user-info-list mt-10">
@@ -66,7 +66,7 @@
               <span v-if="user.avatar" class="user-avatar mr-5">
                 <img :src="user.avatar" />
               </span>
-              <UserOutlined v-else class="mr-5" />
+              <user-outlined v-else class="mr-5" />
               {{ user.realName }}
             </div>
           </a-popover>
@@ -80,7 +80,7 @@
               <p>确认退出系统?</p>
             </template>
             <span class="top-container-right-item link">
-              <LogoutOutlined class="mr-5" />注销
+              <logout-outlined class="mr-5" />注销
             </span>
           </a-popconfirm>
         </template>
@@ -91,20 +91,16 @@
 
 <script>
 import { getCurrentInstance, computed } from "vue";
-import common from "common/index.js";
+import common from "common";
 
 export default {
   name: "AppTop",
   setup() {
     const { ctx } = getCurrentInstance();
 
-    const { showDevMoadl } = common();
+    const { showDevMoadl, toPage } = common();
 
     const user = computed(() => ctx.$store.getters.user);
-
-    const onToPage = path => {
-      ctx.$router.push({ path });
-    };
 
     const logout = async () => {
       try {
@@ -120,7 +116,7 @@ export default {
 
     return {
       showDevMoadl,
-      onToPage,
+      toPage,
       user,
       logout
     };

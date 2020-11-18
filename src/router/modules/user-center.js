@@ -14,8 +14,7 @@ const router = {
       path: "index",
       component: () => import("@/views/user/index"),
       name: "UserCenter",
-      hidden: true,
-      meta: { title: "用户中心" }
+      hidden: true
     },
     {
       path: "info",
