@@ -4,25 +4,25 @@
       <div class="top-container-left">
         <span class="link flex" @click="showDevMoadl">
           <mail-outlined />
-          <span>意见反馈</span>
+          <span class="hidden-xs-only">意见反馈</span>
         </span>
       </div>
       <div class="top-container-right flex">
         <span
-          class="top-container-right-item link mr-10"
+          class="top-container-right-item hidden-xs-only link mr-10"
           @click="toPage('/about')"
         >
           关于我们
         </span>
-        |
+        <span class="hidden-xs-only">|</span>
         <span
-          class="top-container-right-item link mr-10"
+          class="top-container-right-item hidden-xs-only link mr-10"
           @click="toPage('/contact')"
         >
           联系方式
         </span>
         <template v-if="user.nickName">
-          |
+          <span class="hidden-xs-only">|</span>
           <a-popover
             placement="bottom"
             trigger="hover"

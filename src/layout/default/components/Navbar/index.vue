@@ -5,16 +5,20 @@
         <img class="logo" :src="logo" />
       </div>
       <!-- 导航 -->
-      <div class="nav-list-container">
-        <a-menu v-model:selectedKeys="currentMenu" mode="horizontal">
-          <nav-item
-            v-for="route in permissionRoutes"
-            :key="route.path"
-            :item="route"
-            :base-path="route.path"
-          />
-        </a-menu>
-      </div>
+      <!-- <a-row>
+        <a-col :span="24"> -->
+          <div class="nav-list-container">
+            <a-menu v-model:selectedKeys="currentMenu" mode="horizontal">
+              <nav-item
+                v-for="route in permissionRoutes"
+                :key="route.path"
+                :item="route"
+                :base-path="route.path"
+              />
+            </a-menu>
+          </div>
+        <!-- </a-col>
+      </a-row> -->
     </div>
   </div>
 </template>
@@ -54,7 +58,7 @@ export default {
     };
 
     currentMenu.value = getActiveMenu();
-    
+
     // 监听路由变化
     watch(
       () => ctx.$router.currentRoute.value,
@@ -89,12 +93,22 @@ export default {
   }
 }
 
+// .nav-list-container{
+//   width: 100%;
+// }
+
 .logo {
   width: 150px;
   cursor: pointer;
 }
 
-/deep/ .ant-menu-horizontal {
+.ant-menu-horizontal {
   border-bottom: none;
+}
+
+@media only screen and (max-width: 767px) {
+    .nav-list-container {
+        width: 100%;
+    }
 }
 </style>

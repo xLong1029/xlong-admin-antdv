@@ -21,7 +21,7 @@ const router = {
       component: () => import("@/views/user/info/index"),
       name: "UserInfo",
       meta: {
-        title: "用户信息"
+        title: "个人信息"
       }
     },
     {
