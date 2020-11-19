@@ -14,7 +14,6 @@
     "core-js": "^3.6.5",
     "hydrogen-js-sdk": "^2.2.4",
     "js-cookie": "^2.2.1",
-    "path-to-regexp": "^6.2.0",
     "vue": "^3.0.2",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"

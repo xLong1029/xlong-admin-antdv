@@ -39,6 +39,7 @@
                 </div>
                 <ul class="user-info-list mt-10">
                   <li class="user-info-list-item">账号：{{ user.username }}</li>
+                  <li class="user-info-list-item">昵称：{{ user.nickName }}</li>
                   <li class="user-info-list-item">
                     真实姓名：{{ user.realName }}
                   </li>
@@ -53,7 +54,7 @@
                       >系统管理员</a-tag
                     >
                     <a-tag
-                      v-if="user.roles.indexOf('editor') >= 0"
+                      v-if="user.roles.indexOf('user') >= 0"
                       color="orange"
                       >普通用户</a-tag
                     >

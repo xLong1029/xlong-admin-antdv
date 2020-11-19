@@ -1,20 +1,17 @@
 /* eslint-disable */
-import Api from 'api/user';
+import Api from "api/user";
 import { resetRouter } from "router";
-import { strToArr } from 'utils';
-import {
-  getToken,
-  removeToken,
-  setToken
-} from 'utils/auth';
+import { strToArr } from "utils";
+import { getToken, removeToken, setToken } from "utils/auth";
 
 const defaultUser = {
-  id: 0,
-  avatar: '',
-  gender: '',
-  username: '',
-  realName: '',
-  nickName: '',
+  userId: 0,
+  avatar: "",
+  gender: "",
+  username: "",
+  realName: "",
+  nickName: "",
+  companyId: "",
   roles: []
 };
 
@@ -22,28 +19,27 @@ const defaultUser = {
 function clearAccount(_commit) {
   removeToken();
   resetRouter();
-  _commit('SET_TOKEN', null);
-  _commit('SET_USER', {...defaultUser});
+  _commit("SET_TOKEN", null);
+  _commit("SET_USER", { ...defaultUser });
 }
 
 const state = {
   token: getToken(),
-  user: {...defaultUser}
-}
+  user: { ...defaultUser }
+};
 
 const mutations = {
   SET_TOKEN: (state, token) => {
-    state.token = token
+    state.token = token;
   },
   SET_USER: (state, user) => {
-    state.user = user
-  },
-}
+    state.user = user;
+  }
+};
 
 const actions = {
   // 获取用户信息
-  getInfo({
-    commit  }) {
+  getInfo({ commit }) {
     return new Promise((resolve, reject) => {
       const token = getToken();
 
@@ -52,19 +48,29 @@ const actions = {
           const { code, data } = res;
           // 登录成功
           if (code == 200) {
-            const { realName, username, nickName, gender, objectId, userFace , role} = data;
+            const {
+              realName,
+              username,
+              nickName,
+              gender,
+              objectId,
+              companyId,
+              userFace,
+              role
+            } = data;
 
             const info = {
               avatar: userFace ? userFace : null,
-              roles: role ? strToArr(role, ',') : null,
+              roles: role ? strToArr(role, ",") : null,
               realName,
               username,
-              nickName,              
+              nickName,
               gender,
-              id: objectId
-            }
+              userId: objectId,
+              companyId
+            };
 
-            commit('SET_USER', info);
+            commit("SET_USER", info);
             resolve(info);
           }
           // 登录失败
@@ -77,23 +83,19 @@ const actions = {
           clearAccount(commit);
           reject(err);
         });
-    })
+    });
   },
 
   // 登出
-  logout({
-    commit
-  }) {
-    return new Promise((resolve) => {
+  logout({ commit }) {
+    return new Promise(resolve => {
       clearAccount(commit);
       resolve();
-    })
+    });
   },
 
   // 登录
-  login({
-    commit
-  }, from) {
+  login({ commit }, from) {
     return new Promise((resolve, reject) => {
       Api.Login(from)
         .then(res => {
@@ -106,13 +108,13 @@ const actions = {
           } else reject(res);
         })
         .catch(err => reject(err));
-    })
+    });
   }
-}
+};
 
 export default {
   namespaced: true,
   state,
   mutations,
   actions
-}
+};

@@ -34,7 +34,7 @@
           :lg="listItemNumInRow"
           :xl="listItemNumInRow"
         >
-          <div class="list-item flex" @click="toPage(item)">
+          <div class="list-item flex" @click="toPage(item.url)">
             <div class="list-item__icon flex">
               <i :class="`iconfont icon-${item.icon}`"></i>
             </div>
@@ -49,18 +49,21 @@
 
 <script>
 import { getCurrentInstance, computed, ref, watch } from "vue";
+import common from "common";
 
 export default {
   name: "UserCenter",
   setup() {
     const { ctx } = getCurrentInstance();
 
+    const { toPage } = common();
+
     const menuList = [
       {
         icon: "user1",
         title: "个人信息",
         visible: true,
-        desc: "可以查看或变更您的个人信息。",
+        desc: "您可以在这里查看或变更您的个人信息。",
         outLink: false,
         url: "/user/info",
         roles: null
@@ -69,9 +72,18 @@ export default {
         icon: "mima",
         title: "修改密码",
         visible: true,
-        desc: "可以变更您的账号密码。",
+        desc: "您可以在这里变更您的账号密码。",
         outLink: false,
         url: "/user/change-password",
+        roles: null
+      },
+      {
+        icon: "danwei",
+        title: "单位信息",
+        visible: true,
+        desc: "您可以在这里查看、变更您的单位信息。",
+        outLink: false,
+        url: "/user/company-info",
         roles: null
       }
     ];
@@ -100,12 +112,10 @@ export default {
 
     // 获取权限列表
     const getFilterListByRoles = roles => {
-
       if (!roles || !roles.length) {
         return [menuList[0]];
       }
       return menuList.filter(e => {
-        console.log(e);
         if (!e.roles) return true;
 
         const hasPermission = roles.some(role => e.roles.includes(role));
@@ -144,7 +154,8 @@ export default {
       alertVisible,
       handleAlertClose,
       filterList,
-      listItemNumInRow
+      listItemNumInRow,
+      toPage
     };
   }
 };

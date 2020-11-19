@@ -251,6 +251,7 @@ export default {
               realName,
               gender,
               objectId,
+              companyId,
               userFace,
               role
             } = userInfo;
@@ -262,7 +263,8 @@ export default {
               username,
               realName,
               gender,
-              id: objectId
+              userId: objectId,
+              companyId
             };
 
             // 获取可通过的路由

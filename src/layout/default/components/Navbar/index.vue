@@ -5,20 +5,16 @@
         <img class="logo" :src="logo" />
       </div>
       <!-- 导航 -->
-      <!-- <a-row>
-        <a-col :span="24"> -->
-          <div class="nav-list-container">
-            <a-menu v-model:selectedKeys="currentMenu" mode="horizontal">
-              <nav-item
-                v-for="route in permissionRoutes"
-                :key="route.path"
-                :item="route"
-                :base-path="route.path"
-              />
-            </a-menu>
-          </div>
-        <!-- </a-col>
-      </a-row> -->
+      <div class="nav-list-container">
+        <a-menu v-model:selectedKeys="currentMenu" mode="horizontal">
+          <nav-item
+            v-for="route in permissionRoutes"
+            :key="route.path"
+            :item="route"
+            :base-path="route.path"
+          />
+        </a-menu>
+      </div>
     </div>
   </div>
 </template>

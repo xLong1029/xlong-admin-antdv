@@ -21,7 +21,8 @@ const router = {
       component: () => import("@/views/user/info/index"),
       name: "UserInfo",
       meta: {
-        title: "个人信息"
+        title: "个人信息",
+        needBack: true
       }
     },
     {
@@ -29,7 +30,17 @@ const router = {
       component: () => import("@/views/user/change-password/index"),
       name: "ChangePassword",
       meta: {
-        title: "修改密码"
+        title: "修改密码",
+        needBack: true
+      }
+    },
+    {
+      path: "company-info",
+      component: () => import("@/views/user/company-info/index"),
+      name: "CompanyInfo",
+      meta: {
+        title: "单位信息",
+        needBack: true
       }
     }
   ]

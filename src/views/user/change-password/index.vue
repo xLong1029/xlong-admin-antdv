@@ -31,10 +31,14 @@
       <a-form-item
         :wrapper-col="{ span: wrapperColSpan, offset: labelColSpan }"
       >
-        <a-button @click="goBack" class="mr-10">返回</a-button>
-        <a-button type="primary" @click="onSubmit" :loading="loading"
+        <a-button
+          type="primary"
+          class="mr-10"
+          @click="onSubmit"
+          :loading="loading"
           >提交修改</a-button
         >
+        <a-button @click="resetForm">重置</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -44,7 +48,6 @@
 import { getCurrentInstance, reactive, toRaw, ref, computed } from "vue";
 import { validPassword, isEqual } from "utils/validate";
 import Api from "api/user";
-import common from "common";
 
 export default {
   name: "ChangePassword",
@@ -52,8 +55,6 @@ export default {
     const { ctx } = getCurrentInstance();
 
     const token = computed(() => ctx.$store.getters.token);
-
-    const { goBack } = common();
 
     const labelColSpan = 6;
     const wrapperColSpan = 18;
@@ -145,6 +146,10 @@ export default {
         });
     };
 
+    const resetForm = () => {
+      ctx.$refs.submitForm.resetFields();
+    };
+
     return {
       labelColSpan,
       wrapperColSpan,
@@ -152,7 +157,7 @@ export default {
       rules,
       loading,
       onSubmit,
-      goBack
+      resetForm
     };
   }
 };

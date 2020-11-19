@@ -2,41 +2,55 @@
  * 功能 : 封装数据交互api接口(数据使用的是bmob云数据，请求方法使用bmob云规定方法)。
  * 用处 : 用户信息操作相关api
  * 作者 : 罗永梅（381612175@qq.com）
- * 日期 : 2020-01-07
+ * 日期 : 2020-11-19
  */
 /* eslint-disable */
 import BmobServer from 'bmob/bmob-server.js'
 
 export default {
-    // 登录
-    // params: 参数对象
+    /**
+     * 登录
+     *
+     * @param {*} params 参数对象
+     */
     Login: (params) => {
         return new Promise((resolve, reject) => {
             Bmob.User.login(params.username, params.password).then(res => resolve({ code: 200, data: res })).catch(err => reject(err))
         })
     },
-    // 获取用户信息
-    // token: 用户token参数
+    /**
+     * 获取用户信息
+     *
+     * @param {*} token token
+     */
     GetUser: (token) => {
         let query = BmobServer.GetQuery('_User')
         query.equalTo('token', '==', token)
         // 只返回select的字段值
-        query.select('username', 'role', 'userFace', 'nickName', 'realName', 'gender')
+        query.select('username', 'role', 'userFace', 'nickName', 'realName', 'gender', 'companyId')
         return new Promise((resolve, reject) => {
             query.find().then(res => {
                 resolve({ code: 200, data: res[0] })
             }).catch(err => reject(err))
         })
     },
-    // 修改个人资料
-    // params: 修改的参数对象，id: 对象id
+    /**
+     * 修改个人资料
+     *
+     * @param {*} params 修改的参数对象
+     * @param {*} id 对象id
+     */
     EditProfile: (params, id) => {
         return new Promise((resolve, reject) => {
             BmobServer.EditOne('_User', id, params).then(res => resolve(res)).catch(err => reject(err))
         })
     },
-    // 修改密码
-    // params: 修改的参数对象，token: token值
+    /**
+     * 修改密码
+     *
+     * @param {*} params 修改的参数对象
+     * @param {*} token token
+     */
     ChangePwd: (params, token) => {
         let query = BmobServer.GetQuery('_User')
         // 根据唯一键查询对象

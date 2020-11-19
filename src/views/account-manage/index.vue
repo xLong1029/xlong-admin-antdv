@@ -1,6 +1,6 @@
 <template>
   <div class="account-manage-container">
-    账户管理
+    功能建设中，敬请期待...
   </div>
 </template>
 

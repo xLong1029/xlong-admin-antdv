@@ -21,7 +21,7 @@
           </a-breadcrumb-item>
         </a-breadcrumb>
       </div>
-      <a-button v-if="$route.meta.needBack" class="back-btn fr" @click="goBack"
+      <a-button v-if="$route.meta.needBack" class="back-btn" @click="goBack"
         >返回</a-button
       >
     </div>
@@ -108,7 +108,8 @@ export default {
 }
 
 .back-btn {
-  min-width: 80px;
-  margin-top: 4px;
+  position: absolute;
+  right: 15px;
+  top: -5px;
 }
 </style>

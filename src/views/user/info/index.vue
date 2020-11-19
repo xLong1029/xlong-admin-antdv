@@ -1,53 +1,49 @@
 <template>
   <div class="user-info-container">
-    <a-spin :spinning="pageLoading" tip="加载中，请稍后...">
-      <a-form
-        ref="submitForm"
-        :model="form"
-        :rules="rules"
-        :label-col="{ span: labelColSpan }"
-        :wrapper-col="{ span: wrapperColSpan }"
+    <a-form
+      ref="submitForm"
+      :model="form"
+      :rules="rules"
+      :label-col="{ span: labelColSpan }"
+      :wrapper-col="{ span: wrapperColSpan }"
+    >
+      <a-form-item label="账号" name="username">{{
+        form.username
+      }}</a-form-item>
+      <a-form-item label="用户昵称" name="nickName">
+        <a-input
+          v-model:value="form.nickName"
+          placeholder="请输入昵称"
+          @keyup.enter="onSubmit"
+        />
+      </a-form-item>
+      <a-form-item label="真实姓名" name="realName">
+        <a-input
+          v-model:value="form.realName"
+          placeholder="请输入真实姓名"
+          @keyup.enter="onSubmit"
+        />
+      </a-form-item>
+      <a-form-item label="性别" name="gender">
+        <a-radio-group v-model:value="form.gender">
+          <a-radio value="男">男</a-radio>
+          <a-radio value="女">女</a-radio>
+        </a-radio-group>
+      </a-form-item>
+      <a-form-item
+        :wrapper-col="{ span: wrapperColSpan, offset: labelColSpan }"
       >
-        <a-form-item label="账号" name="username">
-          {{ form.username }}
-        </a-form-item>
-        <a-form-item label="用户昵称" name="nickName">
-          <a-input
-            v-model:value="form.nickName"
-            placeholder="请输入昵称"
-            @keyup.enter="onSubmit"
-          />
-        </a-form-item>
-        <a-form-item label="真实姓名" name="realName">
-          <a-input
-            v-model:value="form.realName"
-            placeholder="请输入真实姓名"
-            @keyup.enter="onSubmit"
-          />
-        </a-form-item>
-        <a-form-item label="性别" name="gender">
-          <a-radio-group v-model:value="form.gender">
-            <a-radio value="男">男</a-radio>
-            <a-radio value="女">女</a-radio>
-          </a-radio-group>
-        </a-form-item>
-        <a-form-item
-          :wrapper-col="{ span: wrapperColSpan, offset: labelColSpan }"
+        <a-button type="primary" @click="onSubmit" :loading="submitLoading"
+          >提交修改</a-button
         >
-          <a-button @click="goBack" class="mr-10">返回</a-button>
-          <a-button type="primary" @click="onSubmit" :loading="submitLoading"
-            >提交修改</a-button
-          >
-        </a-form-item>
-      </a-form>
-    </a-spin>
+      </a-form-item>
+    </a-form>
   </div>
 </template>
 
 <script>
 import { getCurrentInstance, reactive, toRaw, ref, computed } from "vue";
 import Api from "api/user";
-import common from "common";
 import { strToArr } from "utils";
 
 export default {
@@ -55,18 +51,18 @@ export default {
   setup() {
     const { ctx } = getCurrentInstance();
 
-    const { goBack } = common();
-
     const labelColSpan = 6;
     const wrapperColSpan = 18;
 
     const token = computed(() => ctx.$store.getters.token);
+    const pageLoading = computed(() => ctx.$store.getters.pageLoading);
+    const userId = computed(() => ctx.$store.getters.userId);
 
     const form = reactive({
-      username: "",
-      nickName: "",
-      realName: "",
-      gender: ""
+      username: null,
+      nickName: null,
+      realName: null,
+      gender: null
     });
 
     const rules = reactive({
@@ -77,13 +73,14 @@ export default {
       gender: [{ required: true, message: "请选择性别", trigger: "change" }]
     });
 
-    const pageLoading = ref(false);
-
-    const userId = ref(null);
+    // 设置页面加载Loading
+    const setPageLoding = val => {
+      ctx.$store.dispatch("app/setPageLoading", val);
+    };
 
     // 获取个人资料
     const getProfile = () => {
-      pageLoading.value = true;
+      setPageLoding(true);
       Api.GetUser(token.value)
         .then(res => {
           const { code, data } = res;
@@ -104,8 +101,6 @@ export default {
             form.realName = realName;
             form.gender = gender;
 
-            userId.value = objectId;
-
             // 更新用户信息
             ctx.$store.commit("user/SET_USER", {
               id: objectId,
@@ -122,7 +117,7 @@ export default {
           }
         })
         .catch(err => console.log(err))
-        .finally(() => (pageLoading.value = false));
+        .finally(() => setPageLoding(false));
     };
 
     const submitLoading = ref(false);
@@ -157,8 +152,7 @@ export default {
       rules,
       submitLoading,
       pageLoading,
-      onSubmit,
-      goBack
+      onSubmit
     };
   }
 };
