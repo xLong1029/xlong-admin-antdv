@@ -53,9 +53,7 @@
                       color="green"
                       >系统管理员</a-tag
                     >
-                    <a-tag
-                      v-if="user.roles.indexOf('user') >= 0"
-                      color="orange"
+                    <a-tag v-if="user.roles.indexOf('user') >= 0" color="orange"
                       >普通用户</a-tag
                     >
                     <span v-if="!user.roles.length">-</span>

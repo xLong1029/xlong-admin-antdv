@@ -27,6 +27,7 @@ import {
   SmileOutlined,
   EyeOutlined,
   DeleteOutlined,
+  EditOutlined,
   RightOutlined
 } from "@ant-design/icons-vue";
 
@@ -45,6 +46,7 @@ app
   .component(SmileOutlined.name, SmileOutlined)
   .component(EyeOutlined.name, EyeOutlined)
   .component(DeleteOutlined.name, DeleteOutlined)
+  .component(EditOutlined.name, EditOutlined)
   .component(RightOutlined.name, RightOutlined);
 
 app.mount("#app");

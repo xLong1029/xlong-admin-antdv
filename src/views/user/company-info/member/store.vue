@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :title="title"
-    v-model:visible="visible"
+    :visible="visible"
     :confirm-loading="confirmLoading"
     centered
     class="member-store-container"
@@ -23,7 +23,13 @@
             <a-form-item label="账号">{{ form.username }}</a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-            <a-form-item label="角色">{{ form.role }}</a-form-item>
+            <a-form-item label="角色">
+              <a-tag v-if="form.role == 'admin'" color="blue">超级管理员</a-tag>
+              <a-tag v-if="form.role == 'manage'" color="green"
+                >系统管理员</a-tag
+              >
+              <a-tag v-if="form.role == 'user'" color="orange">普通用户</a-tag>
+            </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
             <a-form-item label="昵称">{{ form.nickName }}</a-form-item>
@@ -55,11 +61,12 @@
                 placeholder="请选择角色"
               >
                 <a-select-option
-                  v-for="(item, index) in roleList"
-                  :key="'role' + index"
-                  :value="item.value"
-                  >{{ item.label }}</a-select-option
+                  v-if="roles.indexOf('admin') >= 0"
+                  value="admin"
+                  >超级管理员</a-select-option
                 >
+                <a-select-option value="manage">系统管理员</a-select-option>
+                <a-select-option value="user">普通用户</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -91,7 +98,14 @@
 </template>
 
 <script>
-import { getCurrentInstance, watch, ref, reactive, onMounted } from "vue";
+import {
+  getCurrentInstance,
+  watch,
+  ref,
+  reactive,
+  onMounted,
+  computed
+} from "vue";
 import common from "common";
 import Api from "api/company";
 
@@ -116,6 +130,8 @@ export default {
   },
   setup(props, context) {
     const { ctx } = getCurrentInstance();
+
+    const roles = computed(() => ctx.$store.getters.roles);
 
     const { showDevMoadl } = common();
 
@@ -172,6 +188,16 @@ export default {
     const handleCancel = () => {
       context.emit("close", false);
       context.emit("update:visible", false);
+      resetForm();
+    };
+
+    const resetForm = () => {
+      const { username, realName, gender, role, nickName } = defaultForm;
+      form.username = username;
+      form.realName = realName;
+      form.gender = gender;
+      form.role = role;
+      form.nickName = nickName;
     };
 
     const confirmLoading = ref(false);
@@ -214,7 +240,8 @@ export default {
             case 3:
               title.value = "新增人员";
               ctx.$nextTick(() => {
-                ctx.$refs.submitForm.resetFields();
+                // ctx.$refs.submitForm.resetFields(); // 无效
+                resetForm();
               });
               break;
           }
@@ -235,7 +262,8 @@ export default {
       rules,
       roleList,
       labelColSpan,
-      wrapperColSpan
+      wrapperColSpan,
+      roles
     };
   }
 };

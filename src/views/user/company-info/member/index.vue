@@ -50,16 +50,26 @@
       </template>
       <template #action="{ record }">
         <template v-if="roles.indexOf('user') < 0">
-          <a
-            v-if="roles.indexOf('admin') >= 0"
-            @click="showMemberMoadl(record, 2)"
+          <template
+            v-if="
+              roles.indexOf('admin') >= 0 ||
+                roles.indexOf(record.role) >= 0 ||
+                record.role === 'user'
+            "
           >
-            <eye-outlined class="mr-5" />编辑
-          </a>
-          <a-divider type="vertical" />
-          <a-popconfirm title="确认删除?" @confirm="showDevMoadl()">
-            <a> <delete-outlined class="mr-5" />删除 </a>
-          </a-popconfirm>
+            <a @click="showMemberMoadl(record, 2)">
+              <edit-outlined class="mr-5" />编辑
+            </a>
+            <a-divider type="vertical" />
+            <a-popconfirm title="确认删除?" @confirm="showDevMoadl()">
+              <a> <delete-outlined class="mr-5" />删除 </a>
+            </a-popconfirm>
+          </template>
+          <template v-else>
+            <a @click="showMemberMoadl(record, 1)">
+              <eye-outlined class="mr-5" />查看详情
+            </a>
+          </template>
         </template>
         <template v-else>
           <a @click="showMemberMoadl(record, 1)">
@@ -147,15 +157,15 @@ export default {
     });
 
     const showMemberMoadl = (record, type) => {
-      console.log(type);
-
       memberStoreModal.visible = true;
       memberStoreModal.id = record ? record.objectId : null;
       memberStoreModal.type = type;
     };
 
     const closeMemberStoreModal = val => {
-      console.log(333, val);
+      memberStoreModal.visible = val;
+      memberStoreModal.id = null;
+      memberStoreModal.type = 1;
     };
 
     // 表格改变事件
