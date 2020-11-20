@@ -1,11 +1,32 @@
 <template>
-  <div class="member-container">
+  <div class="member-list-container">
+    <div v-if="roles.indexOf('user') < 0" class="operate-btn-container mb-20">
+      <a-space size="small">
+        <a-button type="primary" @click="showMemberMoadl(null, 3)"
+          >添加</a-button
+        >
+        <a-popconfirm title="确认删除?" @confirm="showDevMoadl()">
+          <a-button :disabled="selectList.length === 0">删除</a-button>
+        </a-popconfirm>
+        <a-button
+          type="primary"
+          :disabled="selectList.length === 0"
+          @click="showDevMoadl"
+          >启用</a-button
+        >
+        <a-button :disabled="selectList.length === 0" @click="showDevMoadl"
+          >禁用</a-button
+        >
+      </a-space>
+    </div>
     <a-table
+      class="table-container"
       :loading="listLoading"
       :columns="columns"
       :data-source="listData"
       :row-key="record => record.objectId"
       :pagination="pagination"
+      :row-selection="rowSelection"
       @change="handleTableChange"
     >
       <template #name="{ text }">
@@ -16,51 +37,77 @@
       </template>
       <template #role="{ text: role }">
         <span>
-          <a-tag v-if="role === 'admin'" color="blue" class="mr-10">超级管理员</a-tag>
-          <a-tag v-if="role === 'manage'" color="green" class="mr-10">系统管理员</a-tag>
-          <a-tag v-if="role === 'user'" color="orange" class="mr-10">普通用户</a-tag>
+          <a-tag v-if="role === 'admin'" color="blue" class="mr-10"
+            >超级管理员</a-tag
+          >
+          <a-tag v-if="role === 'manage'" color="green" class="mr-10"
+            >系统管理员</a-tag
+          >
+          <a-tag v-if="role === 'user'" color="orange" class="mr-10"
+            >普通用户</a-tag
+          >
         </span>
       </template>
-      <template #action="{ text, record }">
-        <span>
-          <a>
-            <eye-outlined class="mr-5" />查看详情
+      <template #action="{ record }">
+        <template v-if="roles.indexOf('user') < 0">
+          <a
+            v-if="roles.indexOf('admin') >= 0"
+            @click="showMemberMoadl(record, 2)"
+          >
+            <eye-outlined class="mr-5" />编辑
           </a>
           <a-divider type="vertical" />
-          <a>
-            <delete-outlined class="mr-5" />删除
+          <a-popconfirm title="确认删除?" @confirm="showDevMoadl()">
+            <a> <delete-outlined class="mr-5" />删除 </a>
+          </a-popconfirm>
+        </template>
+        <template v-else>
+          <a @click="showMemberMoadl(record, 1)">
+            <eye-outlined class="mr-5" />查看详情
           </a>
-        </span>
+        </template>
       </template>
     </a-table>
+    <member-store
+      v-model:visible="memberStoreModal.visible"
+      :id="memberStoreModal.id"
+      :type="memberStoreModal.type"
+      @close="closeMemberStoreModal"
+    />
   </div>
 </template>
 
 <script>
-import { getCurrentInstance, computed } from "vue";
+import { getCurrentInstance, computed, reactive, onMounted } from "vue";
 import table from "common/table.js";
+import common from "common";
 import Api from "api/company";
+import MemberStore from "./store.vue";
 
 export default {
-  name: "Member",
+  name: "MemberList",
+  components: { MemberStore },
+  emits: {
+    close: val => {
+      console.log(8888, val);
+      return true;
+    }
+  },
   setup() {
     const { ctx } = getCurrentInstance();
 
+    const { showDevMoadl } = common();
+
     const companyId = computed(() => ctx.$store.getters.companyId);
+    const roles = computed(() => ctx.$store.getters.roles);
 
     const {
       listLoading,
       listData,
       selectList,
       pagination,
-      // pageNo,
-      // pageSize,
-      // pageSizes,
-      // listTotal,
+      rowSelection,
       getList,
-      getSelectList,
-      clearSelect,
-      setPage,
       search
     } = table();
 
@@ -93,9 +140,28 @@ export default {
       }
     ];
 
+    const memberStoreModal = reactive({
+      visible: false,
+      id: null,
+      type: 1 // 1 查看, 2 编辑, 3 新增
+    });
+
+    const showMemberMoadl = (record, type) => {
+      console.log(type);
+
+      memberStoreModal.visible = true;
+      memberStoreModal.id = record ? record.objectId : null;
+      memberStoreModal.type = type;
+    };
+
+    const closeMemberStoreModal = val => {
+      console.log(333, val);
+    };
+
+    // 表格改变事件
     const handleTableChange = (pagination, filters, sorter) => {
-      listLoading.value = true;
       console.log(pagination, filters, sorter);
+      listLoading.value = true;
 
       getList(pagination.current, pagination.pageSize, apiGetList);
     };
@@ -104,7 +170,9 @@ export default {
     const apiGetList = (pageNo, pageSize) =>
       Api.GetMemberList({ companyId: companyId.value }, pageNo, pageSize);
 
-    getList(pagination.value.current, pagination.value.pageSize, apiGetList);
+    onMounted(() => {
+      getList(pagination.value.current, pagination.value.pageSize, apiGetList);
+    });
 
     return {
       listLoading,
@@ -112,17 +180,16 @@ export default {
       selectList,
       pagination,
       getList,
-      getSelectList,
-      clearSelect,
-      setPage,
       search,
       columns,
-      handleTableChange
+      rowSelection,
+      handleTableChange,
+      roles,
+      showDevMoadl,
+      memberStoreModal,
+      showMemberMoadl,
+      closeMemberStoreModal
     };
   }
 };
 </script>
-<style lang="less" scoped>
-.member-container {
-}
-</style>

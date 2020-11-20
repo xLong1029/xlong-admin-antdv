@@ -9,6 +9,7 @@ import router from "router";
  */
 function hasPermission(route, roles) {
   if (!roles) return false;
+
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.includes(role));
   } else {

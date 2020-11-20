@@ -22,11 +22,11 @@ export default {
       default: ""
     }
   },
-  setup() {
+  setup(props) {
     const { ctx } = getCurrentInstance();
 
     const handleLink = () => {
-      const url = ctx.url;
+      const url = props.url;
       if (isExternal(url)) {
         window.open(url);
       } else {

@@ -26,14 +26,11 @@ export default function() {
     showTotal: total => `共 ${total} 个`
   });
 
-  //   // 当前页码
-  //   const pageNo = ref(1);
-  //   // 每页条数
-  //   const pageSize = ref(15);
-  //   // 每页条数选择
-  //   const pageSizes = ref([15, 30, 50, 80]);
-  //   // 列表总数
-  //   const listTotal = ref(1);
+  const rowSelection = ref({
+    onChange: selectedRowKeys => {
+      selectList.value = selectedRowKeys;
+    }
+  });
 
   function getList(pageNo, pageSize, apiGetList) {
     pagination.value.current = pageNo;
@@ -42,30 +39,19 @@ export default function() {
     listLoading.value = true;
     apiGetList(pageNo, pageSize)
       .then(res => {
+        const { data } = res;
         listLoading.value = false;
-        listData.value = res.data;
-        // setPage(res.page);
+        listData.value = data;
       })
       .catch(err => console.log(err));
-  }
-
-  function getSelectList(selection) {
-    clearSelect();
-    for (let i = 0; i < selection.length; i++) {
-      selectList.value.push(selection[i].objectId);
-    }
   }
 
   function clearSelect() {
     selectList.value = [];
   }
 
-  function setPage(data) {
-    pagination.value = data;
-  }
-
   function search() {
-    getList(1, pagination.value);
+    getList(1, pagination.value.pageSize);
   }
 
   return {
@@ -73,14 +59,9 @@ export default function() {
     listData,
     selectList,
     pagination,
-    // pageNo,
-    // pageSize,
-    // pageSizes,
-    // listTotal,
+    rowSelection,
     getList,
-    getSelectList,
     clearSelect,
-    setPage,
     search
   };
 }

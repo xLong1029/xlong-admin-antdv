@@ -42,7 +42,14 @@
 </template>
 
 <script>
-import { getCurrentInstance, reactive, toRaw, ref, computed } from "vue";
+import {
+  getCurrentInstance,
+  reactive,
+  toRaw,
+  ref,
+  computed,
+  onMounted
+} from "vue";
 import Api from "api/user";
 import { strToArr } from "utils";
 
@@ -143,7 +150,9 @@ export default {
         });
     };
 
-    getProfile();
+    onMounted(() => {
+      getProfile();
+    });
 
     return {
       labelColSpan,

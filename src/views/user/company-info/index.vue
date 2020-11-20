@@ -16,14 +16,14 @@
 </template>
 
 <script>
-import { getCurrentInstance, ref, computed } from "vue";
+import { getCurrentInstance, ref, computed, onMounted } from "vue";
 import BaseInfo from "./base-info";
-import Member from "./member";
+import MemberList from "./member";
 import Api from "api/company";
 
 export default {
   name: "CompanyInfo",
-  components: { BaseInfo, Member },
+  components: { BaseInfo, MemberList },
   setup() {
     const { ctx } = getCurrentInstance();
 
@@ -48,7 +48,7 @@ export default {
         label: "人员信息",
         name: "member",
         data: "companyMembers",
-        component: "Member"
+        component: "MemberList"
       }
     ];
 
@@ -76,7 +76,9 @@ export default {
         .finally(() => setPageLoding(false));
     };
 
-    getCompnayInfo();
+    onMounted(() => {
+      getCompnayInfo();
+    });
 
     return {
       tabs,

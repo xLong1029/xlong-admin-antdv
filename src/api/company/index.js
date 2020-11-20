@@ -21,7 +21,7 @@ export default {
     });
   },
   /**
-   * 获取人员信息
+   * 获取人员列表
    *
    * @param {*} params 查询参数对象
    * @param {*} pageNo 当前页码
@@ -31,22 +31,20 @@ export default {
     let query = BmobServer.GetQuery("_User");
     query.equalTo("companyId", "==", params.companyId);
 
-    // if (params && Object.keys(params).length) {
-    //   // 筛选查询
-    //   if (params.id) query.equalTo("objectId", "==", params.id);
-    //   if (params.mobile) query.equalTo("mobile", "==", params.mobile);
-    //   if (params.email) query.equalTo("email", "==", params.email);
-    //   if (params.job) query.equalTo("job", "==", params.job);
-    //   if (params.province) query.equalTo("province", "==", params.province);
-    //   if (params.enabledState)
-    //     query.equalTo("enabledState", "==", parseInt(params.enabledState));
-    //   if (params.sTime) query.equalTo("createdAt", ">=", params.sTime);
-    //   if (params.eTime) query.equalTo("createdAt", "<=", params.eTime);
-    // }
     return new Promise((resolve, reject) => {
       BmobServer.GetListData(query, pageNo, pageSize)
         .then(res => resolve(res))
         .catch(err => reject(err));
     });
-  }
+  },
+   /**
+     * 获取人员信息
+     *
+     * @param {*} id 查询的objectId
+     */
+    GetMemberInfo: (id) => {
+      return new Promise((resolve, reject) => {
+          BmobServer.GetOne('_User', id).then(res => resolve(res)).catch(err => reject(err))
+      });
+  },
 };

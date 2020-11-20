@@ -5,8 +5,23 @@
       {{ systemTitle }}
     </h1>
     <p class="home-subtitle mt-20">
-      为了实现对XXX信息化服务的牛逼功能，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真）。
+      为了实现对XXX信息化服务的牛逼功能，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真），<a
+        >演示的账号密码在操作手册中，请自行查阅。</a
+      >
     </p>
+    <!-- <div style="text-align:center;">
+      <a-row :gutter="10">
+        <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8" class="mt-20">
+          <span class="info mr-10">普通用户账号: 18888888888 密码: 666666</span>
+        </a-col>
+        <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8" class="mt-20">
+          <span class="info">管理员账号: 13543501039 密码: 123456</span>
+        </a-col>
+        <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8" class="mt-20">
+          <span class="info">超级管理员账号: 18376686974 密码: 123456</span>
+        </a-col>
+      </a-row>
+    </div> -->
     <div class="home-content mt-20">
       <div class="banner-user">
         <a-row :gutter="10">
@@ -216,7 +231,7 @@ export default {
     watch(
       () => [remeberPwd.value, ctx.$store.getters.token],
       ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
-        // console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
+        console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
         if (!newRemeberPwd && getLocalS("username")) {
           delLocalS("username");
           delLocalS("password");
@@ -268,7 +283,7 @@ export default {
             };
 
             // 获取可通过的路由
-            await ctx.$store.dispatch("permission/generateRoutes", userInfo);
+            await ctx.$store.dispatch("permission/generateRoutes", info.roles);
 
             // 更新用户信息
             ctx.$store.commit("user/SET_USER", info);
@@ -278,6 +293,8 @@ export default {
             );
             loading.value = false;
           } catch (err) {
+            console.log(err);
+
             ctx.$message.error(err.error ? err.error : err);
             loading.value = false;
           }
@@ -348,7 +365,8 @@ export default {
   }
 
   &-subtitle {
-    text-align: center;
+    // text-align: center;
+    text-indent: 2em;
     font-size: 16px;
   }
 

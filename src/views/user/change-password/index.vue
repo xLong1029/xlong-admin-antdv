@@ -31,14 +31,12 @@
       <a-form-item
         :wrapper-col="{ span: wrapperColSpan, offset: labelColSpan }"
       >
-        <a-button
-          type="primary"
-          class="mr-10"
-          @click="onSubmit"
-          :loading="loading"
-          >提交修改</a-button
-        >
-        <a-button @click="resetForm">重置</a-button>
+        <a-space size="small">
+          <a-button type="primary" @click="onSubmit" :loading="loading"
+            >提交修改</a-button
+          >
+          <a-button @click="resetForm">重置</a-button>
+        </a-space>
       </a-form-item>
     </a-form>
   </div>

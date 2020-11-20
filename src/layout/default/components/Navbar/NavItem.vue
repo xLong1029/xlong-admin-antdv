@@ -33,7 +33,7 @@ export default {
       default: ""
     }
   },
-  setup() {
+  setup(props) {
     const { ctx } = getCurrentInstance();
 
     let currentItem = ref(null);
@@ -42,10 +42,10 @@ export default {
       if (isExternal(routePath)) {
         return routePath;
       }
-      if (isExternal(ctx.basePath)) {
-        return ctx.basePath;
+      if (isExternal(props.basePath)) {
+        return props.basePath;
       }
-      return path.resolve(ctx.basePath, routePath);
+      return path.resolve(props.basePath, routePath);
     }
 
     // 通过判断获取当前菜单组件
@@ -79,7 +79,7 @@ export default {
       return "Submenu";
     };
 
-    const menuComponent = getComponent(ctx.item.children, ctx.item);
+    const menuComponent = getComponent(props.item.children, props.item);
 
     return {
       menuComponent,
