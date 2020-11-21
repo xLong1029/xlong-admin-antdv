@@ -4,7 +4,7 @@
       v-if="alertVisible"
       :message="`尊敬的${realName}：`"
       :description="
-        `您好！欢迎您使用${systemTitle}，我们将在这里为您提供便捷的在线服务。(这里只展示2个菜单内容，其他的可自行扩展)`
+        `您好！欢迎您使用${systemTitle}，我们将在这里为您提供便捷的在线服务。(这里只展示3个菜单内容，其他的可自行扩展)`
       "
       type="info"
       closable

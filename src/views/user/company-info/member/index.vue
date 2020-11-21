@@ -1,8 +1,17 @@
 <template>
   <div class="member-list-container">
     <div v-if="roles.indexOf('user') < 0" class="operate-btn-container mb-20">
+      <a-alert
+      description="本页只做布局展示，若要测试增、删、改、查等功能请移步到“账户管理”页面进行操作"
+      type="info"
+      class="mb-20"
+    >
+      <template #icon>
+        <smile-outlined />
+      </template>
+    </a-alert>
       <a-space size="small">
-        <a-button type="primary" @click="showMemberMoadl(null, 3)"
+        <a-button type="primary" @click="openMemberStoreMoadl(null, 3)"
           >添加</a-button
         >
         <a-popconfirm title="确认删除?" @confirm="showDevMoadl()">
@@ -29,12 +38,6 @@
       :row-selection="rowSelection"
       @change="handleTableChange"
     >
-      <template #name="{ text }">
-        <a>{{ text }}</a>
-      </template>
-      <template #customTitle>
-        <span>Name</span>
-      </template>
       <template #role="{ text: role }">
         <span>
           <a-tag v-if="role === 'admin'" color="blue" class="mr-10"
@@ -57,7 +60,7 @@
                 record.role === 'user'
             "
           >
-            <a @click="showMemberMoadl(record, 2)">
+            <a @click="openMemberStoreMoadl(record, 2)">
               <edit-outlined class="mr-5" />编辑
             </a>
             <a-divider type="vertical" />
@@ -66,13 +69,13 @@
             </a-popconfirm>
           </template>
           <template v-else>
-            <a @click="showMemberMoadl(record, 1)">
+            <a @click="openMemberStoreMoadl(record, 1)">
               <eye-outlined class="mr-5" />查看详情
             </a>
           </template>
         </template>
         <template v-else>
-          <a @click="showMemberMoadl(record, 1)">
+          <a @click="openMemberStoreMoadl(record, 1)">
             <eye-outlined class="mr-5" />查看详情
           </a>
         </template>
@@ -156,7 +159,7 @@ export default {
       type: 1 // 1 查看, 2 编辑, 3 新增
     });
 
-    const showMemberMoadl = (record, type) => {
+    const openMemberStoreMoadl = (record, type) => {
       memberStoreModal.visible = true;
       memberStoreModal.id = record ? record.objectId : null;
       memberStoreModal.type = type;
@@ -197,7 +200,7 @@ export default {
       roles,
       showDevMoadl,
       memberStoreModal,
-      showMemberMoadl,
+      openMemberStoreMoadl,
       closeMemberStoreModal
     };
   }

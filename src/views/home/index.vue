@@ -9,19 +9,6 @@
         >演示的账号密码在操作手册中，请自行查阅。</a
       >
     </p>
-    <!-- <div style="text-align:center;">
-      <a-row :gutter="10">
-        <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8" class="mt-20">
-          <span class="info mr-10">普通用户账号: 18888888888 密码: 666666</span>
-        </a-col>
-        <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8" class="mt-20">
-          <span class="info">管理员账号: 13543501039 密码: 123456</span>
-        </a-col>
-        <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8" class="mt-20">
-          <span class="info">超级管理员账号: 18376686974 密码: 123456</span>
-        </a-col>
-      </a-row>
-    </div> -->
     <div class="home-content mt-20">
       <div class="banner-user">
         <a-row :gutter="10">
@@ -304,9 +291,11 @@ export default {
         });
     };
 
+    const urlPrefix = process.env.VUE_APP_URL_PREFIX;
+
     // 打开操作手册
     const openOperationManual = () => {
-      showDevMoadl();
+      window.open(`${urlPrefix}/static/files/XLONG家里蹲信息化管理系统操作手册.pdf`,"_blank");
     };
 
     // 退出登录

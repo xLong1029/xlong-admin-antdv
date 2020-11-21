@@ -20,17 +20,17 @@ export default {
     GetAccList: (params, pageNo, pageSize) => {
         let query = BmobServer.GetQuery('Account');
 
-        if(params && Object.keys(params).length){
-            // 筛选查询
-            if(params.id) query.equalTo('objectId', '==', params.id);
-            if(params.mobile) query.equalTo('mobile', '==', params.mobile);
-            if(params.email) query.equalTo('email', '==', params.email);
-            if(params.job) query.equalTo('job', '==', params.job);
-            if(params.province) query.equalTo('province', '==', params.province);
-            if(params.enabledState) query.equalTo('enabledState', '==', parseInt(params.enabledState));
-            if(params.sTime) query.equalTo('createdAt', '>=', params.sTime);
-            if(params.eTime) query.equalTo('createdAt', '<=', params.eTime );
-        }
+        // if(params && Object.keys(params).length){
+        //     // 筛选查询
+        //     if(params.id) query.equalTo('objectId', '==', params.id);
+        //     if(params.mobile) query.equalTo('mobile', '==', params.mobile);
+        //     if(params.email) query.equalTo('email', '==', params.email);
+        //     if(params.job) query.equalTo('job', '==', params.job);
+        //     if(params.province) query.equalTo('province', '==', params.province);
+        //     if(params.enabledState) query.equalTo('enabledState', '==', parseInt(params.enabledState));
+        //     if(params.sTime) query.equalTo('createdAt', '>=', params.sTime);
+        //     if(params.eTime) query.equalTo('createdAt', '<=', params.eTime );
+        // }
         return new Promise((resolve, reject) => {
             BmobServer.GetListData(query, pageNo, pageSize).then(res => resolve(res)).catch(err => reject(err));
         });
