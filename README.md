@@ -22,3 +22,8 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+Cannot find module 'vue-loader-v16/package.json'
+```
+npm install --save-dev vue-loader-v16 
+```
