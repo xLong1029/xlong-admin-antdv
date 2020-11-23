@@ -7,9 +7,9 @@
       :label-col="{ span: labelColSpan }"
       :wrapper-col="{ span: wrapperColSpan }"
     >
-      <a-form-item label="账号" name="username">{{
-        form.username
-      }}</a-form-item>
+      <a-form-item label="账号" name="username">
+        {{ form.username }}
+      </a-form-item>
       <a-form-item label="用户昵称" name="nickName">
         <a-input
           v-model:value="form.nickName"
@@ -58,13 +58,16 @@ export default {
   setup() {
     const { ctx } = getCurrentInstance();
 
+    // 表单配置
     const labelColSpan = 6;
     const wrapperColSpan = 18;
 
+    // 当前用户信息和系统配置
     const token = computed(() => ctx.$store.getters.token);
     const pageLoading = computed(() => ctx.$store.getters.pageLoading);
     const userId = computed(() => ctx.$store.getters.userId);
 
+    // 表单
     const form = reactive({
       username: null,
       nickName: null,
@@ -72,6 +75,7 @@ export default {
       gender: null
     });
 
+    // 表单规则
     const rules = reactive({
       nickName: [{ required: true, message: "请输入昵称", trigger: "blur" }],
       realName: [
@@ -116,6 +120,7 @@ export default {
               username,
               realName,
               nickName,
+              userId: objectId,
               roles: role ? strToArr(role, ",") : null
             });
           } else {
@@ -127,6 +132,7 @@ export default {
         .finally(() => setPageLoding(false));
     };
 
+    // 提交loding
     const submitLoading = ref(false);
 
     // 提交修改
@@ -134,6 +140,7 @@ export default {
       ctx.$refs.submitForm
         .validate()
         .then(async () => {
+          submitLoading.value = true;
           let params = toRaw(form);
 
           Api.EditProfile(params, userId.value)
@@ -143,13 +150,15 @@ export default {
                 ctx.$message.success("资料修改成功！");
               } else ctx.$message.error("资料修改失败！");
             })
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
+            .finally(() => (submitLoading.value = false));
         })
         .catch(err => {
           console.log("error", err);
         });
     };
 
+    // 初始化
     onMounted(() => {
       getProfile();
     });

@@ -112,9 +112,12 @@ export default {
 
     const { showDevMoadl } = common();
 
+    // 企业Id
     const companyId = computed(() => ctx.$store.getters.companyId);
+    // 当前角色
     const roles = computed(() => ctx.$store.getters.roles);
 
+    // 表格配置
     const {
       listLoading,
       listData,
@@ -125,6 +128,7 @@ export default {
       search
     } = table();
 
+    // 表格列
     const columns = [
       {
         title: "账号",
@@ -158,18 +162,21 @@ export default {
       }
     ];
 
+    // 人员信息存储弹窗
     const memberStoreModal = reactive({
       visible: false,
       id: null,
       type: 1 // 1 新增, 2 编辑, 3 查看
     });
 
+    // 打开人员信息弹窗
     const openMemberStoreMoadl = (record, type) => {
       memberStoreModal.visible = true;
       memberStoreModal.id = record ? record.objectId : null;
       memberStoreModal.type = type;
     };
 
+    // 关闭人员信息弹窗
     const closeMemberStoreModal = val => {
       memberStoreModal.visible = val;
       memberStoreModal.id = null;
@@ -188,6 +195,7 @@ export default {
     const apiGetList = (pageNo, pageSize) =>
       Api.GetMemberList({ companyId: companyId.value }, pageNo, pageSize);
 
+    // 初始化
     onMounted(() => {
       getList(pagination.value.current, pagination.value.pageSize, apiGetList);
     });

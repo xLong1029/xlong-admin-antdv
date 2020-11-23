@@ -5,9 +5,8 @@
       {{ systemTitle }}
     </h1>
     <p class="home-subtitle mt-20">
-      为了实现对XXX信息化服务的牛逼功能，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真），<a
-        >演示的账号密码在操作手册中，请自行查阅。</a
-      >
+      为了实现对XXX信息化服务的牛逼功能，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真），
+      <a>演示的账号密码在操作手册中，请自行查阅。</a>
     </p>
     <div class="home-content mt-20">
       <div class="banner-user">
@@ -91,7 +90,7 @@
                     <a-button
                       type="primary"
                       @click="onSubmit"
-                      :loading="loading"
+                      :loading="submitLoading"
                       class="mr-10"
                       >登录</a-button
                     >
@@ -174,10 +173,13 @@ export default {
 
     const { showDevMoadl, toPage } = common();
 
+    // 系统名称
     const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
+    // 当前用户昵称
     const nickName = computed(() => ctx.$store.getters.nickName);
 
+    // banner
     const bannerList = [
       {
         imgUrl: require("@/assets/banner-images/1.jpg")
@@ -190,14 +192,13 @@ export default {
       }
     ];
 
-    const loading = ref(false);
-
     // 表单
     const form = reactive({
       username: "",
       password: ""
     });
 
+    // 表单规则
     const rules = reactive({
       username: [
         { required: true, message: "请输入手机号码", trigger: "blur" }
@@ -205,7 +206,9 @@ export default {
       password: [{ required: true, message: "请输入密码", trigger: "blur" }]
     });
 
+    // 是否记住密码
     const remeberPwd = ref(false);
+
     // 判断本地存储用户名是否存在
     if (getLocalS("username")) {
       // 获取本地存储的用户名和密码
@@ -232,6 +235,9 @@ export default {
       }
     );
 
+    // 提交loading
+    const submitLoading = ref(false);
+
     // 登录
     const onSubmit = () => {
       ctx.$refs.loginForm
@@ -239,7 +245,7 @@ export default {
         .then(async () => {
           const params = toRaw(form);
           try {
-            loading.value = true;
+            submitLoading.value = true;
             const userInfo = await ctx.$store.dispatch("user/login", params);
             if (remeberPwd.value) {
               // 本地存储用户名和密码
@@ -278,12 +284,12 @@ export default {
             ctx.$message.success(
               `尊敬的${userInfo.nickName}，欢迎使用${systemTitle}`
             );
-            loading.value = false;
+            submitLoading.value = false;
           } catch (err) {
             console.log(err);
 
             ctx.$message.error(err.error ? err.error : err);
-            loading.value = false;
+            submitLoading.value = false;
           }
         })
         .catch(err => {
@@ -337,7 +343,7 @@ export default {
       form,
       rules,
       remeberPwd,
-      loading,
+      submitLoading,
       onSubmit,
       logout,
       toPage

@@ -2,7 +2,6 @@
   <a-modal
     :title="title"
     :visible="visible"
-    :confirm-loading="confirmLoading"
     centered
     class="member-store-container"
     width="700px"
@@ -131,14 +130,15 @@ export default {
   setup(props, context) {
     const { ctx } = getCurrentInstance();
 
+    // 当前用户角色
     const roles = computed(() => ctx.$store.getters.roles);
 
     const { showDevMoadl } = common();
 
+    // 标题
     const title = ref("人员信息详情");
 
-    const infoLoading = ref(false);
-
+    // 默认表单
     const defaultForm = {
       username: null,
       realName: null,
@@ -147,11 +147,14 @@ export default {
       nickName: null
     };
 
+    // 表单配置
     const labelColSpan = 6;
     const wrapperColSpan = 18;
 
+    // 表单
     const form = reactive({ ...defaultForm });
 
+    // 表单规则
     const rules = reactive({
       username: [{ required: true, message: "请输入账号", trigger: "blur" }],
       realName: [
@@ -162,6 +165,7 @@ export default {
       nickName: [{ required: true, message: "请输入昵称", trigger: "blur" }]
     });
 
+    // 角色列表
     const roleList = [
       {
         label: "超级管理员",
@@ -177,6 +181,7 @@ export default {
       }
     ];
 
+    // 确认弹窗
     const handleOk = () => {
       if (props.type < 3) {
         showDevMoadl();
@@ -185,12 +190,14 @@ export default {
       handleCancel();
     };
 
+    // 取消弹窗
     const handleCancel = () => {
       context.emit("close", false);
       context.emit("update:visible", false);
       resetForm();
     };
 
+    // 重置表单
     const resetForm = () => {
       const { username, realName, gender, role, nickName } = defaultForm;
       form.username = username;
@@ -200,7 +207,8 @@ export default {
       form.nickName = nickName;
     };
 
-    const confirmLoading = ref(false);
+    // loading
+    const infoLoading = ref(false);
 
     // 获取信息
     const getInfo = () => {
@@ -224,6 +232,7 @@ export default {
         .finally(() => (infoLoading.value = false));
     };
 
+    // 监听可见性
     watch(
       () => props.visible,
       val => {
@@ -255,7 +264,6 @@ export default {
       title,
       infoLoading,
       showDevMoadl,
-      confirmLoading,
       handleOk,
       handleCancel,
       form,

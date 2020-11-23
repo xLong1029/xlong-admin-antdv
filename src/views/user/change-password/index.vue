@@ -32,7 +32,7 @@
         :wrapper-col="{ span: wrapperColSpan, offset: labelColSpan }"
       >
         <a-space size="small">
-          <a-button type="primary" @click="onSubmit" :loading="loading"
+          <a-button type="primary" @click="onSubmit" :loading="submitLoading"
             >提交修改</a-button
           >
           <a-button @click="resetForm">重置</a-button>
@@ -52,19 +52,21 @@ export default {
   setup() {
     const { ctx } = getCurrentInstance();
 
+    // 用户token
     const token = computed(() => ctx.$store.getters.token);
 
+    // 表单配置
     const labelColSpan = 6;
     const wrapperColSpan = 18;
 
-    const loading = ref(false);
-
+    // 表单
     const form = reactive({
       oldPassword: "",
       newPassword: "",
       rePassword: ""
     });
 
+    // 校验
     const validateNewPassword = (rule, value) => {
       if (!value) {
         return Promise.reject("请输入新密码");
@@ -84,6 +86,7 @@ export default {
       }
     };
 
+    // 表单规则
     const rules = reactive({
       oldPassword: [
         { required: true, message: "请输入旧密码", trigger: "blur" }
@@ -104,6 +107,9 @@ export default {
       ]
     });
 
+    // 提交loading
+    const submitLoading = ref(false);
+
     // 登录
     const onSubmit = () => {
       ctx.$refs.submitForm
@@ -116,7 +122,7 @@ export default {
             return false;
           }
 
-          loading.value = true;
+          submitLoading.value = true;
 
           // 修改密码 Api
           Api.ChangePwd(params, token.value)
@@ -137,7 +143,7 @@ export default {
               else ctx.$message.error("密码修改失败！");
             })
             .catch(err => ctx.$message.error(err.error))
-            .finally(() => (loading.value = false));
+            .finally(() => (submitLoading.value = false));
         })
         .catch(err => {
           console.log("error", err);
@@ -153,7 +159,7 @@ export default {
       wrapperColSpan,
       form,
       rules,
-      loading,
+      submitLoading,
       onSubmit,
       resetForm
     };
