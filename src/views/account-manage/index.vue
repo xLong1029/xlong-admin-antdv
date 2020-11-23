@@ -21,17 +21,19 @@
     </div>
     <a-table
       class="table-container"
+      :scroll="{ x: 1130 }"
       :loading="listLoading"
       :columns="columns"
       :data-source="listData"
-      :row-key="(record) => record.objectId"
+      :row-key="record => record.objectId"
       :pagination="pagination"
       :row-selection="rowSelection"
       @change="handleTableChange"
     >
-    <template #provinceAndCity="{ record }">
-      <span>{{ record.province}}</span><span v-if="record.city">/ {{ record.city }}</span>
-    </template>
+      <template #provinceAndCity="{ record }">
+        <span>{{ record.province }}</span
+        ><span v-if="record.city">/ {{ record.city }}</span>
+      </template>
       <template #action="{ record }">
         <a @click="openAccountStoreMoadl(record, 2)">
           <edit-outlined class="mr-5" />编辑
@@ -62,17 +64,17 @@ export default {
   name: "AccountList",
   components: { AccountStore },
   emits: {
-    close: (val) => {
+    close: val => {
       console.log(8888, val);
       return true;
-    },
+    }
   },
   setup() {
     const { ctx } = getCurrentInstance();
 
     const { showDevMoadl } = common();
 
-    const companyId = computed(() => ctx.$store.getters.companyId);
+    // const companyId = computed(() => ctx.$store.getters.companyId);
     const roles = computed(() => ctx.$store.getters.roles);
 
     const {
@@ -82,7 +84,7 @@ export default {
       pagination,
       rowSelection,
       getList,
-      search,
+      search
     } = table();
 
     const columns = [
@@ -90,45 +92,66 @@ export default {
         title: "真实姓名",
         dataIndex: "realname",
         key: "realname",
+        width: 200,
+        fixed: "left"
       },
 
       {
         title: "性别",
         dataIndex: "gender",
         key: "gender",
+        width: 100
       },
       {
         title: "手机号码",
-        key: "17777075299",
-        dataIndex: "17777075299",
+        key: "mobile",
+        dataIndex: "mobile",
+        width: 150
       },
       {
         title: "电子邮箱",
         key: "email",
         dataIndex: "email",
+        width: 150
       },
       {
         title: "所在省市",
         dataIndex: "province",
         key: "province",
         slots: { customRender: "provinceAndCity" },
+        width: 200
       },
       {
         title: "所在单位",
         dataIndex: "companyName",
         key: "companyName",
+        width: 200
+      },
+      {
+        title: "职位",
+        dataIndex: "job",
+        key: "job",
+        width: 120
+      },
+      {
+        title: "创建时间",
+        dataIndex: "createdAt",
+        key: "createdAt",
+        width: 200
       },
       {
         title: "Action",
         key: "action",
         slots: { customRender: "action" },
-      },
+        width: 150,
+        fixed: "right"
+      }
     ];
 
     const accountStoreModal = reactive({
       visible: false,
       id: null,
-      type: 1, // 1 查看, 2 编辑, 3 新增
+      type: 1 // 1 查看, 2 编辑, 3 新增
     });
 
     const openAccountStoreMoadl = (record, type) => {
@@ -137,7 +160,7 @@ export default {
       accountStoreModal.type = type;
     };
 
-    const closeAccountStoreModal = (val) => {
+    const closeAccountStoreModal = val => {
       accountStoreModal.visible = val;
       accountStoreModal.id = null;
       accountStoreModal.type = 1;
@@ -173,9 +196,9 @@ export default {
       showDevMoadl,
       accountStoreModal,
       openAccountStoreMoadl,
-      closeAccountStoreModal,
+      closeAccountStoreModal
     };
-  },
+  }
 };
 </script>
 

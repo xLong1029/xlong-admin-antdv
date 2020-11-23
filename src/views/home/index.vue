@@ -295,7 +295,10 @@ export default {
 
     // 打开操作手册
     const openOperationManual = () => {
-      window.open(`${urlPrefix}/static/files/XLONG家里蹲信息化管理系统操作手册.pdf`,"_blank");
+      window.open(
+        `${urlPrefix}/static/files/XLONG家里蹲信息化管理系统操作手册.pdf`,
+        "_blank"
+      );
     };
 
     // 退出登录

@@ -11,17 +11,19 @@
     <a-layout-footer>
       <app-footer />
     </a-layout-footer>
+    <back-top v-model:visible="backTopvisible" />
   </a-layout>
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
 import {
   AppMain,
   AppNavBar,
   AppFooter,
   AppTop,
-  Breadcrumb
-  // BackTop
+  Breadcrumb,
+  BackTop
 } from "./components/index.js";
 
 export default {
@@ -31,8 +33,23 @@ export default {
     AppNavBar,
     AppFooter,
     AppTop,
-    Breadcrumb
-    // BackTop
+    Breadcrumb,
+    BackTop
+  },
+  setup() {
+    const backTopvisible = ref(false);
+
+    onMounted(() => {
+      window.addEventListener("scroll", () => {
+        const { documentElement, body } = document;
+        let scrollTop = documentElement.scrollTop || body.scrollTop;
+        backTopvisible.value = scrollTop > 94 ? true : false;
+      });
+    });
+
+    return {
+      backTopvisible
+    };
   }
 };
 </script>

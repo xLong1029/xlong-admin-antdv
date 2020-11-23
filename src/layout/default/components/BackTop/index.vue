@@ -17,9 +17,9 @@ export default {
       default: false
     }
   },
-  setup(){
-    const toTop = scrollTo(0);
-    return{
+  setup() {
+    const toTop = () => scrollTo(0);
+    return {
       toTop
     };
   }
@@ -30,7 +30,7 @@ export default {
 .back-top-btn {
   position: fixed;
   transform: translateZ(0);
-  background-color: #f07057;
+  background-color: @primary-color;
   color: #fff;
   border-radius: 4px;
   font-size: 14px;

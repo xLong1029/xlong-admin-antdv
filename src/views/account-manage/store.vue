@@ -17,32 +17,7 @@
         :label-col="{ span: labelColSpan }"
         :wrapper-col="{ span: wrapperColSpan }"
       >
-        <!-- 查看 -->
-        <a-row v-if="type === 1" :gutter="10">
-          <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-            <a-form-item label="账号">{{ form.username }}</a-form-item>
-          </a-col>
-          <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-            <a-form-item label="角色">
-              <a-tag v-if="form.role == 'admin'" color="blue">超级管理员</a-tag>
-              <a-tag v-if="form.role == 'manage'" color="green"
-                >系统管理员</a-tag
-              >
-              <a-tag v-if="form.role == 'user'" color="orange">普通用户</a-tag>
-            </a-form-item>
-          </a-col>
-          <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-            <a-form-item label="昵称">{{ form.nickName }}</a-form-item>
-          </a-col>
-          <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-            <a-form-item label="真实姓名">{{ form.realName }}</a-form-item>
-          </a-col>
-          <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-            <a-form-item label="性别">{{ form.gender }}</a-form-item>
-          </a-col>
-        </a-row>
-        <!-- 存储 -->
-        <a-row v-else :gutter="10">
+        <a-row :gutter="10">
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
             <a-form-item label="账号" name="username">
               <span v-if="type === 2">{{ form.username }}</span>
@@ -125,7 +100,7 @@ export default {
     // 类型
     type: {
       type: Number,
-      default: 1 // 1 查看, 2 编辑, 3 新增
+      default: 1 // 1 新增, 2 编辑, 3 查看
     }
   },
   setup(props, context) {
@@ -230,19 +205,19 @@ export default {
         if (val) {
           switch (props.type) {
             case 1:
-              title.value = "查看详情";
-              getInfo(props.id);
+              title.value = "新增账户";
+              ctx.$nextTick(() => {
+                // ctx.$refs.submitForm.resetFields(); // 无效
+                resetForm();
+              });
               break;
             case 2:
               title.value = "编辑账户";
               getInfo(props.id);
               break;
             case 3:
-              title.value = "新增账户";
-              ctx.$nextTick(() => {
-                // ctx.$refs.submitForm.resetFields(); // 无效
-                resetForm();
-              });
+              title.value = "查看详情";
+              getInfo(props.id);
               break;
           }
         }

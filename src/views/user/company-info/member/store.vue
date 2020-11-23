@@ -18,7 +18,7 @@
         :wrapper-col="{ span: wrapperColSpan }"
       >
         <!-- 查看 -->
-        <a-row v-if="type === 1" :gutter="10">
+        <a-row v-if="type === 3" :gutter="10">
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
             <a-form-item label="账号">{{ form.username }}</a-form-item>
           </a-col>
@@ -125,7 +125,7 @@ export default {
     // 类型
     type: {
       type: Number,
-      default: 1 // 1 查看, 2 编辑, 3 新增
+      default: 1 // 1 新增, 2 编辑, 3 查看
     }
   },
   setup(props, context) {
@@ -178,7 +178,7 @@ export default {
     ];
 
     const handleOk = () => {
-      if (props.type > 1) {
+      if (props.type < 3) {
         showDevMoadl();
       }
 
@@ -230,19 +230,19 @@ export default {
         if (val) {
           switch (props.type) {
             case 1:
-              title.value = "查看详情";
-              getInfo(props.id);
+              title.value = "新增人员";
+              ctx.$nextTick(() => {
+                // ctx.$refs.submitForm.resetFields(); // 无效
+                resetForm();
+              });
               break;
             case 2:
               title.value = "编辑人员";
               getInfo(props.id);
               break;
             case 3:
-              title.value = "新增人员";
-              ctx.$nextTick(() => {
-                // ctx.$refs.submitForm.resetFields(); // 无效
-                resetForm();
-              });
+              title.value = "查看详情";
+              getInfo(props.id);
               break;
           }
         }
