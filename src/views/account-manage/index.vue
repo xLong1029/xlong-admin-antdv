@@ -61,9 +61,6 @@ import common from "common/index.js";
 import Api from "api/account-manage";
 // 组件
 import AccountStore from "./store.vue";
-// Json数据
-import JsonCity from "mock/city.json";
-import JsonData from "mock/data.json";
 
 export default {
   name: "AccountList",
