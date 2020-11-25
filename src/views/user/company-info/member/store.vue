@@ -194,17 +194,6 @@ export default {
     const handleCancel = () => {
       context.emit("close", false);
       context.emit("update:visible", false);
-      resetForm();
-    };
-
-    // 重置表单
-    const resetForm = () => {
-      const { username, realName, gender, role, nickName } = defaultForm;
-      form.username = username;
-      form.realName = realName;
-      form.gender = gender;
-      form.role = role;
-      form.nickName = nickName;
     };
 
     // loading
@@ -237,13 +226,14 @@ export default {
       () => props.visible,
       val => {
         if (val) {
+          ctx.$nextTick(() => {
+            ctx.$refs.submitForm.resetFields();
+          });
+
           switch (props.type) {
             case 1:
               title.value = "新增人员";
-              ctx.$nextTick(() => {
-                // ctx.$refs.submitForm.resetFields(); // 无效
-                resetForm();
-              });
+
               break;
             case 2:
               title.value = "编辑人员";
@@ -253,6 +243,8 @@ export default {
               title.value = "查看详情";
               getInfo(props.id);
               break;
+            default:
+              console.log("type is error");
           }
         }
       }

@@ -2,7 +2,7 @@
   <a-modal
     :title="title"
     :visible="visible"
-    :confirm-loading="confirmLoading"
+    :confirm-loading="submitLoading"
     centered
     class="account-store-container"
     width="800px"
@@ -42,7 +42,6 @@
                             children: 'childs'
                           }"
                           placeholder="请选择所在省市"
-                          @change="handleProvinceChange"
                         ></a-cascader>
                       </a-form-item>
                     </div>
@@ -79,10 +78,10 @@
                   <span class="required">性别</span>
                 </div>
                 <div class="info-table__td">
-                  <a-form-item name="gender" class="width-100">
-                    <a-radio-group v-model:valuel="form.gender">
-                      <a-radio label="男">男</a-radio>
-                      <a-radio label="女">女</a-radio>
+                  <a-form-item name="gender">
+                    <a-radio-group v-model:value="form.gender">
+                      <a-radio value="男">男</a-radio>
+                      <a-radio value="女">女</a-radio>
                     </a-radio-group>
                   </a-form-item>
                 </div>
@@ -164,7 +163,10 @@
                       @change="handleWorkTimeChange"
                       class="mr-10 work-time"
                     />
-                    <a-checkbox v-model="form.isGraduate" @change="handleGraduateChange">尚未毕业</a-checkbox>
+                    <a-checkbox
+                      v-model:checked="form.isGraduate"
+                      @change="handleGraduateChange"
+                    >尚未毕业</a-checkbox>
                   </a-form-item>
                 </div>
               </div>
@@ -188,19 +190,15 @@
 </template>
 
 <script>
-import {
-  getCurrentInstance,
-  watch,
-  ref,
-  reactive,
-  onMounted,
-  computed
-} from "vue";
-import common from "common";
-import Api from "api/company";
+import { getCurrentInstance, watch, ref, reactive, toRaw } from "vue";
+import Api from "api/account-manage/index.js";
+import moment from "moment";
 // Json数据
 import JsonCity from "mock/city.json";
 import JsonData from "mock/data.json";
+// 工具
+import { strToArr, arrToStr, compareDate } from "utils";
+import { validEmail, validMobile } from "utils/validate";
 
 export default {
   name: "AccountStore",
@@ -224,8 +222,6 @@ export default {
   setup(props, context) {
     const { ctx } = getCurrentInstance();
 
-    const { showDevMoadl } = common();
-
     // 标题
     const title = ref("账户详情");
 
@@ -236,24 +232,23 @@ export default {
     const workTimePH = ref("请选择日期");
 
     // 改变工作时间
-    const handleWorkTimeChange = e => {};
+    const handleWorkTimeChange = val => {
+      console.log(val);
+    };
     // 勾选尚未毕业
-    const handleGraduateChange = e => {};
+    const handleGraduateChange = e => {
+      const value = e.target.checked;
+      workTimePH.value = value ? "尚未毕业" : "请选择日期";
+    };
 
     // 所在省市
     const provinceList = JsonCity;
 
-    // 选择省市
-    const handleProvinceChange = e => {};
-
     // 专业领域
-
-    // 所在省市
     const professionList = JsonData.profession.map(e => ({
       label: e.name,
       value: e.name
     }));
-    console.log(professionList);
 
     // 默认头像
     const defaultFaceImg = require("@/assets/images/head.jpg");
@@ -266,7 +261,7 @@ export default {
 
     // 默认表单
     const defaultForm = {
-      realName: null,
+      realname: null,
       province: [],
       birthdate: null,
       gender: null,
@@ -283,9 +278,52 @@ export default {
     // 表单
     const form = reactive({ ...defaultForm });
 
+    // 校验
+    const validBirthDate = (rule, value) => {
+      if (!value) {
+        return Promise.reject("请选择出生日期");
+      }
+      let nowDate = new Date();
+      const compare = compareDate(value, nowDate);
+      if (!compare) return Promise.reject("出生日期不能大于当前日期");
+      else {
+        return Promise.resolve();
+      }
+    };
+    const validateMobile = (rule, value) => {
+      if (!value) {
+        return Promise.reject(new Error("请输入手机号码"));
+      } else if (!validMobile(value)) {
+        return Promise.reject(new Error("手机号码格式不正确"));
+      } else {
+        return Promise.resolve();
+      }
+    };
+    const validateEmail = (rule, value) => {
+      if (!value) {
+        return Promise.reject(new Error("请输入邮箱地址"));
+      } else if (!validEmail(value)) {
+        return Promise.reject(new Error("邮箱格式不正确"));
+      } else {
+        return Promise.resolve();
+      }
+    };
+    const validateWorkTime = (rule, value) => {
+      if (form.isGraduate) return Promise.resolve();
+      if (!value) return Promise.reject(new Error("请选择工作时间"));
+      else {
+        // 日期比较
+        let nowDate = new Date();
+        const compare = compareDate(value, nowDate);
+        if (!compare)
+          return Promise.reject(new Error("工作时间不能大于当前日期"));
+        else return Promise.resolve();
+      }
+    };
+
     // 表单规则
     const rules = reactive({
-      realName: [
+      realname: [
         { required: true, message: "请输入真实姓名", trigger: "blur" }
       ],
       province: [
@@ -296,10 +334,17 @@ export default {
           trigger: "change"
         }
       ],
-      birthdate: [{ required: true, message: "请选择日期", trigger: "change" }],
+      birthdate: [
+        {
+          type: "object",
+          required: true,
+          validator: validBirthDate,
+          trigger: "change"
+        }
+      ],
       gender: [{ required: true, message: "请选择性别", trigger: "change" }],
-      mobile: [{ required: true, message: "请输入手机号码", trigger: "blur" }],
-      email: [{ required: true, message: "请输入电子邮箱", trigger: "blur" }],
+      mobile: [{ required: true, validator: validateMobile, trigger: "blur" }],
+      email: [{ required: true, validator: validateEmail, trigger: "blur" }],
       companyName: [
         { required: true, message: "请输入工作单位名称", trigger: "blur" }
       ],
@@ -310,7 +355,14 @@ export default {
           trigger: "change"
         }
       ],
-      workTime: [{ required: true, message: "请选择日期", trigger: "change" }],
+      workTime: [
+        {
+          type: "object",
+          required: true,
+          validator: validateWorkTime,
+          trigger: "change"
+        }
+      ],
       profession: [
         {
           type: "array",
@@ -321,30 +373,68 @@ export default {
       ]
     });
 
+    // 提交loading
+    const submitLoading = ref(false);
+
     // 确认弹窗
     const handleOk = () => {
-      if (props.type > 1) {
-        showDevMoadl();
-      }
+      ctx.$refs.submitForm
+        .validate()
+        .then(async () => {
+          const data = toRaw(form);
 
-      handleCancel();
+          submitLoading.value = true;
+
+          let params = { ...data };
+          params.province = data.province[0];
+          params.city = data.province[1] ? data.province[1] : "";
+          params.area = data.province[2] ? data.province[2] : "";
+          params.profession = arrToStr(data.profession, ",");
+          params.birthdate = data.birthdate.format("YYYY-MM-DD");
+          params.workTime = data.isGraduate
+            ? null
+            : data.workTime.format("YYYY-MM-DD");
+
+          console.log(params);
+
+          // 新增
+          if (props.type === 1) {
+            // Api.AddAccount(params)
+            //   .then(res => {
+            //     if (res.code == 200) {
+            //       this.$message.success("添加成功");
+            //       this.$emit("submit", 0);
+            //       this.close();
+            //     } else this.$message.error(res.msg);
+            //   })
+            //   .catch(() => ctx.$message.error("操作失败"))
+            //   .finally(() => (submitLoading.value = false));
+          }
+          // 编辑
+          else {
+            // Api.EditAccount(params, props.id)
+            //   .then(res => {
+            //     if (res.code == 200) {
+            //       this.$message.success("编辑成功");
+            //       this.$emit("submit", 1);
+            //       this.close();
+            //     } else this.$message.error(res.msg);
+            //   })
+            //   .catch(() => ctx.$message.error("操作失败"))
+            //   .finally(() => (submitLoading.value = false));
+          }
+
+          handleCancel();
+        })
+        .catch(err => {
+          console.log("error", err);
+        });
     };
 
     // 取消弹窗
     const handleCancel = () => {
       context.emit("close", false);
       context.emit("update:visible", false);
-      resetForm();
-    };
-
-    // 重置表单
-    const resetForm = () => {
-      const { username, realName, gender, role, nickName } = defaultForm;
-      form.username = username;
-      form.realName = realName;
-      form.gender = gender;
-      form.role = role;
-      form.nickName = nickName;
     };
 
     // loading
@@ -353,17 +443,43 @@ export default {
     // 获取信息
     const getInfo = () => {
       infoLoading.value = true;
-      Api.GetMemberInfo(props.id)
+
+      Api.GetAccInfo(props.id)
         .then(res => {
           const { code, data } = res;
           // 获取到数据
           if (code == 200) {
-            const { username, realName, gender, role, nickName } = data;
-            form.username = username;
-            form.realName = realName;
+            const {
+              realname,
+              province,
+              city,
+              area,
+              birthdate,
+              gender,
+              mobile,
+              email,
+              address,
+              companyName,
+              job,
+              workTime,
+              isGraduate,
+              profession
+            } = data;
+
+            form.realname = realname;
+            form.province = [province, city, area];
+            form.birthdate = moment(birthdate, "YYYY-MM-DD");
             form.gender = gender;
-            form.role = role;
-            form.nickName = nickName;
+            form.mobile = mobile;
+            form.email = email;
+            form.address = address;
+            form.companyName = companyName;
+            form.job = job;
+            form.workTime = isGraduate ? null : moment(workTime, "YYYY-MM-DD");
+            form.isGraduate = isGraduate;
+            form.profession = profession ? strToArr(profession, ",") : [];
+
+            workTimePH.value = isGraduate ? "尚未毕业" : "请选择日期";
           } else {
             ctx.$message.error("无法获取账户信息!");
           }
@@ -380,33 +496,29 @@ export default {
       () => props.visible,
       val => {
         if (val) {
+          ctx.$nextTick(() => {
+            ctx.$refs.submitForm.resetFields();
+            ctx.$refs.submitForm.clearValidate();
+          });
+
           switch (props.type) {
             case 1:
               title.value = "新增账户";
-              ctx.$nextTick(() => {
-                // ctx.$refs.submitForm.resetFields(); // 无效
-                resetForm();
-              });
               break;
             case 2:
               title.value = "编辑账户";
-              // getInfo(props.id);
+              getInfo(props.id);
               break;
-            case 3:
-              title.value = "查看详情";
-              // getInfo(props.id);
-              break;
+            default:
+              console.log("type is error");
           }
         }
       }
     );
 
-    onMounted(() => {});
-
     return {
       title,
       infoLoading,
-      showDevMoadl,
       confirmLoading,
       handleOk,
       handleCancel,
@@ -417,10 +529,10 @@ export default {
       defaultFaceImg,
       setdefaultFaceImg,
       workTimePH,
-      handleProvinceChange,
       jobList,
       handleWorkTimeChange,
-      handleGraduateChange
+      handleGraduateChange,
+      submitLoading
     };
   }
 };

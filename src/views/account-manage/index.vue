@@ -2,7 +2,7 @@
   <div class="account-list-container">
     <div class="operate-btn-container mb-20">
       <a-space size="small">
-        <a-button type="primary" @click="openAccountStoreMoadl(null, 3)"
+        <a-button type="primary" @click="openAccountStoreMoadl(null, 1)"
           >添加</a-button
         >
         <a-popconfirm title="确认删除?" @confirm="showDevMoadl()">
@@ -153,7 +153,7 @@ export default {
     const accountStoreModal = reactive({
       visible: false,
       id: null,
-      type: 1 // 1 查看, 2 编辑, 3 新增
+      type: 1 // 1 新增, 2 编辑, 3 查看
     });
 
     const openAccountStoreMoadl = (record, type) => {
