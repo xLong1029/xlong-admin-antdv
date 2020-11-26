@@ -35,7 +35,7 @@
       :columns="columns"
       :data-source="listData"
       :row-key="record => record.objectId"
-      :pagination="pagination"
+      :pagination="pageConfig"
       :row-selection="rowSelection"
       @change="handleTableChange"
     >
@@ -122,7 +122,7 @@ export default {
       listLoading,
       listData,
       selectList,
-      pagination,
+      pageConfig,
       rowSelection,
       getList,
       search
@@ -186,7 +186,6 @@ export default {
     // 表格改变事件
     const handleTableChange = (pagination, filters, sorter) => {
       console.log(pagination, filters, sorter);
-      listLoading.value = true;
 
       getList(pagination.current, pagination.pageSize, apiGetList);
     };
@@ -197,14 +196,14 @@ export default {
 
     // 初始化
     onMounted(() => {
-      getList(pagination.value.current, pagination.value.pageSize, apiGetList);
+      getList(pageConfig.value.current, pageConfig.value.pageSize, apiGetList);
     });
 
     return {
       listLoading,
       listData,
       selectList,
-      pagination,
+      pageConfig,
       getList,
       search,
       columns,

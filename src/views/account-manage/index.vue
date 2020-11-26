@@ -26,7 +26,7 @@
       :columns="columns"
       :data-source="listData"
       :row-key="record => record.objectId"
-      :pagination="pagination"
+      :pagination="pageConfig"
       :row-selection="rowSelection"
       @change="handleTableChange"
     >
@@ -49,6 +49,7 @@
       :id="accountStoreModal.id"
       :type="accountStoreModal.type"
       @close="closeAccountStoreModal"
+      @submit="handleAccountStoreChange"
     />
   </div>
 </template>
@@ -83,7 +84,7 @@ export default {
       listLoading,
       listData,
       selectList,
-      pagination,
+      pageConfig,
       rowSelection,
       getList,
       search
@@ -156,12 +157,14 @@ export default {
       type: 1 // 1 新增, 2 编辑, 3 查看
     });
 
+    // 打开账户存储弹窗
     const openAccountStoreMoadl = (record, type) => {
       accountStoreModal.visible = true;
       accountStoreModal.id = record ? record.objectId : null;
       accountStoreModal.type = type;
     };
 
+    // 关闭账户存储弹窗
     const closeAccountStoreModal = val => {
       accountStoreModal.visible = val;
       accountStoreModal.id = null;
@@ -171,7 +174,6 @@ export default {
     // 表格改变事件
     const handleTableChange = (pagination, filters, sorter) => {
       console.log(pagination, filters, sorter);
-      listLoading.value = true;
 
       getList(pagination.current, pagination.pageSize, apiGetList);
     };
@@ -179,16 +181,24 @@ export default {
     // 获取列表
     const apiGetList = (pageNo, pageSize) =>
       Api.GetAccList({}, pageNo, pageSize);
+    // 获取列表
+    const handleAccountStoreChange = type => {
+      // 新增操作返回第一页
+      if (type === 1) {
+        pageConfig.value.current = 1;
+      }
+      getList(pageConfig.value.current, pageConfig.value.pageSize, apiGetList);
+    };
 
     onMounted(() => {
-      getList(pagination.value.current, pagination.value.pageSize, apiGetList);
+      getList(pageConfig.value.current, pageConfig.value.pageSize, apiGetList);
     });
 
     return {
       listLoading,
       listData,
       selectList,
-      pagination,
+      pageConfig,
       getList,
       search,
       columns,
@@ -198,7 +208,8 @@ export default {
       showDevMoadl,
       accountStoreModal,
       openAccountStoreMoadl,
-      closeAccountStoreModal
+      closeAccountStoreModal,
+      handleAccountStoreChange
     };
   }
 };

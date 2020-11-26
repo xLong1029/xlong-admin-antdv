@@ -285,6 +285,8 @@ export default {
               `尊敬的${userInfo.nickName}，欢迎使用${systemTitle}`
             );
             submitLoading.value = false;
+
+            ctx.$router.push({ name: "userCenter" });
           } catch (err) {
             console.log(err);
 

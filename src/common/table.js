@@ -11,7 +11,7 @@ export default function() {
   const selectList = ref([]);
 
   // 分页
-  const pagination = ref({
+  const pageConfig = ref({
     // 当前页码
     current: 1,
     // 每页条数
@@ -33,8 +33,8 @@ export default function() {
   });
 
   function getList(pageNo, pageSize, apiGetList) {
-    pagination.value.current = pageNo;
-    pagination.value.pageSize = pageSize;
+    pageConfig.value.current = pageNo;
+    pageConfig.value.pageSize = pageSize;
 
     listLoading.value = true;
     apiGetList(pageNo, pageSize)
@@ -51,14 +51,14 @@ export default function() {
   }
 
   function search() {
-    getList(1, pagination.value.pageSize);
+    getList(1, pageConfig.value.pageSize);
   }
 
   return {
     listLoading,
     listData,
     selectList,
-    pagination,
+    pageConfig,
     rowSelection,
     getList,
     clearSelect,
