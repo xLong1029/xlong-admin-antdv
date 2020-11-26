@@ -7,17 +7,14 @@ export default function() {
   // 列表数据
   const listData = ref([]);
 
-  // 选项
-  const selectList = ref([]);
-
   // 分页
   const pageConfig = ref({
     // 当前页码
     current: 1,
     // 每页条数
-    pageSize: 15,
+    pageSize: 10,
     // 每页条数选择
-    pageSizeOptions: ["15", "30", "50", "80"],
+    pageSizeOptions: ["10", "30", "50", "80"],
     // 列表总数
     total: 0,
     // 显示每页条数
@@ -27,11 +24,19 @@ export default function() {
   });
 
   const rowSelection = ref({
+    selectedRowKeys: [],
     onChange: selectedRowKeys => {
-      selectList.value = selectedRowKeys;
+      rowSelection.value.selectedRowKeys = selectedRowKeys;
     }
   });
 
+  /**
+   * 获取列表内容
+   *
+   * @param {*} pageNo 当前页码
+   * @param {*} pageSize 每页条数
+   * @param {*} apiGetList Api方法
+   */
   function getList(pageNo, pageSize, apiGetList) {
     pageConfig.value.current = pageNo;
     pageConfig.value.pageSize = pageSize;
@@ -39,17 +44,26 @@ export default function() {
     listLoading.value = true;
     apiGetList(pageNo, pageSize)
       .then(res => {
-        const { data } = res;
+        const { data, page } = res;
         listLoading.value = false;
         listData.value = data;
+        pageConfig.value.current = page.page;
+        pageConfig.value.pageSize = page.size;
+        pageConfig.value.total = page.count;
       })
       .catch(err => console.log(err));
   }
 
+  /**
+   * 清楚勾选
+   */
   function clearSelect() {
-    selectList.value = [];
+    rowSelection.value.selectedRowKeys = [];
   }
 
+  /**
+   * 搜索
+   */
   function search() {
     getList(1, pageConfig.value.pageSize);
   }
@@ -57,7 +71,6 @@ export default function() {
   return {
     listLoading,
     listData,
-    selectList,
     pageConfig,
     rowSelection,
     getList,

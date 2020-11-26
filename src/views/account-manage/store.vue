@@ -32,7 +32,7 @@
                       <a-form-item name="realname" class="width-100">
                         <a-input
                           v-model:value="form.realname"
-                          placeholder="请输入内容"
+                          placeholder="请输入真实姓名"
                         ></a-input>
                       </a-form-item>
                     </div>
@@ -130,7 +130,7 @@
               <div class="info-table__tr">
                 <div class="info-table__th">通讯地址</div>
                 <div class="info-table__td">
-                  <a-form-item class="width-100">
+                  <a-form-item name="address" class="width-100">
                     <a-input
                       v-model:value="form.address"
                       placeholder="请输入通讯地址"
@@ -141,7 +141,7 @@
               <div class="info-table__tr">
                 <div class="info-table__th">备注</div>
                 <div class="info-table__td">
-                  <a-form-item class="width-100">
+                  <a-form-item name="remark" class="width-100">
                     <a-textarea
                       v-model:value="form.remark"
                       :rows="5"
@@ -462,8 +462,6 @@ export default {
               .catch(() => ctx.$message.error("操作失败"))
               .finally(() => (submitLoading.value = false));
           }
-
-          handleCancel();
         })
         .catch(err => {
           console.log("error", err);

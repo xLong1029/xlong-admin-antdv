@@ -15,15 +15,19 @@
           >添加</a-button
         >
         <a-popconfirm title="确认删除?" @confirm="showDevMoadl()">
-          <a-button :disabled="selectList.length === 0">删除</a-button>
+          <a-button :disabled="rowSelection.selectedRowKeys.length === 0"
+            >删除</a-button
+          >
         </a-popconfirm>
         <a-button
           type="primary"
-          :disabled="selectList.length === 0"
+          :disabled="rowSelection.selectedRowKeys.length === 0"
           @click="showDevMoadl"
           >启用</a-button
         >
-        <a-button :disabled="selectList.length === 0" @click="showDevMoadl"
+        <a-button
+          :disabled="rowSelection.selectedRowKeys.length === 0"
+          @click="showDevMoadl"
           >禁用</a-button
         >
       </a-space>
@@ -121,7 +125,6 @@ export default {
     const {
       listLoading,
       listData,
-      selectList,
       pageConfig,
       rowSelection,
       getList,
@@ -202,7 +205,6 @@ export default {
     return {
       listLoading,
       listData,
-      selectList,
       pageConfig,
       getList,
       search,

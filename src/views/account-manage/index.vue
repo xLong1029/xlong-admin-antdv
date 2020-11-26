@@ -5,16 +5,24 @@
         <a-button type="primary" @click="openAccountStoreMoadl(null, 1)"
           >添加</a-button
         >
-        <a-popconfirm title="确认删除?" @confirm="showDevMoadl()">
-          <a-button :disabled="selectList.length === 0">删除</a-button>
+        <a-popconfirm title="确认删除?" @confirm="handleDelelteAccount()">
+          <a-button
+            :disabled="rowSelection.selectedRowKeys.length === 0"
+            :loading="delLoading"
+            >删除</a-button
+          >
         </a-popconfirm>
         <a-button
           type="primary"
-          :disabled="selectList.length === 0"
-          @click="showDevMoadl"
+          :loading="enableLoading"
+          :disabled="rowSelection.selectedRowKeys.length === 0"
+          @click="handleEnableAccount(1)"
           >启用</a-button
         >
-        <a-button :disabled="selectList.length === 0" @click="showDevMoadl"
+        <a-button
+          :loading="disableLoading"
+          :disabled="rowSelection.selectedRowKeys.length === 0"
+          @click="handleEnableAccount(2)"
           >禁用</a-button
         >
       </a-space>
@@ -30,6 +38,10 @@
       :row-selection="rowSelection"
       @change="handleTableChange"
     >
+      <template #enabledStateText="{ record }">
+        <a-tag v-if="record.enabledState === 1" color="green">启用</a-tag>
+        <a-tag v-else color="red">禁用</a-tag>
+      </template>
       <template #provinceAndCity="{ record }">
         <span>{{ record.province }}</span>
         <span v-if="record.city">/ {{ record.city }}</span>
@@ -39,7 +51,10 @@
           <edit-outlined class="mr-5" />编辑
         </a>
         <a-divider type="vertical" />
-        <a-popconfirm title="确认删除?" @confirm="showDevMoadl()">
+        <a-popconfirm
+          title="确认删除?"
+          @confirm="handleDelelteAccount(record.objectId)"
+        >
           <a> <delete-outlined class="mr-5" />删除 </a>
         </a-popconfirm>
       </template>
@@ -55,7 +70,7 @@
 </template>
 
 <script>
-import { getCurrentInstance, computed, reactive, onMounted } from "vue";
+import { getCurrentInstance, computed, reactive, onMounted, ref } from "vue";
 import table from "common/table.js";
 import common from "common/index.js";
 // Api
@@ -83,9 +98,9 @@ export default {
     const {
       listLoading,
       listData,
-      selectList,
       pageConfig,
       rowSelection,
+      clearSelect,
       getList,
       search
     } = table();
@@ -98,7 +113,13 @@ export default {
         width: 200,
         fixed: "left"
       },
-
+      {
+        title: "状态",
+        dataIndex: "enabledState",
+        key: "enabledState",
+        slots: { customRender: "enabledStateText" },
+        width: 100
+      },
       {
         title: "性别",
         dataIndex: "gender",
@@ -190,6 +211,75 @@ export default {
       getList(pageConfig.value.current, pageConfig.value.pageSize, apiGetList);
     };
 
+    // 删除loading
+    const delLoading = ref(false);
+    // 删除id
+    const delIds = ref(null);
+
+    // 删除账户
+    const handleDelelteAccount = id => {
+      if (!id && !rowSelection.value.selectedRowKeys.length) {
+        ctx.$message.warning("无可操作的对象，请刷新页面重试");
+      }
+
+      delIds.value = id ? [id] : rowSelection.value.selectedRowKeys;
+
+      delLoading.value = id ? false : true;
+
+      Api.DeleteAcc(delIds.value)
+        .then(res => {
+          if (res.code == 200) {
+            ctx.$message.success("删除成功!");
+            getList(
+              pageConfig.value.current,
+              pageConfig.value.pageSize,
+              apiGetList
+            );
+            clearSelect();
+          } else console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+          ctx.$message.error("删除失败！");
+        })
+        .finally(() => {
+          delLoading.value = false;
+          delIds.value = null;
+        });
+    };
+
+    // 启/禁用loading
+    const enableLoading = ref(false);
+    const disableLoading = ref(false);
+
+    // 启/禁用账户
+    const handleEnableAccount = enabledState => {
+      // console.log(rowSelection.value.selectedRowKeys);
+
+      enabledState === 1
+        ? (enableLoading.value = true)
+        : (disableLoading.value = true);
+
+      Api.EnableAcc({ enabledState }, rowSelection.value.selectedRowKeys)
+        .then(res => {
+          if (res.code == 200) {
+            ctx.$message.success("操作成功!");
+            getList(
+              pageConfig.value.current,
+              pageConfig.value.pageSize,
+              apiGetList
+            );
+          } else ctx.$message.warning(res.msg);
+        })
+        .catch(() => ctx.$message.error("操作失败！"))
+        .finally(() => {
+          enabledState === 1
+            ? (enableLoading.value = false)
+            : (disableLoading.value = false);
+          clearSelect();
+        });
+    };
+
     onMounted(() => {
       getList(pageConfig.value.current, pageConfig.value.pageSize, apiGetList);
     });
@@ -197,7 +287,6 @@ export default {
     return {
       listLoading,
       listData,
-      selectList,
       pageConfig,
       getList,
       search,
@@ -209,7 +298,12 @@ export default {
       accountStoreModal,
       openAccountStoreMoadl,
       closeAccountStoreModal,
-      handleAccountStoreChange
+      handleAccountStoreChange,
+      delLoading,
+      handleDelelteAccount,
+      enableLoading,
+      disableLoading,
+      handleEnableAccount
     };
   }
 };
