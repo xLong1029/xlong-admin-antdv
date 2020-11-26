@@ -1139,5 +1139,27 @@
         }
       ]
     }
+  ],
+  "emailSuffix": [
+    {
+      "value": "@qq.com",
+      "name": "@qq.com"
+    },
+    {
+      "value": "@163.com",
+      "name": "@163.com"
+    },
+    {
+      "value": "@115.com",
+      "name": "@115.com"
+    },
+    {
+      "value": "@dingtalk.com",
+      "name": "@dingtalk.com"
+    },
+    {
+      "value": "@sina.com",
+      "name": "@sina.com"
+    }
   ]
 }

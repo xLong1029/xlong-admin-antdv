@@ -1,31 +1,34 @@
 <template>
   <div class="account-list-container">
-    <div class="operate-btn-container mb-20">
+    <div class="operate-btn-container mb-20 flex">
       <a-space size="small">
-        <a-button type="primary" @click="openAccountStoreMoadl(null, 1)"
-          >添加</a-button
-        >
+        <a-button type="primary" @click="openAccountStoreMoadl(null, 1)">添加</a-button>
         <a-popconfirm title="确认删除?" @confirm="handleDelelteAccount()">
-          <a-button
-            :disabled="rowSelection.selectedRowKeys.length === 0"
-            :loading="delLoading"
-            >删除</a-button
-          >
+          <a-button :disabled="rowSelection.selectedRowKeys.length === 0" :loading="delLoading">删除</a-button>
         </a-popconfirm>
         <a-button
           type="primary"
           :loading="enableLoading"
           :disabled="rowSelection.selectedRowKeys.length === 0"
           @click="handleEnableAccount(1)"
-          >启用</a-button
-        >
+        >启用</a-button>
         <a-button
           :loading="disableLoading"
           :disabled="rowSelection.selectedRowKeys.length === 0"
-          @click="handleEnableAccount(2)"
-          >禁用</a-button
-        >
+          @click="handleEnableAccount(-1)"
+        >禁用</a-button>
       </a-space>
+      <div class="search-container">
+        <a-input-search
+          v-model:value="filterParams.mobile"
+          placeholder="请输入手机号码进行搜索"
+          enter-button
+          allowClear
+          :loading="searchLoading"
+          @search="onSearch"
+          @change="handleFilterParamsChange"
+        />
+      </div>
     </div>
     <a-table
       class="table-container"
@@ -51,11 +54,10 @@
           <edit-outlined class="mr-5" />编辑
         </a>
         <a-divider type="vertical" />
-        <a-popconfirm
-          title="确认删除?"
-          @confirm="handleDelelteAccount(record.objectId)"
-        >
-          <a> <delete-outlined class="mr-5" />删除 </a>
+        <a-popconfirm title="确认删除?" @confirm="handleDelelteAccount(record.objectId)">
+          <a>
+            <delete-outlined class="mr-5" />删除
+          </a>
         </a-popconfirm>
       </template>
     </a-table>
@@ -64,7 +66,7 @@
       :id="accountStoreModal.id"
       :type="accountStoreModal.type"
       @close="closeAccountStoreModal"
-      @submit="handleAccountStoreChange"
+      @submit="handleAccountStoreSuccess"
     />
   </div>
 </template>
@@ -73,6 +75,7 @@
 import { getCurrentInstance, computed, reactive, onMounted, ref } from "vue";
 import table from "common/table.js";
 import common from "common/index.js";
+import moment from "moment";
 // Api
 import Api from "api/account-manage";
 // 组件
@@ -97,12 +100,12 @@ export default {
 
     const {
       listLoading,
+      searchLoading,
       listData,
       pageConfig,
       rowSelection,
       clearSelect,
-      getList,
-      search
+      getList
     } = table();
 
     const columns = [
@@ -118,13 +121,37 @@ export default {
         dataIndex: "enabledState",
         key: "enabledState",
         slots: { customRender: "enabledStateText" },
-        width: 100
+        width: 100,
+        filters: [
+          {
+            text: "启用",
+            value: 1
+          },
+          {
+            text: "禁用",
+            value: -1
+          }
+        ],
+        filterMultiple: false,
+        onFilter: (value, record) => record.enabledState === value
       },
       {
         title: "性别",
         dataIndex: "gender",
         key: "gender",
-        width: 100
+        width: 100,
+        filters: [
+          {
+            text: "男",
+            value: "男"
+          },
+          {
+            text: "女",
+            value: "女"
+          }
+        ],
+        filterMultiple: false,
+        onFilter: (value, record) => record.gender === value
       },
       {
         title: "手机号码",
@@ -161,7 +188,8 @@ export default {
         title: "创建时间",
         dataIndex: "createdAt",
         key: "createdAt",
-        width: 200
+        width: 200,
+        sorter: (a, b) => moment(a.createdAt).isBefore(b.createdAt)
       },
       {
         title: "Action",
@@ -192,6 +220,10 @@ export default {
       accountStoreModal.type = 1;
     };
 
+    // 获取列表
+    const apiGetList = (pageNo, pageSize) =>
+      Api.GetAccList(filterParams, pageNo, pageSize);
+
     // 表格改变事件
     const handleTableChange = (pagination, filters, sorter) => {
       console.log(pagination, filters, sorter);
@@ -199,11 +231,23 @@ export default {
       getList(pagination.current, pagination.pageSize, apiGetList);
     };
 
-    // 获取列表
-    const apiGetList = (pageNo, pageSize) =>
-      Api.GetAccList({}, pageNo, pageSize);
-    // 获取列表
-    const handleAccountStoreChange = type => {
+    const filterParams = reactive({});
+
+    const handleFilterParamsChange = e => {
+      const value = e.target.value;
+      // 清空
+      if (!value) {
+        getList(1, pageConfig.value.pageSize, apiGetList);
+      }
+    };
+
+    // 搜索
+    function onSearch() {
+      getList(1, pageConfig.value.pageSize, apiGetList);
+    }
+
+    // 账户存储成功
+    const handleAccountStoreSuccess = type => {
       // 新增操作返回第一页
       if (type === 1) {
         pageConfig.value.current = 1;
@@ -286,10 +330,11 @@ export default {
 
     return {
       listLoading,
+      searchLoading,
       listData,
       pageConfig,
       getList,
-      search,
+      onSearch,
       columns,
       rowSelection,
       handleTableChange,
@@ -298,12 +343,14 @@ export default {
       accountStoreModal,
       openAccountStoreMoadl,
       closeAccountStoreModal,
-      handleAccountStoreChange,
+      handleAccountStoreSuccess,
       delLoading,
       handleDelelteAccount,
       enableLoading,
       disableLoading,
-      handleEnableAccount
+      handleEnableAccount,
+      filterParams,
+      handleFilterParamsChange
     };
   }
 };
@@ -312,5 +359,13 @@ export default {
 <style lang="less" scoped>
 .account-list-container {
   padding: 20px 0;
+}
+
+.operate-btn-container {
+  justify-content: space-between;
+}
+
+.search-container {
+  width: 300px;
 }
 </style>

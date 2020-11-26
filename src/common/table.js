@@ -4,6 +4,8 @@ export default function() {
   // 列表加载
   const listLoading = ref(false);
 
+  const searchLoading = ref(false);
+
   // 列表数据
   const listData = ref([]);
 
@@ -61,20 +63,13 @@ export default function() {
     rowSelection.value.selectedRowKeys = [];
   }
 
-  /**
-   * 搜索
-   */
-  function search() {
-    getList(1, pageConfig.value.pageSize);
-  }
-
   return {
     listLoading,
+    searchLoading,
     listData,
     pageConfig,
     rowSelection,
     getList,
-    clearSelect,
-    search
+    clearSelect
   };
 }

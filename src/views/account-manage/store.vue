@@ -5,7 +5,7 @@
     :confirm-loading="submitLoading"
     centered
     class="account-store-container"
-    width="800px"
+    width="850px"
     @ok="handleOk"
     @cancel="handleCancel"
   >
@@ -120,10 +120,24 @@
                 </div>
                 <div class="info-table__td">
                   <a-form-item name="email" class="width-100">
-                    <a-input
-                      v-model:value="form.email"
-                      placeholder="请输入电子邮箱"
-                    ></a-input>
+                    <a-input-group compact>
+                      <a-input
+                        style="width: 40%"
+                        v-model:value="form.email"
+                        placeholder="请输入电子邮箱"
+                      ></a-input>
+                      <a-select
+                        style="width: 60%"
+                        v-model:value="emailSuffixValue"
+                      >
+                        <a-select-option
+                          v-for="(item, index) in emailSuffixList"
+                          :key="'emailSuffix' + index"
+                          :value="item.name"
+                          >{{ item.name }}</a-select-option
+                        >
+                      </a-select>
+                    </a-input-group>
                   </a-form-item>
                 </div>
               </div>
@@ -290,6 +304,10 @@ export default {
       value: e.name
     }));
 
+    // 邮箱后缀
+    const emailSuffixList = JsonData.emailSuffix;
+    const emailSuffixValue = ref("@qq.com");
+
     // 默认头像
     const defaultFaceImg = require("@/assets/images/head.jpg");
 
@@ -342,7 +360,7 @@ export default {
     const validateEmail = (rule, value) => {
       if (!value) {
         return Promise.reject(new Error("请输入邮箱地址"));
-      } else if (!validEmail(value)) {
+      } else if (!validEmail(value + emailSuffixValue.value)) {
         return Promise.reject(new Error("邮箱格式不正确"));
       } else {
         return Promise.resolve();
@@ -426,6 +444,7 @@ export default {
           submitLoading.value = true;
 
           let params = { ...data };
+          params.email = data.email ? data.email + emailSuffixValue.value : "";
           params.province = data.province[0];
           params.city = data.province[1] ? data.province[1] : "";
           params.area = data.province[2] ? data.province[2] : "";
@@ -508,7 +527,13 @@ export default {
             form.birthdate = moment(birthdate, "YYYY-MM-DD");
             form.gender = gender;
             form.mobile = mobile;
-            form.email = email;
+
+            if (email) {
+              const emailSplit = email.split("@");
+              form.email = emailSplit[0];
+              emailSuffixValue.value = `@${emailSplit[1]}`;
+            }
+
             form.address = address;
             form.companyName = companyName;
             form.job = job;
@@ -534,6 +559,7 @@ export default {
       val => {
         if (val) {
           ctx.$nextTick(() => {
+            emailSuffixValue.value = "@qq.com";
             ctx.$refs.submitForm.resetFields();
             ctx.$refs.submitForm.clearValidate();
           });
@@ -569,7 +595,9 @@ export default {
       jobList,
       handleWorkTimeChange,
       handleGraduateChange,
-      submitLoading
+      submitLoading,
+      emailSuffixList,
+      emailSuffixValue
     };
   }
 };
