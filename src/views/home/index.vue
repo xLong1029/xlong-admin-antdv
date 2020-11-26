@@ -286,7 +286,7 @@ export default {
             );
             submitLoading.value = false;
 
-            ctx.$router.push({ name: "userCenter" });
+            ctx.$router.push({ name: "UserCenter" });
           } catch (err) {
             console.log(err);
 
