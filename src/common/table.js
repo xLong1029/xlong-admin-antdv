@@ -1,4 +1,11 @@
-import { ref } from "vue";
+/*
+ * 模块 : 上传相关配置
+ * 作者 : 罗永梅（381612175@qq.com）
+ * 日期 : 2020-11-27
+ * 版本 : version 1.0
+ */
+
+import { ref, reactive } from "vue";
 
 export default function() {
   // 列表加载
@@ -10,7 +17,7 @@ export default function() {
   const listData = ref([]);
 
   // 分页
-  const pageConfig = ref({
+  const pageConfig = reactive({
     // 当前页码
     current: 1,
     // 每页条数
@@ -25,10 +32,10 @@ export default function() {
     showTotal: total => `共 ${total} 个`
   });
 
-  const rowSelection = ref({
+  const rowSelection = reactive({
     selectedRowKeys: [],
     onChange: selectedRowKeys => {
-      rowSelection.value.selectedRowKeys = selectedRowKeys;
+      rowSelection.selectedRowKeys = selectedRowKeys;
     }
   });
 
@@ -40,8 +47,8 @@ export default function() {
    * @param {*} apiGetList Api方法
    */
   function getList(pageNo, pageSize, apiGetList) {
-    pageConfig.value.current = pageNo;
-    pageConfig.value.pageSize = pageSize;
+    pageConfig.current = pageNo;
+    pageConfig.pageSize = pageSize;
 
     listLoading.value = true;
     apiGetList(pageNo, pageSize)
@@ -49,9 +56,9 @@ export default function() {
         const { data, page } = res;
         listLoading.value = false;
         listData.value = data;
-        pageConfig.value.current = page.page;
-        pageConfig.value.pageSize = page.size;
-        pageConfig.value.total = page.count;
+        pageConfig.current = page.page;
+        pageConfig.pageSize = page.size;
+        pageConfig.total = page.count;
       })
       .catch(err => console.log(err));
   }
@@ -60,7 +67,7 @@ export default function() {
    * 清楚勾选
    */
   function clearSelect() {
-    rowSelection.value.selectedRowKeys = [];
+    rowSelection.selectedRowKeys = [];
   }
 
   return {

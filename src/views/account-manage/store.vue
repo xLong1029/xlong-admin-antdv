@@ -10,16 +10,9 @@
     @cancel="handleCancel"
   >
     <a-spin :spinning="infoLoading" tip="系统初始化，请稍后...">
-      <a-form
-        ref="submitForm"
-        :model="form"
-        :rules="rules"
-        class="account-detail-container"
-      >
+      <a-form ref="submitForm" :model="form" :rules="rules" class="account-detail-container">
         <div class="account-detail-content">
-          <div class="account-detail-content__title mt-0" id="baseInfo">
-            基本信息
-          </div>
+          <div class="account-detail-content__title mt-0" id="baseInfo">基本信息</div>
           <div class="account-detail-content__cont">
             <div class="info-table">
               <div class="flex">
@@ -30,10 +23,7 @@
                     </div>
                     <div class="info-table__td">
                       <a-form-item name="realname" class="width-100">
-                        <a-input
-                          v-model:value="form.realname"
-                          placeholder="请输入真实姓名"
-                        ></a-input>
+                        <a-input v-model:value="form.realname" placeholder="请输入真实姓名"></a-input>
                       </a-form-item>
                     </div>
                   </div>
@@ -59,21 +49,24 @@
                 </div>
                 <div class="info-table__tr">
                   <div class="info-table__td head-pic img-shade">
-                    <img
-                      :src="form.face ? form.face : defaultFaceImg"
-                      @error="setdefaultFaceImg"
-                    />
+                    <img :src="form.face ? form.face : defaultFaceImg" @error="setdefaultHeadImg" />
                     <div class="img-shade-actions">
-                      <!-- <a-upload
-                        class="img-shade-actions-btn"
+                      <a-upload
+                        class="img-shade-actions__btn"
                         action="customize"
-                        :accept="imgAccept"
-                        :before-upload="imgBeforeUpload"
-                        :http-request="uploadHead"
+                        :accept="fileAccept"
+                        :before-upload="handleBeforeUpload"
+                        :custom-request="uploadAvatar"
+                        @change="handleUploadChange"
                         :show-file-list="false"
                       >
-                        <i class="a-icon-edit"></i>编辑
-                      </a-upload>-->
+                        <!-- <div v-if="uploadLoading">
+                          <loading-outlined v-if="uploadLoading" />
+                        </div>
+                        <div v-else> -->
+                          <edit-outlined />编辑
+                        <!-- </div> -->
+                      </a-upload>
                     </div>
                   </div>
                 </div>
@@ -84,11 +77,7 @@
                 </div>
                 <div class="info-table__td">
                   <a-form-item name="birthdate" class="width-100">
-                    <a-date-picker
-                      v-model:value="form.birthdate"
-                      type="date"
-                      placeholder="请选择日期"
-                    ></a-date-picker>
+                    <a-date-picker v-model:value="form.birthdate" type="date" placeholder="请选择日期"></a-date-picker>
                   </a-form-item>
                 </div>
                 <div class="info-table__th">
@@ -109,10 +98,7 @@
                 </div>
                 <div class="info-table__td">
                   <a-form-item name="mobile" class="width-100">
-                    <a-input
-                      v-model:value="form.mobile"
-                      placeholder="请输入手机号码"
-                    ></a-input>
+                    <a-input v-model:value="form.mobile" placeholder="请输入手机号码"></a-input>
                   </a-form-item>
                 </div>
                 <div class="info-table__th">
@@ -121,21 +107,13 @@
                 <div class="info-table__td">
                   <a-form-item name="email" class="width-100">
                     <a-input-group compact>
-                      <a-input
-                        style="width: 40%"
-                        v-model:value="form.email"
-                        placeholder="请输入电子邮箱"
-                      ></a-input>
-                      <a-select
-                        style="width: 60%"
-                        v-model:value="emailSuffixValue"
-                      >
+                      <a-input style="width: 40%" v-model:value="form.email" placeholder="请输入电子邮箱"></a-input>
+                      <a-select style="width: 60%" v-model:value="emailSuffixValue">
                         <a-select-option
                           v-for="(item, index) in emailSuffixList"
                           :key="'emailSuffix' + index"
                           :value="item.name"
-                          >{{ item.name }}</a-select-option
-                        >
+                        >{{ item.name }}</a-select-option>
                       </a-select>
                     </a-input-group>
                   </a-form-item>
@@ -145,10 +123,7 @@
                 <div class="info-table__th">通讯地址</div>
                 <div class="info-table__td">
                   <a-form-item name="address" class="width-100">
-                    <a-input
-                      v-model:value="form.address"
-                      placeholder="请输入通讯地址"
-                    ></a-input>
+                    <a-input v-model:value="form.address" placeholder="请输入通讯地址"></a-input>
                   </a-form-item>
                 </div>
               </div>
@@ -156,20 +131,14 @@
                 <div class="info-table__th">备注</div>
                 <div class="info-table__td">
                   <a-form-item name="remark" class="width-100">
-                    <a-textarea
-                      v-model:value="form.remark"
-                      :rows="5"
-                      placeholder="请输入备注"
-                    ></a-textarea>
+                    <a-textarea v-model:value="form.remark" :rows="5" placeholder="请输入备注"></a-textarea>
                   </a-form-item>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="account-detail-content__title" id="workInfo">
-            工作信息
-          </div>
+          <div class="account-detail-content__title" id="workInfo">工作信息</div>
           <div class="account-detail-content__cont mb-0">
             <div class="info-table">
               <div class="info-table__tr">
@@ -178,10 +147,7 @@
                 </div>
                 <div class="info-table__td">
                   <a-form-item name="companyName" class="width-100">
-                    <a-input
-                      v-model:value="form.companyName"
-                      placeholder="请输入工作单位名称"
-                    ></a-input>
+                    <a-input v-model:value="form.companyName" placeholder="请输入工作单位名称"></a-input>
                   </a-form-item>
                 </div>
                 <div class="info-table__th">
@@ -194,8 +160,7 @@
                         v-for="(item, index) in jobList"
                         :key="'job' + index"
                         :value="item.name"
-                        >{{ item.name }}</a-select-option
-                      >
+                      >{{ item.name }}</a-select-option>
                     </a-select>
                   </a-form-item>
                 </div>
@@ -210,14 +175,12 @@
                       v-model:value="form.workTime"
                       :placeholder="workTimePH"
                       :disabled="form.isGraduate"
-                      @change="handleWorkTimeChange"
                       class="mr-10 work-time"
                     />
                     <a-checkbox
                       v-model:checked="form.isGraduate"
                       @change="handleGraduateChange"
-                      >尚未毕业</a-checkbox
-                    >
+                    >尚未毕业</a-checkbox>
                   </a-form-item>
                 </div>
               </div>
@@ -227,10 +190,7 @@
                 </div>
                 <div class="info-table__td">
                   <a-form-item name="profession" class="width-100">
-                    <a-checkbox-group
-                      v-model:value="form.profession"
-                      :options="professionList"
-                    />
+                    <a-checkbox-group v-model:value="form.profession" :options="professionList" />
                   </a-form-item>
                 </div>
               </div>
@@ -247,6 +207,7 @@
 import { getCurrentInstance, watch, ref, reactive, toRaw } from "vue";
 import Api from "api/account-manage/index.js";
 import moment from "moment";
+import upload from "common/upload.js";
 // Json数据
 import JsonCity from "mock/city.json";
 import JsonData from "mock/data.json";
@@ -285,14 +246,15 @@ export default {
     // 参加工作时间
     const workTimePH = ref("请选择日期");
 
-    // 改变工作时间
-    const handleWorkTimeChange = val => {
-      console.log(val);
-    };
     // 勾选尚未毕业
     const handleGraduateChange = e => {
       const value = e.target.checked;
-      workTimePH.value = value ? "尚未毕业" : "请选择日期";
+      if (value) {
+        form.workTime = "";
+        workTimePH.value = "尚未毕业";
+      } else {
+        workTimePH.value = "请选择日期";
+      }
     };
 
     // 所在省市
@@ -308,13 +270,63 @@ export default {
     const emailSuffixList = JsonData.emailSuffix;
     const emailSuffixValue = ref("@qq.com");
 
+    const { fileAccept, beforeUpload, uploadToBomb } = upload();
+
     // 默认头像
     const defaultFaceImg = require("@/assets/images/head.jpg");
 
-    // 设置默认图片
-    const setdefaultFaceImg = e => {
+    // 设置默认头像
+    const setdefaultHeadImg = e => {
       e.currentTarget.src = defaultFaceImg.value;
       e.currentTarget.onerror = null;
+    };
+
+    // 头像上传前
+    const handleBeforeUpload = file => {
+      return beforeUpload(file, function(file) {
+        // 双重检查，避免在“所有文件”中选择其他文件
+        if (
+          !(
+            file.type === "image/jpeg" ||
+            file.type === "image/png" ||
+            file.type === "image/gif"
+          )
+        ) {
+          ctx.$message.warning("图片只能是 png 、jpg 、gif 格式");
+          return false;
+        }
+        return true;
+      });
+    };
+
+    const uploadLoading = ref(false);
+
+    const handleUploadChange = info => {
+      if (info.file.status === "uploading") {
+        uploadLoading.value = true;
+        return;
+      }
+      if (info.file.status === "done") {
+        uploadLoading.value = false;
+      }
+      if (info.file.status === "error") {
+        uploadLoading.value = false;
+      }
+    };
+
+    // 上传头像
+    const uploadAvatar = params => {
+      // console.log("uploadFile", params);
+      const file = params.file;
+
+      uploadToBomb(file)
+        .then(res => {
+          if (res.length) {
+            form.face = res[0].url;
+          }
+        })
+        .catch(err => console.log(err))
+        .finally(() => (uploadLoading.value = false));
     };
 
     // 默认表单
@@ -506,6 +518,7 @@ export default {
           // 获取到数据
           if (code == 200) {
             const {
+              face,
               realname,
               province,
               city,
@@ -521,6 +534,8 @@ export default {
               isGraduate,
               profession
             } = data;
+
+            form.face = face ? face : null;
 
             form.realname = realname;
             form.province = [province, city, area];
@@ -562,6 +577,7 @@ export default {
             emailSuffixValue.value = "@qq.com";
             ctx.$refs.submitForm.resetFields();
             ctx.$refs.submitForm.clearValidate();
+            form.face = null;
           });
 
           switch (props.type) {
@@ -590,14 +606,18 @@ export default {
       professionList,
       provinceList,
       defaultFaceImg,
-      setdefaultFaceImg,
+      setdefaultHeadImg,
       workTimePH,
       jobList,
-      handleWorkTimeChange,
       handleGraduateChange,
       submitLoading,
       emailSuffixList,
-      emailSuffixValue
+      emailSuffixValue,
+      fileAccept,
+      handleBeforeUpload,
+      uploadAvatar,
+      uploadLoading,
+      handleUploadChange
     };
   }
 };
@@ -703,12 +723,6 @@ export default {
   width: 100%;
   height: 100%;
 
-  &-thumbnail {
-    width: 100%;
-    height: 100%;
-    // cursor: pointer;
-  }
-
   &-actions {
     display: flex;
     align-items: center;
@@ -724,11 +738,16 @@ export default {
     background-color: rgba(0, 0, 0, 0.5);
     transition: opacity 0.3s;
 
-    &-btn {
+    &__btn {
       cursor: pointer;
+
+      // 隐藏默认上传loading效果
+      ::v-deep(.ant-upload-list) {
+        display: none;
+      }
     }
 
-    /deep/ .el-upload:focus {
+    ::v-deep(.ant-upload) {
       color: #fff;
     }
   }

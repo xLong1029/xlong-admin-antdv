@@ -157,7 +157,7 @@ export default {
         slots: { customRender: "role" }
       },
       {
-        title: "Action",
+        title: "操作",
         key: "action",
         slots: { customRender: "action" },
         width: 150,
@@ -199,7 +199,7 @@ export default {
 
     // 初始化
     onMounted(() => {
-      getList(pageConfig.value.current, pageConfig.value.pageSize, apiGetList);
+      getList(pageConfig.current, pageConfig.pageSize, apiGetList);
     });
 
     return {

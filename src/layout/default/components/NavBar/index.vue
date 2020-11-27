@@ -2,7 +2,7 @@
   <div class="navbar-container fixed">
     <div class="wrapper-container flex">
       <div class="logo-container" @click="toPage('/home')">
-        <img class="logo" :src="logo" />
+        <!-- <img class="logo" :src="logo" /> -->
       </div>
       <!-- 导航 -->
       <div class="nav-list-container">

@@ -64,6 +64,7 @@ xlong-admin-antdv 是一套基于 Vue3 + Ant Design Vue + Bmob 开发的单页�
 │  ├─common 通用方法
 │  │    index.js
 │  │    table.js
+│  │    upload.js
 │  │
 │  ├─config // 项目配置
 │  │    index.js

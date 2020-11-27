@@ -2,21 +2,29 @@
   <div class="account-list-container">
     <div class="operate-btn-container mb-20 flex">
       <a-space size="small">
-        <a-button type="primary" @click="openAccountStoreMoadl(null, 1)">添加</a-button>
+        <a-button type="primary" @click="openAccountStoreMoadl(null, 1)"
+          >添加</a-button
+        >
         <a-popconfirm title="确认删除?" @confirm="handleDelelteAccount()">
-          <a-button :disabled="rowSelection.selectedRowKeys.length === 0" :loading="delLoading">删除</a-button>
+          <a-button
+            :disabled="rowSelection.selectedRowKeys.length === 0"
+            :loading="delLoading"
+            >删除</a-button
+          >
         </a-popconfirm>
         <a-button
           type="primary"
           :loading="enableLoading"
           :disabled="rowSelection.selectedRowKeys.length === 0"
           @click="handleEnableAccount(1)"
-        >启用</a-button>
+          >启用</a-button
+        >
         <a-button
           :loading="disableLoading"
           :disabled="rowSelection.selectedRowKeys.length === 0"
           @click="handleEnableAccount(-1)"
-        >禁用</a-button>
+          >禁用</a-button
+        >
       </a-space>
       <div class="search-container">
         <a-input-search
@@ -54,10 +62,11 @@
           <edit-outlined class="mr-5" />编辑
         </a>
         <a-divider type="vertical" />
-        <a-popconfirm title="确认删除?" @confirm="handleDelelteAccount(record.objectId)">
-          <a>
-            <delete-outlined class="mr-5" />删除
-          </a>
+        <a-popconfirm
+          title="确认删除?"
+          @confirm="handleDelelteAccount(record.objectId)"
+        >
+          <a> <delete-outlined class="mr-5" />删除 </a>
         </a-popconfirm>
       </template>
     </a-table>
@@ -192,7 +201,7 @@ export default {
         sorter: (a, b) => moment(a.createdAt).isBefore(b.createdAt)
       },
       {
-        title: "Action",
+        title: "操作",
         key: "action",
         slots: { customRender: "action" },
         width: 150,
@@ -237,22 +246,22 @@ export default {
       const value = e.target.value;
       // 清空
       if (!value) {
-        getList(1, pageConfig.value.pageSize, apiGetList);
+        getList(1, pageConfig.pageSize, apiGetList);
       }
     };
 
     // 搜索
     function onSearch() {
-      getList(1, pageConfig.value.pageSize, apiGetList);
+      getList(1, pageConfig.pageSize, apiGetList);
     }
 
     // 账户存储成功
     const handleAccountStoreSuccess = type => {
       // 新增操作返回第一页
       if (type === 1) {
-        pageConfig.value.current = 1;
+        pageConfig.current = 1;
       }
-      getList(pageConfig.value.current, pageConfig.value.pageSize, apiGetList);
+      getList(pageConfig.current, pageConfig.pageSize, apiGetList);
     };
 
     // 删除loading
@@ -262,11 +271,11 @@ export default {
 
     // 删除账户
     const handleDelelteAccount = id => {
-      if (!id && !rowSelection.value.selectedRowKeys.length) {
+      if (!id && !rowSelection.selectedRowKeys.length) {
         ctx.$message.warning("无可操作的对象，请刷新页面重试");
       }
 
-      delIds.value = id ? [id] : rowSelection.value.selectedRowKeys;
+      delIds.value = id ? [id] : rowSelection.selectedRowKeys;
 
       delLoading.value = id ? false : true;
 
@@ -274,11 +283,7 @@ export default {
         .then(res => {
           if (res.code == 200) {
             ctx.$message.success("删除成功!");
-            getList(
-              pageConfig.value.current,
-              pageConfig.value.pageSize,
-              apiGetList
-            );
+            getList(pageConfig.current, pageConfig.pageSize, apiGetList);
             clearSelect();
           } else console.log(res);
         })
@@ -298,21 +303,17 @@ export default {
 
     // 启/禁用账户
     const handleEnableAccount = enabledState => {
-      // console.log(rowSelection.value.selectedRowKeys);
+      // console.log(rowSelection.selectedRowKeys);
 
       enabledState === 1
         ? (enableLoading.value = true)
         : (disableLoading.value = true);
 
-      Api.EnableAcc({ enabledState }, rowSelection.value.selectedRowKeys)
+      Api.EnableAcc({ enabledState }, rowSelection.selectedRowKeys)
         .then(res => {
           if (res.code == 200) {
             ctx.$message.success("操作成功!");
-            getList(
-              pageConfig.value.current,
-              pageConfig.value.pageSize,
-              apiGetList
-            );
+            getList(pageConfig.current, pageConfig.pageSize, apiGetList);
           } else ctx.$message.warning(res.msg);
         })
         .catch(() => ctx.$message.error("操作失败！"))
@@ -325,7 +326,7 @@ export default {
     };
 
     onMounted(() => {
-      getList(pageConfig.value.current, pageConfig.value.pageSize, apiGetList);
+      getList(pageConfig.current, pageConfig.pageSize, apiGetList);
     });
 
     return {
