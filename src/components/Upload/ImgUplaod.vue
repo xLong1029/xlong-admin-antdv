@@ -1,22 +1,15 @@
 <template>
   <a-upload
-    name="face"
-    list-type="picture-card"
     action="customize"
+    list-type="picture-card"
     :accept="fileAccept"
-    :before-upload="handleBeforeUpload"
-    :custom-request="uploadAvatar"
+    :custom-request="uploadImg"
     @preview="handlePreview"
     @change="handleUploadChange"
-    :show-file-list="false"
   >
-    <div v-if="form.userFace" class="img-shade">
-      <img :src="form.userFace" alt="avatar" @error="setDefaultHeadImg" />
-    </div>
-    <div v-else>
-      <loading-outlined v-if="uploadLoading" />
-      <plus-outlined v-else />
-      <div class="ant-upload-text">上传头像</div>
+    <div v-if="fileList.length < limitNum">
+      <plus-outlined />
+      <div class="ant-upload-text">{{ uploadBtnText }}</div>
     </div>
   </a-upload>
 </template>
@@ -26,7 +19,21 @@ import { getCurrentInstance, ref } from "vue";
 import upload from "common/upload.js";
 
 export default {
-  name: "UserInfo",
+  name: "ImgUpload",
+  props: {
+    uploadBtnText: {
+      type: String,
+      default: "上传图片"
+    },
+    fileList: {
+      type: Array,
+      default: () => []
+    },
+    limitNum: {
+      type: Number,
+      default: 8
+    }
+  },
   setup() {
     const { ctx } = getCurrentInstance();
 
@@ -75,8 +82,8 @@ export default {
       }
     };
 
-    // 上传头像
-    const uploadAvatar = params => {
+    // 上传图片
+    const uploadImg = params => {
       // console.log("uploadFile", params);
       const file = params.file;
 
@@ -95,7 +102,8 @@ export default {
 
     // 预览头像
     const handlePreview = file => {
-      ctx.$emit("preview", file);
+      console.log(file);
+      // ctx.$emit("preview", file);
     };
 
     return {
@@ -104,7 +112,7 @@ export default {
       handleUploadChange,
       handleBeforeUpload,
       uploadLoading,
-      uploadAvatar,
+      uploadImg,
       handlePreview
     };
   }

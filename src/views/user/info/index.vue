@@ -7,12 +7,12 @@
       :label-col="{ span: labelColSpan }"
       :wrapper-col="{ span: wrapperColSpan }"
     >
-      <a-form-item label="账号" name="username">{{
-        form.username
-      }}</a-form-item>
-      <!-- <a-form-item label="头像" name="face" class="mb-15">
-        <img-upload :file-list="fileList" :on-check-format="onCheckFormat" />
-      </a-form-item>-->
+      <a-form-item label="账号" name="username">
+        {{ form.username }}
+      </a-form-item>
+      <a-form-item label="头像" name="face" class="mb-0">
+        <img-upload upload-btn-text="上传图片" />
+      </a-form-item>
       <a-form-item label="用户昵称" name="nickName">
         <a-input
           v-model:value="form.nickName"
@@ -60,10 +60,9 @@ import {
   computed,
   onMounted
 } from "vue";
-import upload from "common/upload.js";
 import Api from "api/user";
 import { strToArr } from "utils";
-import { ImgUpload } from "components/Upload/ImgUplaod.vue";
+import ImgUpload from "components/Upload/ImgUplaod.vue";
 
 export default {
   name: "UserInfo",
@@ -102,8 +101,6 @@ export default {
     const setPageLoding = val => {
       ctx.$store.dispatch("app/setPageLoading", val);
     };
-
-    const fileList = ref([]);
 
     const previewModal = reactive({
       visible: false,
@@ -209,8 +206,7 @@ export default {
       onSubmit,
       previewModal,
       handlePreview,
-      handleCancelPreview,
-      fileList
+      handleCancelPreview
     };
   }
 };
