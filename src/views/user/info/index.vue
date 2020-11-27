@@ -7,9 +7,12 @@
       :label-col="{ span: labelColSpan }"
       :wrapper-col="{ span: wrapperColSpan }"
     >
-      <a-form-item label="账号" name="username">
-        {{ form.username }}
-      </a-form-item>
+      <a-form-item label="账号" name="username">{{
+        form.username
+      }}</a-form-item>
+      <!-- <a-form-item label="头像" name="face" class="mb-15">
+        <img-upload :file-list="fileList" :on-check-format="onCheckFormat" />
+      </a-form-item>-->
       <a-form-item label="用户昵称" name="nickName">
         <a-input
           v-model:value="form.nickName"
@@ -38,6 +41,13 @@
         >
       </a-form-item>
     </a-form>
+    <a-modal
+      :visible="previewModal.visible"
+      :footer="null"
+      @cancel="handleCancelPreview"
+    >
+      <img alt="example" style="width: 100%" :src="previewModal.imgUrl" />
+    </a-modal>
   </div>
 </template>
 
@@ -50,11 +60,14 @@ import {
   computed,
   onMounted
 } from "vue";
+import upload from "common/upload.js";
 import Api from "api/user";
 import { strToArr } from "utils";
+import { ImgUpload } from "components/Upload/ImgUplaod.vue";
 
 export default {
   name: "UserInfo",
+  components: { ImgUpload },
   setup() {
     const { ctx } = getCurrentInstance();
 
@@ -70,6 +83,7 @@ export default {
     // 表单
     const form = reactive({
       username: null,
+      userFace: null,
       nickName: null,
       realName: null,
       gender: null
@@ -89,6 +103,27 @@ export default {
       ctx.$store.dispatch("app/setPageLoading", val);
     };
 
+    const fileList = ref([]);
+
+    const previewModal = reactive({
+      visible: false,
+      imgUrl: null
+    });
+
+    // 预览头像
+    const handlePreview = file => {
+      console.log(file);
+
+      previewModal.visible = true;
+      previewModal.imgUrl = file;
+    };
+
+    // 取消预览
+    const handleCancelPreview = () => {
+      previewModal.visible = false;
+      previewModal.imgUrl = null;
+    };
+
     // 获取个人资料
     const getProfile = () => {
       setPageLoding(true);
@@ -99,15 +134,16 @@ export default {
           if (code == 200) {
             const {
               username,
+              userFace,
               nickName,
               realName,
               gender,
               objectId,
-              userFace,
               role
             } = data;
 
             form.username = username;
+            form.userFace = userFace;
             form.nickName = nickName;
             form.realName = realName;
             form.gender = gender;
@@ -170,7 +206,11 @@ export default {
       rules,
       submitLoading,
       pageLoading,
-      onSubmit
+      onSubmit,
+      previewModal,
+      handlePreview,
+      handleCancelPreview,
+      fileList
     };
   }
 };
@@ -180,5 +220,40 @@ export default {
   padding: 40px 0;
   width: 500px;
   margin: auto;
+}
+
+.img-shade {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  &-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    cursor: default;
+    color: #fff;
+    opacity: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s;
+
+    &__btn {
+      cursor: pointer;
+
+      // 隐藏默认上传loading效果
+      ::v-deep(.ant-upload-list) {
+        display: none;
+      }
+    }
+
+    ::v-deep(.ant-upload) {
+      color: #fff;
+    }
+  }
 }
 </style>

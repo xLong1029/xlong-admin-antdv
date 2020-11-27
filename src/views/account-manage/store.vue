@@ -10,9 +10,16 @@
     @cancel="handleCancel"
   >
     <a-spin :spinning="infoLoading" tip="系统初始化，请稍后...">
-      <a-form ref="submitForm" :model="form" :rules="rules" class="account-detail-container">
+      <a-form
+        ref="submitForm"
+        :model="form"
+        :rules="rules"
+        class="account-detail-container"
+      >
         <div class="account-detail-content">
-          <div class="account-detail-content__title mt-0" id="baseInfo">基本信息</div>
+          <div class="account-detail-content__title mt-0" id="baseInfo">
+            基本信息
+          </div>
           <div class="account-detail-content__cont">
             <div class="info-table">
               <div class="flex">
@@ -23,7 +30,10 @@
                     </div>
                     <div class="info-table__td">
                       <a-form-item name="realname" class="width-100">
-                        <a-input v-model:value="form.realname" placeholder="请输入真实姓名"></a-input>
+                        <a-input
+                          v-model:value="form.realname"
+                          placeholder="请输入真实姓名"
+                        ></a-input>
                       </a-form-item>
                     </div>
                   </div>
@@ -49,7 +59,10 @@
                 </div>
                 <div class="info-table__tr">
                   <div class="info-table__td head-pic img-shade">
-                    <img :src="form.face ? form.face : defaultFaceImg" @error="setdefaultHeadImg" />
+                    <img
+                      :src="form.face ? form.face : defaultFaceImg"
+                      @error="setDefaultHeadImg"
+                    />
                     <div class="img-shade-actions">
                       <a-upload
                         class="img-shade-actions__btn"
@@ -60,12 +73,10 @@
                         @change="handleUploadChange"
                         :show-file-list="false"
                       >
-                        <!-- <div v-if="uploadLoading">
+                        <div v-if="uploadLoading">
                           <loading-outlined v-if="uploadLoading" />
                         </div>
-                        <div v-else> -->
-                          <edit-outlined />编辑
-                        <!-- </div> -->
+                        <div v-else><edit-outlined />编辑</div>
                       </a-upload>
                     </div>
                   </div>
@@ -77,7 +88,11 @@
                 </div>
                 <div class="info-table__td">
                   <a-form-item name="birthdate" class="width-100">
-                    <a-date-picker v-model:value="form.birthdate" type="date" placeholder="请选择日期"></a-date-picker>
+                    <a-date-picker
+                      v-model:value="form.birthdate"
+                      type="date"
+                      placeholder="请选择日期"
+                    ></a-date-picker>
                   </a-form-item>
                 </div>
                 <div class="info-table__th">
@@ -98,7 +113,10 @@
                 </div>
                 <div class="info-table__td">
                   <a-form-item name="mobile" class="width-100">
-                    <a-input v-model:value="form.mobile" placeholder="请输入手机号码"></a-input>
+                    <a-input
+                      v-model:value="form.mobile"
+                      placeholder="请输入手机号码"
+                    ></a-input>
                   </a-form-item>
                 </div>
                 <div class="info-table__th">
@@ -107,13 +125,21 @@
                 <div class="info-table__td">
                   <a-form-item name="email" class="width-100">
                     <a-input-group compact>
-                      <a-input style="width: 40%" v-model:value="form.email" placeholder="请输入电子邮箱"></a-input>
-                      <a-select style="width: 60%" v-model:value="emailSuffixValue">
+                      <a-input
+                        style="width: 40%"
+                        v-model:value="form.email"
+                        placeholder="请输入电子邮箱"
+                      ></a-input>
+                      <a-select
+                        style="width: 60%"
+                        v-model:value="emailSuffixValue"
+                      >
                         <a-select-option
                           v-for="(item, index) in emailSuffixList"
                           :key="'emailSuffix' + index"
                           :value="item.name"
-                        >{{ item.name }}</a-select-option>
+                          >{{ item.name }}</a-select-option
+                        >
                       </a-select>
                     </a-input-group>
                   </a-form-item>
@@ -123,7 +149,10 @@
                 <div class="info-table__th">通讯地址</div>
                 <div class="info-table__td">
                   <a-form-item name="address" class="width-100">
-                    <a-input v-model:value="form.address" placeholder="请输入通讯地址"></a-input>
+                    <a-input
+                      v-model:value="form.address"
+                      placeholder="请输入通讯地址"
+                    ></a-input>
                   </a-form-item>
                 </div>
               </div>
@@ -131,14 +160,20 @@
                 <div class="info-table__th">备注</div>
                 <div class="info-table__td">
                   <a-form-item name="remark" class="width-100">
-                    <a-textarea v-model:value="form.remark" :rows="5" placeholder="请输入备注"></a-textarea>
+                    <a-textarea
+                      v-model:value="form.remark"
+                      :rows="5"
+                      placeholder="请输入备注"
+                    ></a-textarea>
                   </a-form-item>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="account-detail-content__title" id="workInfo">工作信息</div>
+          <div class="account-detail-content__title" id="workInfo">
+            工作信息
+          </div>
           <div class="account-detail-content__cont mb-0">
             <div class="info-table">
               <div class="info-table__tr">
@@ -147,7 +182,10 @@
                 </div>
                 <div class="info-table__td">
                   <a-form-item name="companyName" class="width-100">
-                    <a-input v-model:value="form.companyName" placeholder="请输入工作单位名称"></a-input>
+                    <a-input
+                      v-model:value="form.companyName"
+                      placeholder="请输入工作单位名称"
+                    ></a-input>
                   </a-form-item>
                 </div>
                 <div class="info-table__th">
@@ -160,7 +198,8 @@
                         v-for="(item, index) in jobList"
                         :key="'job' + index"
                         :value="item.name"
-                      >{{ item.name }}</a-select-option>
+                        >{{ item.name }}</a-select-option
+                      >
                     </a-select>
                   </a-form-item>
                 </div>
@@ -180,7 +219,8 @@
                     <a-checkbox
                       v-model:checked="form.isGraduate"
                       @change="handleGraduateChange"
-                    >尚未毕业</a-checkbox>
+                      >尚未毕业</a-checkbox
+                    >
                   </a-form-item>
                 </div>
               </div>
@@ -190,7 +230,10 @@
                 </div>
                 <div class="info-table__td">
                   <a-form-item name="profession" class="width-100">
-                    <a-checkbox-group v-model:value="form.profession" :options="professionList" />
+                    <a-checkbox-group
+                      v-model:value="form.profession"
+                      :options="professionList"
+                    />
                   </a-form-item>
                 </div>
               </div>
@@ -276,7 +319,7 @@ export default {
     const defaultFaceImg = require("@/assets/images/head.jpg");
 
     // 设置默认头像
-    const setdefaultHeadImg = e => {
+    const setDefaultHeadImg = e => {
       e.currentTarget.src = defaultFaceImg.value;
       e.currentTarget.onerror = null;
     };
@@ -301,6 +344,7 @@ export default {
 
     const uploadLoading = ref(false);
 
+    // 上传状态改变
     const handleUploadChange = info => {
       if (info.file.status === "uploading") {
         uploadLoading.value = true;
@@ -606,7 +650,7 @@ export default {
       professionList,
       provinceList,
       defaultFaceImg,
-      setdefaultHeadImg,
+      setDefaultHeadImg,
       workTimePH,
       jobList,
       handleGraduateChange,

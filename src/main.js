@@ -29,6 +29,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   LoadingOutlined,
+  PlusOutlined,
   RightOutlined
 } from "@ant-design/icons-vue";
 
@@ -49,6 +50,7 @@ app
   .component(DeleteOutlined.name, DeleteOutlined)
   .component(EditOutlined.name, EditOutlined)
   .component(LoadingOutlined.name, LoadingOutlined)
+  .component(PlusOutlined.name, PlusOutlined)
   .component(RightOutlined.name, RightOutlined);
 
 app.mount("#app");

@@ -4,33 +4,37 @@
 
 xlong-admin-antdv 是一套基于 Vue3 + Ant Design Vue + Bmob 开发的单页面客户端渲染管理后台系统示例。  
 
+温馨提示：  
+1. 因我的Bmob用的是开发版套餐，所有查询只有全匹配查询，无模糊查询，请根据自行需求进行修改。
+2. 部署到github的站点是https的，上传到bomb的图片地址是http，在线上项目浏览器会报Mixed Content错误，并且无法显示图片，本地运行项目无此问题，建议使用本地运行查看效果。
+3. 如果要测试删除功能，请自行添加再删除，请保留我原有的测试数据
+
 *该项目仅作学习参考，请勿商用
 
-<!-- ## 项目展示
+## 项目展示
 
-> DEMO地址：https://xlong1029.github.io/xlong-admin-element/#/Login
+> DEMO地址：https://xlong1029.github.io/xlong-admin-antdv/#/home
 
 ## 项目说明
 
 #### 1. 前后端分离开发模式
-- **前端**：Vue + Webpack+ Element
+- **前端**：Vue + Ant Design Vue
 - **后端**：Bmob
 
 #### 2. 项目用到技术、框架与插件
-[Vue.js](https://github.com/vuejs)<br/>
-[webpack](https://github.com/webpack)<br/>
-[Element](https://github.com/ElemeFE/element)<br/>
-[vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)<br/>
-[ECharts](https://www.echartsjs.com/zh)<br/>
+[Vue.js](https://v3.vuejs.org/)<br/>
+[Ant Design Vue](https://github.com/vueComponent/ant-design-vue)<br/>
 
 ## 部分项目运行截图
-* 首页
+* 首页/登录
+
+![Image text](static/images/screen-1.gif)
 
 * 用户中心
 
 * 单位信息
 
-* 账户管理 -->
+* 账户管理
 
 ## 目录结构
 
