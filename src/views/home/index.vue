@@ -221,7 +221,7 @@ export default {
     watch(
       () => [remeberPwd.value, ctx.$store.getters.token],
       ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
-        console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
+        // console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
         if (!newRemeberPwd && getLocalS("username")) {
           delLocalS("username");
           delLocalS("password");

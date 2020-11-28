@@ -13,11 +13,24 @@ export default {
    *
    * @param {*} id 企业id
    */
-  GetCompanyInfo: id => {
+  GetCompanyInfo: (id) => {
     return new Promise((resolve, reject) => {
       BmobServer.GetOne("CompanyInfo", id)
-        .then(res => resolve(res))
-        .catch(err => reject(err));
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
+    });
+  },
+  /**
+   * 变单位信息
+   *
+   * @param {*} params 新增的参数对象
+   * @param {*} id 查询的objectId
+   */
+  EditCompanyInfo: (params, id) => {
+    return new Promise((resolve, reject) => {
+      BmobServer.EditOne("CompanyInfo", id, params)
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
     });
   },
   /**
@@ -33,18 +46,20 @@ export default {
 
     return new Promise((resolve, reject) => {
       BmobServer.GetListData(query, pageNo, pageSize)
-        .then(res => resolve(res))
-        .catch(err => reject(err));
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
     });
   },
-   /**
-     * 获取人员信息
-     *
-     * @param {*} id 查询的objectId
-     */
-    GetMemberInfo: (id) => {
-      return new Promise((resolve, reject) => {
-          BmobServer.GetOne('_User', id).then(res => resolve(res)).catch(err => reject(err))
-      });
+  /**
+   * 获取人员信息
+   *
+   * @param {*} id 查询的objectId
+   */
+  GetMemberInfo: (id) => {
+    return new Promise((resolve, reject) => {
+      BmobServer.GetOne("_User", id)
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
+    });
   },
 };

@@ -123,3 +123,62 @@ export function isArray(arg) {
   }
   return Array.isArray(arg);
 }
+
+/**
+ *
+ * 验证邮政编码
+ *
+ * @param {string} postCode
+ * @returns {Boolean}
+ */
+export function validPostCode(postCode) {
+  const reg = /[1-9]\d{5}(?!\d)/
+  return reg.test(postCode)
+}
+
+/**
+ *
+ * 验证身份证
+ *
+ * @param {string} idcard
+ * @returns {Boolean}
+ */
+export function validIDcard(idcard) {
+  const reg = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/
+  return reg.test(idcard)
+}
+
+/**
+ *
+ * 验证统一社会信用代码
+ *
+ * @param {string} CompanyNo
+ * @returns {Boolean}
+ */
+export function validBusinessLicence(CompanyNo) {
+  const reg = /^[0-9A-ZW]{18}$/
+  return reg.test(CompanyNo)
+}
+
+/**
+ *
+ * 验证真实姓名
+ *
+ * @param {string} realName
+ * @returns {Boolean}
+ */
+export function validRealName(realName) {
+  const reg = /^[\u4E00-\u9FA5](([\u4E00-\u9FA5]|·(?!·))){0,18}[\u4E00-\u9FA5]$/
+  return reg.test(realName)
+}
+
+/**
+ * 验证普通电话(包含手机和座机)
+ *
+ * @param {string} phone
+ * @returns {Boolean}
+ */
+export function validPhone(phone) {
+  const reg = /^(1\d{10}$)|(((400)-(\d{3})-(\d{4}))|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{3,7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)$/
+  return reg.test(phone)
+}

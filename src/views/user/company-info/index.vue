@@ -1,7 +1,7 @@
 <template>
   <div class="company-info-container">
-    <a-tabs type="card" class="card-container">
-      <a-tab-pane v-for="item in tabs" :key="item.label" :tab="item.label">
+    <a-tabs v-model:active-key="activeName" type="card" class="card-container">
+      <a-tab-pane v-for="item in tabs" :key="item.name" :tab="item.label">
         <component
           :ref="item.name"
           :is="item.component"
@@ -9,9 +9,20 @@
           :data="tabDatas[item.data]"
           :loading="pageLoading"
           :disable-edit="disableEdit"
+          @change="tabContentChange"
         />
       </a-tab-pane>
     </a-tabs>
+    <div class="operate-btn-container">
+      <template v-if="activeName === 'base'">
+        <a-button v-if="!isChange" type="primary" @click="changeInfo(true)"
+          >变更基本信息</a-button
+        >
+        <a-button v-else  @click="changeInfo(false)"
+          >取消变更</a-button
+        >
+      </template>
+    </div>
   </div>
 </template>
 
@@ -32,7 +43,7 @@ export default {
 
     const tabDatas = ref({
       companyBaseInfo: {},
-      companyMembers: {}
+      companyMembers: {},
     });
 
     const disableEdit = ref(true);
@@ -42,20 +53,20 @@ export default {
         label: "基本信息",
         name: "base",
         data: "companyBaseInfo",
-        component: "BaseInfo"
+        component: "BaseInfo",
       },
       {
         label: "人员信息",
         name: "member",
         data: "companyMembers",
-        component: "MemberList"
-      }
+        component: "MemberList",
+      },
     ];
 
     const activeName = ref("base");
 
     // 设置页面加载Loading
-    const setPageLoding = val => {
+    const setPageLoding = (val) => {
       ctx.$store.dispatch("app/setPageLoading", val);
     };
 
@@ -63,7 +74,7 @@ export default {
     const getCompnayInfo = () => {
       setPageLoding(true);
       Api.GetCompanyInfo(companyId.value)
-        .then(res => {
+        .then((res) => {
           const { code, data } = res;
           // 获取到数据
           if (code == 200) {
@@ -72,8 +83,27 @@ export default {
             ctx.$message.error("数据获取失败，请稍后重试");
           }
         })
-        .catch(err => console.log(err))
+        .catch((err) => console.log(err))
         .finally(() => setPageLoding(false));
+    };
+
+    const isChange = ref(false);
+
+    // 变更单位信息
+    const changeInfo = (val) => {
+      disableEdit.value = !val;
+      isChange.value = val;
+      if(!val) {
+        getCompnayInfo();
+      }
+    };
+
+    // tab内容改变
+    const tabContentChange = (val) => {
+      if (val === "变更基本信息" || val === "取消变更基本信息") {
+        changeInfo(false);
+        getCompnayInfo();
+      }
     };
 
     onMounted(() => {
@@ -85,15 +115,19 @@ export default {
       activeName,
       pageLoading,
       tabDatas,
-      disableEdit
+      disableEdit,
+      changeInfo,
+      isChange,
+      tabContentChange,
     };
-  }
+  },
 };
 </script>
 <style lang="less" scoped>
 .company-info-container {
   padding: 20px 0;
   overflow: hidden;
+  position: relative;
 }
 
 .card-container {
@@ -116,5 +150,11 @@ export default {
     padding: 16px;
     border-radius: 0 0 4px 4px;
   }
+}
+
+.operate-btn-container {
+  position: absolute;
+  right: 0;
+  top: 20px;
 }
 </style>

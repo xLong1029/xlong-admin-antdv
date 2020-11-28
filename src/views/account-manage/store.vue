@@ -60,7 +60,7 @@
                 <div class="info-table__tr">
                   <div class="info-table__td head-pic img-shade">
                     <img
-                      :src="form.face ? form.face : defaultFaceImg"
+                      :src="form.face"
                       @error="setDefaultHeadImg"
                     />
                     <div class="img-shade-actions">
@@ -517,7 +517,7 @@ export default {
               .then(res => {
                 if (res.code == 200) {
                   ctx.$message.success("添加成功");
-                  ctx.$emit("submit", 1);
+                  context.emit("submit", 1);
                   handleCancel();
                 } else ctx.$message.error(res.msg);
               })
@@ -530,7 +530,7 @@ export default {
               .then(res => {
                 if (res.code == 200) {
                   ctx.$message.success("编辑成功");
-                  ctx.$emit("submit", 2);
+                  context.emit("submit", 2);
                   handleCancel();
                 } else ctx.$message.error(res.msg);
               })
@@ -546,7 +546,6 @@ export default {
     // 取消弹窗
     const handleCancel = () => {
       context.emit("close", false);
-      context.emit("update:visible", false);
     };
 
     // loading

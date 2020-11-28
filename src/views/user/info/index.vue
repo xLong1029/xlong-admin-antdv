@@ -10,8 +10,15 @@
       <a-form-item label="账号" name="username">
         {{ form.username }}
       </a-form-item>
-      <a-form-item label="头像" name="face" class="mb-0">
-        <img-upload upload-btn-text="上传图片" />
+      <a-form-item label="头像" name="userFace" class="mb-0">
+        <img-upload
+          :file-list="form.userFace"
+          upload-btn-text="上传头像"
+          :limit-num="1"
+          @delete="handleUploadImgDelete"
+          @upload-success="handleUploadSuccess"
+          @preview="handleImgPreview"
+        />
       </a-form-item>
       <a-form-item label="用户昵称" name="nickName">
         <a-input
@@ -41,13 +48,12 @@
         >
       </a-form-item>
     </a-form>
-    <a-modal
-      :visible="previewModal.visible"
-      :footer="null"
-      @cancel="handleCancelPreview"
-    >
-      <img alt="example" style="width: 100%" :src="previewModal.imgUrl" />
-    </a-modal>
+    <img-preview
+      :title="imgPreviewModal.title"
+      :visible="imgPreviewModal.visible"
+      :imgUrl="imgPreviewModal.imgUrl"
+      @close="handleCancelImgPreview"
+    />
   </div>
 </template>
 
@@ -58,15 +64,21 @@ import {
   toRaw,
   ref,
   computed,
-  onMounted
+  onMounted,
 } from "vue";
+// Api
 import Api from "api/user";
+// 工具
 import { strToArr } from "utils";
+// 组件
 import ImgUpload from "components/Upload/ImgUplaod.vue";
+import ImgPreview from "components/Preview/ImgPreview.vue";
+// 通用方法
+import preview from "common/preview.js";
 
 export default {
   name: "UserInfo",
-  components: { ImgUpload },
+  components: { ImgUpload, ImgPreview },
   setup() {
     const { ctx } = getCurrentInstance();
 
@@ -82,50 +94,50 @@ export default {
     // 表单
     const form = reactive({
       username: null,
-      userFace: null,
+      userFace: [],
       nickName: null,
       realName: null,
-      gender: null
+      gender: null,
     });
 
     // 表单规则
     const rules = reactive({
       nickName: [{ required: true, message: "请输入昵称", trigger: "blur" }],
       realName: [
-        { required: true, message: "请输入真实姓名", trigger: "blur" }
+        { required: true, message: "请输入真实姓名", trigger: "blur" },
       ],
-      gender: [{ required: true, message: "请选择性别", trigger: "change" }]
+      gender: [{ required: true, message: "请选择性别", trigger: "change" }],
     });
 
     // 设置页面加载Loading
-    const setPageLoding = val => {
+    const setPageLoding = (val) => {
       ctx.$store.dispatch("app/setPageLoading", val);
     };
 
-    const previewModal = reactive({
-      visible: false,
-      imgUrl: null
-    });
-
-    // 预览头像
-    const handlePreview = file => {
-      console.log(file);
-
-      previewModal.visible = true;
-      previewModal.imgUrl = file;
+    // 头像上传成功
+    const handleUploadSuccess = (file) => {
+      // 多图片上传时
+      const length = form.userFace.length;
+      file.uid = length ? form.userFace[length - 1].uid++ : 1; // 解决浏览器报警告“<TransitionGroup> children must be keyed. ”
+      form.userFace = [file];
     };
 
-    // 取消预览
-    const handleCancelPreview = () => {
-      previewModal.visible = false;
-      previewModal.imgUrl = null;
+    // 删除上传的图片
+    const handleUploadImgDelete = ({ file, index, list }) => {
+      form.userFace = list;
     };
+
+    const {
+      imgPreviewModal,
+      handleImgPreview,
+      handleCancelImgPreview,
+    } = preview();
 
     // 获取个人资料
     const getProfile = () => {
       setPageLoding(true);
       Api.GetUser(token.value)
-        .then(res => {
+        .then((res) => {
           const { code, data } = res;
           // 获取到数据
           if (code == 200) {
@@ -136,11 +148,20 @@ export default {
               realName,
               gender,
               objectId,
-              role
+              role,
             } = data;
 
             form.username = username;
-            form.userFace = userFace;
+            form.userFace = userFace
+              ? [
+                  {
+                    uid: 1,
+                    url: userFace,
+                  },
+                ]
+              : [];
+
+            console.log(form.userFace);
             form.nickName = nickName;
             form.realName = realName;
             form.gender = gender;
@@ -154,14 +175,14 @@ export default {
               realName,
               nickName,
               userId: objectId,
-              roles: role ? strToArr(role, ",") : null
+              roles: role ? strToArr(role, ",") : null,
             });
           } else {
             ctx.$message.error("无法获取用户数据!");
             console.log("无该用户");
           }
         })
-        .catch(err => console.log(err))
+        .catch((err) => console.log(err))
         .finally(() => setPageLoding(false));
     };
 
@@ -172,21 +193,25 @@ export default {
     const onSubmit = () => {
       ctx.$refs.submitForm
         .validate()
-        .then(async () => {
+        .then(() => {
           submitLoading.value = true;
-          let params = toRaw(form);
+          const data = toRaw(form);
+
+          let params = { ...data };
+
+          params.userFace = data.userFace.length ? data.userFace[0].url : null;
 
           Api.EditProfile(params, userId.value)
-            .then(res => {
+            .then((res) => {
               if (res.code == 200) {
                 getProfile();
                 ctx.$message.success("资料修改成功！");
               } else ctx.$message.error("资料修改失败！");
             })
-            .catch(err => console.log(err))
+            .catch((err) => console.log(err))
             .finally(() => (submitLoading.value = false));
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("error", err);
         });
     };
@@ -204,11 +229,13 @@ export default {
       submitLoading,
       pageLoading,
       onSubmit,
-      previewModal,
-      handlePreview,
-      handleCancelPreview
+      imgPreviewModal,
+      handleImgPreview,
+      handleCancelImgPreview,
+      handleUploadSuccess,
+      handleUploadImgDelete,
     };
-  }
+  },
 };
 </script>
 <style lang="less" scoped>

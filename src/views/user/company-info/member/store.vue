@@ -193,7 +193,6 @@ export default {
     // 取消弹窗
     const handleCancel = () => {
       context.emit("close", false);
-      context.emit("update:visible", false);
     };
 
     // loading
