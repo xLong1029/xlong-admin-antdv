@@ -25,7 +25,7 @@ xlong-admin-antdv 是一套基于 Vue3 + Ant Design Vue + Bmob 开发的单页�
 
 #### 2. 项目用到技术、框架与插件
 
-[Vue.js](https://v3.vuejs.org/)<br/>
+[Vue3](https://v3.vuejs.org/)<br/>
 [Ant Design Vue](https://github.com/vueComponent/ant-design-vue)<br/>
 
 ## 部分项目运行截图
@@ -46,15 +46,11 @@ xlong-admin-antdv 是一套基于 Vue3 + Ant Design Vue + Bmob 开发的单页�
 
 ![Image text](static/images/screen-4.gif)
 
-- 单位基本信息变更
+- 账户管理
 
 ![Image text](static/images/screen-5.gif)
 
-- 账户管理
-
 ![Image text](static/images/screen-6.gif)
-
-![Image text](static/images/screen-7.gif)
 
 ## 目录结构
 
