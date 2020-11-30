@@ -14,13 +14,11 @@
       </a-tab-pane>
     </a-tabs>
     <div class="operate-btn-container">
-      <template v-if="activeName === 'base'">
+      <template v-if="showBaseInfoChangeBtn">
         <a-button v-if="!isChange" type="primary" @click="changeInfo(true)"
           >变更基本信息</a-button
         >
-        <a-button v-else  @click="changeInfo(false)"
-          >取消变更</a-button
-        >
+        <a-button v-else @click="changeInfo(false)">取消变更</a-button>
       </template>
     </div>
   </div>
@@ -40,6 +38,12 @@ export default {
 
     const pageLoading = computed(() => ctx.$store.getters.pageLoading);
     const companyId = computed(() => ctx.$store.getters.companyId);
+    const showBaseInfoChangeBtn = computed(
+      () =>
+        activeName.value === "base" &&
+        (ctx.$store.getters.roles.indexOf("admin") >= 0 ||
+          ctx.$store.getters.roles.indexOf("manage") >= 0)
+    );
 
     const tabDatas = ref({
       companyBaseInfo: {},
@@ -93,7 +97,7 @@ export default {
     const changeInfo = (val) => {
       disableEdit.value = !val;
       isChange.value = val;
-      if(!val) {
+      if (!val) {
         getCompnayInfo();
       }
     };
@@ -119,6 +123,7 @@ export default {
       changeInfo,
       isChange,
       tabContentChange,
+      showBaseInfoChangeBtn,
     };
   },
 };

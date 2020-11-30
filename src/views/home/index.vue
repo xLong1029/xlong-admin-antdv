@@ -6,7 +6,9 @@
     </h1>
     <p class="home-subtitle mt-20">
       为了实现对XXX信息化服务的牛逼功能，我们在此为广大群众提供在线服务，欢迎大家使用，并对我们的服务提出宝贵的意见（没错，是编的，不用太认真），
-      <a>演示的账号密码在操作手册中，请自行查阅。</a>
+      <a @click="openOperationManual()"
+        >演示的账号密码在操作手册中，请自行查阅。</a
+      >
     </p>
     <div class="home-content mt-20">
       <div class="banner-user">
@@ -151,7 +153,7 @@ import {
   toRaw,
   ref,
   watch,
-  createVNode
+  createVNode,
 } from "vue";
 // import { useForm } from "@ant-design-vue/use";
 import { Modal } from "ant-design-vue";
@@ -163,7 +165,7 @@ import {
   delLocalS,
   encrypt,
   decrypt,
-  strToArr
+  strToArr,
 } from "utils";
 
 export default {
@@ -182,28 +184,28 @@ export default {
     // banner
     const bannerList = [
       {
-        imgUrl: require("@/assets/banner-images/1.jpg")
+        imgUrl: require("@/assets/banner-images/1.jpg"),
       },
       {
-        imgUrl: require("@/assets/banner-images/2.jpg")
+        imgUrl: require("@/assets/banner-images/2.jpg"),
       },
       {
-        imgUrl: require("@/assets/banner-images/3.jpg")
-      }
+        imgUrl: require("@/assets/banner-images/3.jpg"),
+      },
     ];
 
     // 表单
     const form = reactive({
       username: "",
-      password: ""
+      password: "",
     });
 
     // 表单规则
     const rules = reactive({
       username: [
-        { required: true, message: "请输入手机号码", trigger: "blur" }
+        { required: true, message: "请输入手机号码", trigger: "blur" },
       ],
-      password: [{ required: true, message: "请输入密码", trigger: "blur" }]
+      password: [{ required: true, message: "请输入密码", trigger: "blur" }],
     });
 
     // 是否记住密码
@@ -261,7 +263,7 @@ export default {
               objectId,
               companyId,
               userFace,
-              role
+              role,
             } = userInfo;
 
             const info = {
@@ -272,7 +274,7 @@ export default {
               realName,
               gender,
               userId: objectId,
-              companyId
+              companyId,
             };
 
             // 获取可通过的路由
@@ -288,13 +290,16 @@ export default {
 
             ctx.$router.push({ name: "UserCenter" });
           } catch (err) {
-            console.log(err);
+            if (err.code === 101) {
+              ctx.$message.error("用户名或密码不正确");
+            } else {
+              ctx.$message.error(err.error ? err.error : err);
+            }
 
-            ctx.$message.error(err.error ? err.error : err);
             submitLoading.value = false;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("error", err);
         });
     };
@@ -332,7 +337,7 @@ export default {
             console.log(err);
           }
         },
-        onCancel() {}
+        onCancel() {},
       });
     };
 
@@ -348,9 +353,9 @@ export default {
       submitLoading,
       onSubmit,
       logout,
-      toPage
+      toPage,
     };
-  }
+  },
 };
 </script>
 
