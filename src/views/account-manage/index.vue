@@ -81,10 +81,12 @@
 </template>
 
 <script>
-import { getCurrentInstance, computed, reactive, onMounted, ref } from "vue";
+import { computed, reactive, onMounted, ref } from "vue";
+import { message } from "ant-design-vue";
 import table from "common/table.js";
 import common from "common/index.js";
 import moment from "moment";
+import { useStore } from "vuex";
 // Api
 import Api from "api/account-manage";
 // 组件
@@ -100,12 +102,11 @@ export default {
     }
   },
   setup() {
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
 
     const { showDevMoadl } = common();
 
-    // const companyId = computed(() => ctx.$store.getters.companyId);
-    const roles = computed(() => ctx.$store.getters.roles);
+    const roles = computed(() => store.getters.roles);
 
     const {
       listLoading,
@@ -272,7 +273,7 @@ export default {
     // 删除账户
     const handleDelelteAccount = id => {
       if (!id && !rowSelection.selectedRowKeys.length) {
-        ctx.$message.warning("无可操作的对象，请刷新页面重试");
+        message.warning("无可操作的对象，请刷新页面重试");
       }
 
       delIds.value = id ? [id] : rowSelection.selectedRowKeys;
@@ -282,14 +283,14 @@ export default {
       Api.DeleteAcc(delIds.value)
         .then(res => {
           if (res.code == 200) {
-            ctx.$message.success("删除成功!");
+            message.success("删除成功!");
             getList(pageConfig.current, pageConfig.pageSize, apiGetList);
             clearSelect();
           } else console.log(res);
         })
         .catch(err => {
           console.log(err);
-          ctx.$message.error("删除失败！");
+          message.error("删除失败！");
         })
         .finally(() => {
           delLoading.value = false;
@@ -312,11 +313,11 @@ export default {
       Api.EnableAcc({ enabledState }, rowSelection.selectedRowKeys)
         .then(res => {
           if (res.code == 200) {
-            ctx.$message.success("操作成功!");
+            message.success("操作成功!");
             getList(pageConfig.current, pageConfig.pageSize, apiGetList);
-          } else ctx.$message.warning(res.msg);
+          } else message.warning(res.msg);
         })
-        .catch(() => ctx.$message.error("操作失败！"))
+        .catch(() => message.error("操作失败！"))
         .finally(() => {
           enabledState === 1
             ? (enableLoading.value = false)

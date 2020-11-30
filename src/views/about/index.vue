@@ -22,9 +22,9 @@ export default {
   setup() {
     const qrcode = require("assets/images/qrcode.jpg");
     return {
-      qrcode,
+      qrcode
     };
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

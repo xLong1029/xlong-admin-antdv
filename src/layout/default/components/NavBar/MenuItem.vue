@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { getCurrentInstance } from "vue";
+import { useRouter } from "vue-router";
 import { isExternal } from "utils/validate";
 export default {
   name: "MenuItem",
@@ -23,14 +23,14 @@ export default {
     }
   },
   setup(props) {
-    const { ctx } = getCurrentInstance();
+    const router = useRouter();
 
     const handleLink = () => {
       const url = props.url;
       if (isExternal(url)) {
         window.open(url);
       } else {
-        ctx.$router.push({ path: url });
+        router.push({ path: url });
       }
     };
     return {

@@ -96,9 +96,10 @@
 </template>
 
 <script>
-import { getCurrentInstance, computed, reactive, onMounted } from "vue";
+import { computed, reactive, onMounted } from "vue";
 import table from "common/table.js";
 import common from "common";
+import { useStore } from "vuex";
 import Api from "api/company";
 import MemberStore from "./store.vue";
 
@@ -112,14 +113,14 @@ export default {
     }
   },
   setup() {
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
 
     const { showDevMoadl } = common();
 
     // 企业Id
-    const companyId = computed(() => ctx.$store.getters.companyId);
+    const companyId = computed(() => store.getters.companyId);
     // 当前角色
-    const roles = computed(() => ctx.$store.getters.roles);
+    const roles = computed(() => store.getters.roles);
 
     // 表格配置
     const {

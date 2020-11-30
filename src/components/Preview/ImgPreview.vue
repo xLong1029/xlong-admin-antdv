@@ -11,24 +11,21 @@
   </a-modal>
 </template>
 <script>
-import { getCurrentInstance, ref, onMounted } from "vue";
-import upload from "common/upload.js";
-
 export default {
   name: "ImgPreview",
   props: {
     title: {
       type: String,
-      default: "预览图片",
+      default: "预览图片"
     },
     visible: {
       type: Boolean,
-      default: () => [],
+      default: false
     },
     imgUrl: {
       type: String,
-      default: "",
-    },
+      default: ""
+    }
   },
   setup(props, context) {
     const handleCancelPreview = () => {
@@ -45,7 +42,7 @@ export default {
       handleCancelPreview,
       setDefaultImg
     };
-  },
+  }
 };
 </script>
 <style lang="less">

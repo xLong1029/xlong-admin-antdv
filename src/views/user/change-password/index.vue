@@ -35,7 +35,7 @@
           <a-button type="primary" @click="onSubmit" :loading="submitLoading"
             >提交修改</a-button
           >
-          <a-button @click="resetForm">重置</a-button>
+          <a-button @click="handleResetForm">重置</a-button>
         </a-space>
       </a-form-item>
     </a-form>
@@ -43,17 +43,22 @@
 </template>
 
 <script>
-import { getCurrentInstance, reactive, toRaw, ref, computed } from "vue";
+import { reactive, toRaw, ref, computed } from "vue";
+import { message } from "ant-design-vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import { validPassword, isEqual } from "utils/validate";
 import Api from "api/user";
 
 export default {
   name: "ChangePassword",
   setup() {
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
+
+    const router = useRouter();
 
     // 用户token
-    const token = computed(() => ctx.$store.getters.token);
+    const token = computed(() => store.getters.token);
 
     // 表单配置
     const labelColSpan = 6;
@@ -109,16 +114,17 @@ export default {
 
     // 提交loading
     const submitLoading = ref(false);
+    const submitForm = ref(null);
 
     // 登录
     const onSubmit = () => {
-      ctx.$refs.submitForm
+      submitForm.value
         .validate()
         .then(async () => {
           const params = toRaw(form);
 
           if (params.oldPassword == params.newPassword) {
-            ctx.$message.error("旧密码和新密码不能相同！");
+            message.error("旧密码和新密码不能相同！");
             return false;
           }
 
@@ -131,18 +137,18 @@ export default {
               if (code == 200) {
                 // 登出 action方法
                 try {
-                  await ctx.$store.dispatch("user/logout");
-                  await ctx.$store.dispatch("permission/generateRoutes", null);
-                  ctx.$message.success("密码修改成功!请重新登录");
-                  ctx.$router.push({ name: "Home" });
+                  await store.dispatch("user/logout");
+                  await store.dispatch("permission/generateRoutes", null);
+                  message.success("密码修改成功!请重新登录");
+                  router.push({ name: "Home" });
                 } catch (err) {
                   console.log(err);
-                  ctx.$router.push({ name: "Home" });
+                  router.push({ name: "Home" });
                 }
-              } else if (code == 404) ctx.$message.warning(msg);
-              else ctx.$message.error("密码修改失败！");
+              } else if (code == 404) message.warning(msg);
+              else message.error("密码修改失败！");
             })
-            .catch(err => ctx.$message.error(err.error))
+            .catch(err => message.error(err.error))
             .finally(() => (submitLoading.value = false));
         })
         .catch(err => {
@@ -150,8 +156,8 @@ export default {
         });
     };
 
-    const resetForm = () => {
-      ctx.$refs.submitForm.resetFields();
+    const handleResetForm = () => {
+      submitForm.value.resetFields();
     };
 
     return {
@@ -161,7 +167,8 @@ export default {
       rules,
       submitLoading,
       onSubmit,
-      resetForm
+      handleResetForm,
+      submitForm
     };
   }
 };

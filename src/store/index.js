@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import getters from "./getters";
+import getters from "./getters.js";
 
 const modulesFiles = require.context("./modules", true, /\.js$/);
 

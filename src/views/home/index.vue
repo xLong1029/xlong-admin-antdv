@@ -146,32 +146,28 @@
 </template>
 
 <script>
-import {
-  computed,
-  getCurrentInstance,
-  reactive,
-  toRaw,
-  ref,
-  watch,
-  createVNode,
-} from "vue";
-// import { useForm } from "@ant-design-vue/use";
+import { computed, reactive, toRaw, ref, watch, createVNode } from "vue";
+import { message } from "ant-design-vue";
+import { useRouter } from "vue-router";
 import { Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import common from "common";
+import { useStore } from "vuex";
 import {
   setLocalS,
   getLocalS,
   delLocalS,
   encrypt,
   decrypt,
-  strToArr,
+  strToArr
 } from "utils";
 
 export default {
   name: "Home",
   setup() {
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
+
+    const router = useRouter();
 
     const { showDevMoadl, toPage } = common();
 
@@ -179,33 +175,33 @@ export default {
     const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
     // 当前用户昵称
-    const nickName = computed(() => ctx.$store.getters.nickName);
+    const nickName = computed(() => store.getters.nickName);
 
     // banner
     const bannerList = [
       {
-        imgUrl: require("@/assets/banner-images/1.jpg"),
+        imgUrl: require("@/assets/banner-images/1.jpg")
       },
       {
-        imgUrl: require("@/assets/banner-images/2.jpg"),
+        imgUrl: require("@/assets/banner-images/2.jpg")
       },
       {
-        imgUrl: require("@/assets/banner-images/3.jpg"),
-      },
+        imgUrl: require("@/assets/banner-images/3.jpg")
+      }
     ];
 
     // 表单
     const form = reactive({
       username: "",
-      password: "",
+      password: ""
     });
 
     // 表单规则
     const rules = reactive({
       username: [
-        { required: true, message: "请输入手机号码", trigger: "blur" },
+        { required: true, message: "请输入手机号码", trigger: "blur" }
       ],
-      password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+      password: [{ required: true, message: "请输入密码", trigger: "blur" }]
     });
 
     // 是否记住密码
@@ -221,9 +217,9 @@ export default {
 
     // 监听己住密码与token的改变
     watch(
-      () => [remeberPwd.value, ctx.$store.getters.token],
+      () => [remeberPwd.value, store.getters.token],
       ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
-        // console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
+        console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
         if (!newRemeberPwd && getLocalS("username")) {
           delLocalS("username");
           delLocalS("password");
@@ -240,15 +236,17 @@ export default {
     // 提交loading
     const submitLoading = ref(false);
 
+    const loginForm = ref(null);
+
     // 登录
     const onSubmit = () => {
-      ctx.$refs.loginForm
+      loginForm.value
         .validate()
         .then(async () => {
           const params = toRaw(form);
           try {
             submitLoading.value = true;
-            const userInfo = await ctx.$store.dispatch("user/login", params);
+            const userInfo = await store.dispatch("user/login", params);
             if (remeberPwd.value) {
               // 本地存储用户名和密码
               setLocalS("username", params.username);
@@ -263,7 +261,7 @@ export default {
               objectId,
               companyId,
               userFace,
-              role,
+              role
             } = userInfo;
 
             const info = {
@@ -274,32 +272,32 @@ export default {
               realName,
               gender,
               userId: objectId,
-              companyId,
+              companyId
             };
 
             // 获取可通过的路由
-            await ctx.$store.dispatch("permission/generateRoutes", info.roles);
+            await store.dispatch("permission/generateRoutes", info.roles);
 
             // 更新用户信息
-            ctx.$store.commit("user/SET_USER", info);
+            store.commit("user/SET_USER", info);
 
-            ctx.$message.success(
+            message.success(
               `尊敬的${userInfo.nickName}，欢迎使用${systemTitle}`
             );
             submitLoading.value = false;
 
-            ctx.$router.push({ name: "UserCenter" });
+            router.push({ name: "UserCenter" });
           } catch (err) {
             if (err.code === 101) {
-              ctx.$message.error("用户名或密码不正确");
+              message.error("用户名或密码不正确");
             } else {
-              ctx.$message.error(err.error ? err.error : err);
+              message.error(err.error ? err.error : err);
             }
 
             submitLoading.value = false;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log("error", err);
         });
     };
@@ -322,22 +320,22 @@ export default {
         centered: true,
         async onOk() {
           try {
-            await ctx.$store.dispatch("user/logout");
-            await ctx.$store.dispatch("permission/generateRoutes", null);
-            ctx.$message.success("您已退出该系统");
+            await store.dispatch("user/logout");
+            await store.dispatch("permission/generateRoutes", null);
+            message.success("您已退出该系统");
 
             if (!remeberPwd.value) {
               form.username = "";
               form.password = "";
 
               // 清除校验
-              ctx.$refs.loginForm.clearValidate();
+              loginForm.value.clearValidate();
             }
           } catch (err) {
             console.log(err);
           }
         },
-        onCancel() {},
+        onCancel() {}
       });
     };
 
@@ -354,8 +352,9 @@ export default {
       onSubmit,
       logout,
       toPage,
+      loginForm
     };
-  },
+  }
 };
 </script>
 

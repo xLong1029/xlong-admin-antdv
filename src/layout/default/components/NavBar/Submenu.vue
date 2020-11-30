@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { getCurrentInstance } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   name: "Submenu",
@@ -22,11 +22,11 @@ export default {
     }
   },
   setup() {
-    const { ctx } = getCurrentInstance();
+    const router = useRouter();
 
     const handleLink = item => {
       if (!item.meta.directLink) return;
-      ctx.$router.push({ path: item.path });
+      router.push({ path: item.path });
     };
     return {
       handleLink

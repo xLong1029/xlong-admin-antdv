@@ -29,13 +29,15 @@
 </template>
 
 <script>
-import { getCurrentInstance, ref, watch } from "vue";
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import common from "common";
 
 export default {
   name: "Breadcrumb",
   setup() {
-    const { ctx } = getCurrentInstance();
+    const router = useRouter();
+
     const { goBack } = common();
 
     const levelList = ref([]);
@@ -51,7 +53,7 @@ export default {
 
     // 获取面包屑
     const getBreadcrumb = () => {
-      let matched = ctx.$router.currentRoute.value.matched.filter(
+      let matched = router.currentRoute.value.matched.filter(
         item => item.meta && item.meta.title
       );
       const first = matched[0];
@@ -68,18 +70,18 @@ export default {
       const { redirect, path } = item;
 
       if (redirect) {
-        ctx.$router.push(redirect);
+        router.push(redirect);
         return;
       }
 
-      ctx.$router.push(path);
+      router.push(path);
     };
 
     getBreadcrumb();
 
     // 监听路由变化
     watch(
-      () => ctx.$router.currentRoute.value,
+      () => router.currentRoute.value,
       val => {
         if (val.path.startsWith("/redirect/")) {
           return;

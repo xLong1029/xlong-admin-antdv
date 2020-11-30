@@ -18,14 +18,15 @@
 </template>
 
 <script>
-import { getCurrentInstance, computed } from "vue";
+import { computed } from "vue";
+import { useStore } from "vuex";
 
 export default {
   name: "AppMain",
   setup() {
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
 
-    const pageLoading = computed(() => ctx.$store.getters.pageLoading);
+    const pageLoading = computed(() => store.getters.pageLoading);
 
     return {
       pageLoading

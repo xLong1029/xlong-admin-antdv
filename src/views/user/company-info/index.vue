@@ -25,7 +25,9 @@
 </template>
 
 <script>
-import { getCurrentInstance, ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { message } from "ant-design-vue";
+import { useStore } from "vuex";
 import BaseInfo from "./base-info";
 import MemberList from "./member";
 import Api from "api/company";
@@ -34,20 +36,22 @@ export default {
   name: "CompanyInfo",
   components: { BaseInfo, MemberList },
   setup() {
-    const { ctx } = getCurrentInstance();
+    // const { ctx } = getCurrentInstance(); // 实例
 
-    const pageLoading = computed(() => ctx.$store.getters.pageLoading);
-    const companyId = computed(() => ctx.$store.getters.companyId);
+    const store = useStore();
+
+    const pageLoading = computed(() => store.getters.pageLoading);
+    const companyId = computed(() => store.getters.companyId);
     const showBaseInfoChangeBtn = computed(
       () =>
         activeName.value === "base" &&
-        (ctx.$store.getters.roles.indexOf("admin") >= 0 ||
-          ctx.$store.getters.roles.indexOf("manage") >= 0)
+        (store.getters.roles.indexOf("admin") >= 0 ||
+          store.getters.roles.indexOf("manage") >= 0)
     );
 
     const tabDatas = ref({
       companyBaseInfo: {},
-      companyMembers: {},
+      companyMembers: {}
     });
 
     const disableEdit = ref(true);
@@ -57,44 +61,44 @@ export default {
         label: "基本信息",
         name: "base",
         data: "companyBaseInfo",
-        component: "BaseInfo",
+        component: "BaseInfo"
       },
       {
         label: "人员信息",
         name: "member",
         data: "companyMembers",
-        component: "MemberList",
-      },
+        component: "MemberList"
+      }
     ];
 
     const activeName = ref("base");
 
     // 设置页面加载Loading
-    const setPageLoding = (val) => {
-      ctx.$store.dispatch("app/setPageLoading", val);
+    const setPageLoding = val => {
+      store.dispatch("app/setPageLoading", val);
     };
 
     // 获取单位信息
     const getCompnayInfo = () => {
       setPageLoding(true);
       Api.GetCompanyInfo(companyId.value)
-        .then((res) => {
+        .then(res => {
           const { code, data } = res;
           // 获取到数据
           if (code == 200) {
             tabDatas.value.companyBaseInfo = { ...data };
           } else {
-            ctx.$message.error("数据获取失败，请稍后重试");
+            message.error("数据获取失败，请稍后重试");
           }
         })
-        .catch((err) => console.log(err))
+        .catch(err => console.log(err))
         .finally(() => setPageLoding(false));
     };
 
     const isChange = ref(false);
 
     // 变更单位信息
-    const changeInfo = (val) => {
+    const changeInfo = val => {
       disableEdit.value = !val;
       isChange.value = val;
       if (!val) {
@@ -103,7 +107,7 @@ export default {
     };
 
     // tab内容改变
-    const tabContentChange = (val) => {
+    const tabContentChange = val => {
       if (val === "变更基本信息" || val === "取消变更基本信息") {
         changeInfo(false);
         getCompnayInfo();
@@ -123,9 +127,9 @@ export default {
       changeInfo,
       isChange,
       tabContentChange,
-      showBaseInfoChangeBtn,
+      showBaseInfoChangeBtn
     };
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

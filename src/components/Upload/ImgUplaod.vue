@@ -17,7 +17,8 @@
   </div>
 </template>
 <script>
-import { getCurrentInstance, ref } from "vue";
+import { ref } from "vue";
+import { message } from "ant-design-vue";
 import upload from "common/upload.js";
 
 export default {
@@ -25,34 +26,32 @@ export default {
   props: {
     uploadBtnText: {
       type: String,
-      default: "上传图片",
+      default: "上传图片"
     },
     fileList: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     limitNum: {
       type: Number,
-      default: 8,
-    },
+      default: 8
+    }
   },
   setup(props, context) {
-    const { ctx } = getCurrentInstance();
-
     const { fileAccept, beforeUpload, uploadToBomb } = upload();
 
     // 默认头像
     const defaultFaceImg = require("@/assets/images/head.jpg");
 
     // 设置默认头像
-    const setDefaultHeadImg = (e) => {
+    const setDefaultHeadImg = e => {
       e.currentTarget.src = defaultFaceImg.value;
       e.currentTarget.onerror = null;
     };
 
     // 头像上传前
-    const handleBeforeUpload = (file) => {
-      return beforeUpload(file, function (file) {
+    const handleBeforeUpload = file => {
+      return beforeUpload(file, function(file) {
         // 双重检查，避免在“所有文件”中选择其他文件
         if (
           !(
@@ -61,7 +60,7 @@ export default {
             file.type === "image/gif"
           )
         ) {
-          ctx.$message.warning("图片只能是 png 、jpg 、gif 格式");
+          message.warning("图片只能是 png 、jpg 、gif 格式");
           return false;
         }
         return true;
@@ -71,7 +70,7 @@ export default {
     const uploadLoading = ref(false);
 
     // 上传状态改变
-    const handleUploadChange = (info) => {
+    const handleUploadChange = info => {
       if (info.file.status === "uploading") {
         uploadLoading.value = true;
         return;
@@ -85,16 +84,16 @@ export default {
     };
 
     // 上传图片
-    const uploadImg = (params) => {
+    const uploadImg = params => {
       const file = params.file;
 
       uploadToBomb(file)
-        .then((res) => {
+        .then(res => {
           if (res.length) {
             context.emit("upload-success", res[0]);
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           context.emit("upload-fail", err);
         })
@@ -102,7 +101,7 @@ export default {
     };
 
     // 移除文件
-    const removeFile = (file) => {
+    const removeFile = file => {
       let list = [...props.fileList];
       if (!list.length) return;
       const index = list.indexOf(file);
@@ -111,7 +110,7 @@ export default {
     };
 
     // 预览头像
-    const handlePreview = (file) => {
+    const handlePreview = file => {
       context.emit("preview", file);
     };
 
@@ -125,7 +124,7 @@ export default {
       handlePreview,
       removeFile
     };
-  },
+  }
 };
 </script>
 <style>

@@ -16,7 +16,7 @@ module.exports = {
   productionSourceMap: false,
   // 代理服务
   devServer: {
-    port: 3030
+    port: 3030,
   },
   configureWebpack: {
     resolve: {
@@ -32,16 +32,16 @@ module.exports = {
         views: resolve("src/views"),
         bmob: resolve("src/bmob"),
         utils: resolve("src/utils"),
-        router: resolve("src/router")
-      }
-    }
+        router: resolve("src/router"),
+      },
+    },
     // 外部引用
     // externals: {
     //   $: 'jquery'
     // }
   },
-  chainWebpack: config => {
-    config.plugin("html").tap(args => {
+  chainWebpack: (config) => {
+    config.plugin("html").tap((args) => {
       // 修改配置名称
       args[0].title = title;
       return args;
@@ -51,17 +51,17 @@ module.exports = {
     loaderOptions: {
       less: {
         globalVars: {
-          hack: `true; @import '~@/styles/variables.less';`
+          hack: `true; @import '~@/styles/variables.less';`,
         },
         // 定制主题
         modifyVars: {
           "primary-color": "#3b8ccb",
           "link-color": "#3b8ccb",
           "info-color": "#3b8ccb",
-          "border-radius-base": "4px"
+          "border-radius-base": "4px",
         },
-        javascriptEnabled: true
-      }
-    }
-  }
+        javascriptEnabled: true,
+      },
+    },
+  },
 };

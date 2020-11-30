@@ -11,11 +11,11 @@ export default function() {
   const imgPreviewModal = reactive({
     title: "预览图片",
     visible: false,
-    imgUrl: null,
+    imgUrl: null
   });
 
   // 预览图片
-  const handleImgPreview = (file) => {
+  const handleImgPreview = file => {
     imgPreviewModal.visible = true;
     imgPreviewModal.imgUrl = file.url;
   };
@@ -29,6 +29,6 @@ export default function() {
   return {
     imgPreviewModal,
     handleImgPreview,
-    handleCancelImgPreview,
+    handleCancelImgPreview
   };
 }

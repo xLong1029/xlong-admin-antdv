@@ -97,14 +97,9 @@
 </template>
 
 <script>
-import {
-  getCurrentInstance,
-  watch,
-  ref,
-  reactive,
-  onMounted,
-  computed
-} from "vue";
+import { watch, ref, reactive, onMounted, computed, nextTick } from "vue";
+import { message } from "ant-design-vue";
+import { useStore } from "vuex";
 import common from "common";
 import Api from "api/company";
 
@@ -128,10 +123,10 @@ export default {
     }
   },
   setup(props, context) {
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
 
     // 当前用户角色
-    const roles = computed(() => ctx.$store.getters.roles);
+    const roles = computed(() => store.getters.roles);
 
     const { showDevMoadl } = common();
 
@@ -213,21 +208,22 @@ export default {
             form.role = role;
             form.nickName = nickName;
           } else {
-            ctx.$message.error("无法获取人员信息!");
+            message.error("无法获取人员信息!");
           }
         })
         .catch(err => console.log(err))
         .finally(() => (infoLoading.value = false));
     };
 
+    const submitForm = ref(null);
+
     // 监听可见性
     watch(
       () => props.visible,
-      val => {
+      async val => {
         if (val) {
-          ctx.$nextTick(() => {
-            ctx.$refs.submitForm.resetFields();
-          });
+          await nextTick();
+          submitForm.value.resetFields();
 
           switch (props.type) {
             case 1:
@@ -262,7 +258,8 @@ export default {
       roleList,
       labelColSpan,
       wrapperColSpan,
-      roles
+      roles,
+      submitForm
     };
   }
 };

@@ -89,27 +89,32 @@
 </template>
 
 <script>
-import { getCurrentInstance, computed } from "vue";
+import { computed } from "vue";
+import { message } from "ant-design-vue";
 import common from "common";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
 export default {
   name: "AppTop",
   setup() {
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
+
+    const router = useRouter();
 
     const { showDevMoadl, toPage } = common();
 
-    const user = computed(() => ctx.$store.getters.user);
+    const user = computed(() => store.getters.user);
 
     const logout = async () => {
       try {
-        await ctx.$store.dispatch("user/logout");
-        await ctx.$store.dispatch("permission/generateRoutes", null);
-        ctx.$message.success("您已退出该系统");
-        ctx.$router.push({ name: "Home" });
+        await store.dispatch("user/logout");
+        await store.dispatch("permission/generateRoutes", null);
+        message.success("您已退出该系统");
+        router.push({ name: "Home" });
       } catch (err) {
         console.log(err);
-        ctx.$router.push({ name: "Home" });
+        router.push({ name: "Home" });
       }
     };
 

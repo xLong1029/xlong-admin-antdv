@@ -21,7 +21,9 @@
 
 <script>
 /* eslint-disable */
-import { ref, computed, watch, getCurrentInstance } from "vue";
+import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import common from "common";
 import NavItem from "./NavItem";
 
@@ -29,21 +31,21 @@ export default {
   name: "AppNavBar",
   components: { NavItem },
   setup() {
-    const { ctx } = getCurrentInstance();
+    const router = useRouter();
+
+    const store = useStore();
 
     const { toPage } = common();
 
     const logo = require("@/assets/images/logo.jpg");
 
-    const permissionRoutes = computed(
-      () => ctx.$store.getters.permissionRoutes
-    );
+    const permissionRoutes = computed(() => store.getters.permissionRoutes);
 
     const currentMenu = ref([]);
 
     // 获取当前激活菜单
     const getActiveMenu = () => {
-      const route = ctx.$router.currentRoute.value;
+      const route = router.currentRoute.value;
       const { meta, matched, path } = route;
 
       if (meta.activeMenu) {
@@ -57,26 +59,19 @@ export default {
 
     // 监听路由变化
     watch(
-      () => ctx.$router.currentRoute.value,
-      val => {
+      () => router.currentRoute.value,
+      (val) => {
         currentMenu.value = getActiveMenu();
       }
     );
-
-    //  watch(
-    //   () => currentMenu.value,
-    //   val => {
-    //     console.log(val);
-    //   }
-    // );
 
     return {
       logo,
       permissionRoutes,
       currentMenu,
-      toPage
+      toPage,
     };
-  }
+  },
 };
 </script>
 
@@ -86,6 +81,10 @@ export default {
 
   .wrapper-container {
     justify-content: space-between;
+  }
+
+  ::v-deep(.ant-menu-horizontal) {
+    border-bottom: none;
   }
 }
 
@@ -98,13 +97,9 @@ export default {
   cursor: pointer;
 }
 
-.ant-menu-horizontal {
-  border-bottom: none;
-}
-
 @media only screen and (max-width: 767px) {
-    .nav-list-container {
-        width: 100%;
-    }
+  .nav-list-container {
+    width: 100%;
+  }
 }
 </style>

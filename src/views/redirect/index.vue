@@ -1,12 +1,16 @@
 <script>
+import { useRouter, useRoute } from "vue-router";
+
 export default {
-  created() {
-    const { params, query } = this.$route;
+  name: "Redirect",
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+
+    const { params, query } = route;
     const { path } = params;
-    this.$router.replace({ path: "/" + path, query });
-  },
-  render: function(h) {
-    return h(); // avoid warning message
+
+    router.replace({ path: "/" + path, query });
   }
 };
 </script>

@@ -11,6 +11,7 @@ router.beforeEach(async (to, from, next) => {
   document.title = getPageTitle(to.meta.title);
 
   const hasRoles = store.getters.roles && store.getters.roles.length > 0;
+
   if (hasRoles) {
     next();
   }

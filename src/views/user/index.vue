@@ -48,13 +48,14 @@
 </template>
 
 <script>
-import { getCurrentInstance, computed, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
+import { useStore } from "vuex";
 import common from "common";
 
 export default {
   name: "UserCenter",
   setup() {
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
 
     const { toPage } = common();
 
@@ -90,8 +91,8 @@ export default {
 
     const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
-    const realName = computed(() => ctx.$store.getters.realName);
-    const roles = computed(() => ctx.$store.getters.roles);
+    const realName = computed(() => store.getters.realName);
+    const roles = computed(() => store.getters.roles);
 
     const listItemNumInRow = ref(6);
 
@@ -135,7 +136,7 @@ export default {
 
     // 监听角色变化
     watch(
-      () => ctx.$store.getters.roles,
+      () => store.getters.roles,
       val => {
         filterList.value = getFilterListByRoles(val);
       }

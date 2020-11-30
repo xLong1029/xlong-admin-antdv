@@ -58,14 +58,9 @@
 </template>
 
 <script>
-import {
-  getCurrentInstance,
-  reactive,
-  toRaw,
-  ref,
-  computed,
-  onMounted,
-} from "vue";
+import { reactive, toRaw, ref, computed, onMounted } from "vue";
+import { message } from "ant-design-vue";
+import { useStore } from "vuex";
 // Api
 import Api from "api/user";
 // 工具
@@ -80,16 +75,16 @@ export default {
   name: "UserInfo",
   components: { ImgUpload, ImgPreview },
   setup() {
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
 
     // 表单配置
     const labelColSpan = 6;
     const wrapperColSpan = 18;
 
     // 当前用户信息和系统配置
-    const token = computed(() => ctx.$store.getters.token);
-    const pageLoading = computed(() => ctx.$store.getters.pageLoading);
-    const userId = computed(() => ctx.$store.getters.userId);
+    const token = computed(() => store.getters.token);
+    const pageLoading = computed(() => store.getters.pageLoading);
+    const userId = computed(() => store.getters.userId);
 
     // 表单
     const form = reactive({
@@ -97,25 +92,25 @@ export default {
       userFace: [],
       nickName: null,
       realName: null,
-      gender: null,
+      gender: null
     });
 
     // 表单规则
     const rules = reactive({
       nickName: [{ required: true, message: "请输入昵称", trigger: "blur" }],
       realName: [
-        { required: true, message: "请输入真实姓名", trigger: "blur" },
+        { required: true, message: "请输入真实姓名", trigger: "blur" }
       ],
-      gender: [{ required: true, message: "请选择性别", trigger: "change" }],
+      gender: [{ required: true, message: "请选择性别", trigger: "change" }]
     });
 
     // 设置页面加载Loading
-    const setPageLoding = (val) => {
-      ctx.$store.dispatch("app/setPageLoading", val);
+    const setPageLoding = val => {
+      store.dispatch("app/setPageLoading", val);
     };
 
     // 头像上传成功
-    const handleUploadSuccess = (file) => {
+    const handleUploadSuccess = file => {
       // 多图片上传时
       const length = form.userFace.length;
       file.uid = length ? form.userFace[length - 1].uid++ : 1; // 解决浏览器报警告“<TransitionGroup> children must be keyed. ”
@@ -124,20 +119,21 @@ export default {
 
     // 删除上传的图片
     const handleUploadImgDelete = ({ file, index, list }) => {
+      console.log(file, index);
       form.userFace = list;
     };
 
     const {
       imgPreviewModal,
       handleImgPreview,
-      handleCancelImgPreview,
+      handleCancelImgPreview
     } = preview();
 
     // 获取个人资料
     const getProfile = () => {
       setPageLoding(true);
       Api.GetUser(token.value)
-        .then((res) => {
+        .then(res => {
           const { code, data } = res;
           // 获取到数据
           if (code == 200) {
@@ -148,7 +144,7 @@ export default {
               realName,
               gender,
               objectId,
-              role,
+              role
             } = data;
 
             form.username = username;
@@ -156,18 +152,16 @@ export default {
               ? [
                   {
                     uid: 1,
-                    url: userFace,
-                  },
+                    url: userFace
+                  }
                 ]
               : [];
-
-            console.log(form.userFace);
             form.nickName = nickName;
             form.realName = realName;
             form.gender = gender;
 
             // 更新用户信息
-            ctx.$store.commit("user/SET_USER", {
+            store.commit("user/SET_USER", {
               id: objectId,
               avatar: userFace ? userFace : null,
               gender,
@@ -175,23 +169,25 @@ export default {
               realName,
               nickName,
               userId: objectId,
-              roles: role ? strToArr(role, ",") : null,
+              roles: role ? strToArr(role, ",") : null
             });
           } else {
-            ctx.$message.error("无法获取用户数据!");
+            message.error("无法获取用户数据!");
             console.log("无该用户");
           }
         })
-        .catch((err) => console.log(err))
+        .catch(err => console.log(err))
         .finally(() => setPageLoding(false));
     };
 
     // 提交loding
     const submitLoading = ref(false);
 
+    const submitForm = ref(null);
+
     // 提交修改
     const onSubmit = () => {
-      ctx.$refs.submitForm
+      submitForm.value
         .validate()
         .then(() => {
           submitLoading.value = true;
@@ -202,16 +198,16 @@ export default {
           params.userFace = data.userFace.length ? data.userFace[0].url : null;
 
           Api.EditProfile(params, userId.value)
-            .then((res) => {
+            .then(res => {
               if (res.code == 200) {
                 getProfile();
-                ctx.$message.success("资料修改成功！");
-              } else ctx.$message.error("资料修改失败！");
+                message.success("资料修改成功！");
+              } else message.error("资料修改失败！");
             })
-            .catch((err) => console.log(err))
+            .catch(err => console.log(err))
             .finally(() => (submitLoading.value = false));
         })
-        .catch((err) => {
+        .catch(err => {
           console.log("error", err);
         });
     };
@@ -234,8 +230,9 @@ export default {
       handleCancelImgPreview,
       handleUploadSuccess,
       handleUploadImgDelete,
+      submitForm
     };
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

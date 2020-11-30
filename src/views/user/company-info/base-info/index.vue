@@ -133,7 +133,9 @@
 </template>
 
 <script>
-import { getCurrentInstance, reactive, computed, watch, ref, toRaw } from "vue";
+import { reactive, computed, watch, ref, toRaw } from "vue";
+import { message } from "ant-design-vue";
+import { useStore } from "vuex";
 // 校验
 import { validBusinessLicence, validIDcard, validPhone } from "utils/validate";
 import Api from "api/company";
@@ -144,28 +146,28 @@ export default {
     // 当前激活类型
     activeTabName: {
       type: String,
-      default: "base",
+      default: "base"
     },
     // 数据
     data: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
     // 加载
     loading: {
       type: Boolean,
-      default: true,
+      default: true
     },
     // 禁止编辑
     disableEdit: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   setup(props, context) {
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
 
-    const pageLoading = computed(() => ctx.$store.getters.pageLoading);
+    const pageLoading = computed(() => store.getters.pageLoading);
 
     const labelColSpan = 5;
     const wrapperColSpan = 19;
@@ -176,7 +178,7 @@ export default {
       "集体所有制企业",
       "私营企业",
       "股份制企业",
-      "外资企业",
+      "外资企业"
     ];
 
     const defaultForm = {
@@ -187,7 +189,7 @@ export default {
       legalPersonName: null,
       legalPersonNumber: null,
       contacter: null,
-      contacterPhone: null,
+      contacterPhone: null
     };
 
     const form = reactive({ ...defaultForm });
@@ -224,35 +226,35 @@ export default {
 
     const rules = reactive({
       companyName: [
-        { required: true, message: "请输入企业名称", trigger: "blur" },
+        { required: true, message: "请输入企业名称", trigger: "blur" }
       ],
       creditCode: [
-        { required: true, validator: validateBusinessLicence, trigger: "blur" },
+        { required: true, validator: validateBusinessLicence, trigger: "blur" }
       ],
       companyNature: [
-        { required: true, message: "请选择企业类型", trigger: "change" },
+        { required: true, message: "请选择企业类型", trigger: "change" }
       ],
       companyAddress: [
-        { required: true, message: "请输入单位地址", trigger: "blur" },
+        { required: true, message: "请输入单位地址", trigger: "blur" }
       ],
       legalPersonName: [
-        { required: true, message: "请输入法人姓名", trigger: "blur" },
+        { required: true, message: "请输入法人姓名", trigger: "blur" }
       ],
       legalPersonNumber: [
-        { required: true, validator: validateIDcard, trigger: "blur" },
+        { required: true, validator: validateIDcard, trigger: "blur" }
       ],
       contacter: [
-        { required: true, message: "请输入单位联系人姓名", trigger: "blur" },
+        { required: true, message: "请输入单位联系人姓名", trigger: "blur" }
       ],
       contacterPhone: [
-        { required: true, validator: validatePhone, trigger: "blur" },
-      ],
+        { required: true, validator: validatePhone, trigger: "blur" }
+      ]
     });
 
     // 监听data的变化
     watch(
-      () => ctx.data,
-      (val) => {
+      () => props.data,
+      val => {
         let data =
           val && Object.keys(val).length ? { ...val } : { ...defaultForm };
 
@@ -264,7 +266,7 @@ export default {
           legalPersonName,
           legalPersonNumber,
           contacter,
-          contacterPhone,
+          contacterPhone
         } = data;
 
         form.companyName = companyName;
@@ -282,27 +284,29 @@ export default {
     const submitLoading = ref(false);
 
     // 单位id
-    const companyId = computed(() => ctx.$store.getters.companyId);
+    const companyId = computed(() => store.getters.companyId);
+
+    const submitForm = ref(null);
 
     // 提交修改
     const onSubmit = () => {
-      ctx.$refs.submitForm
+      submitForm.value
         .validate()
         .then(async () => {
           submitLoading.value = true;
           const params = toRaw(form);
 
           Api.EditCompanyInfo(params, companyId.value)
-            .then((res) => {
+            .then(res => {
               if (res.code == 200) {
                 context.emit("change", "变更基本信息");
-                ctx.$message.success("基本信息变更成功！");
-              } else ctx.$message.error("基本信息变更失败！");
+                message.success("基本信息变更成功！");
+              } else message.error("基本信息变更失败！");
             })
-            .catch((err) => console.log(err))
+            .catch(err => console.log(err))
             .finally(() => (submitLoading.value = false));
         })
-        .catch((err) => {
+        .catch(err => {
           console.log("error", err);
         });
     };
@@ -322,11 +326,8 @@ export default {
       submitLoading,
       onSubmit,
       cancelChange,
+      submitForm
     };
-  },
+  }
 };
 </script>
-<style lang="less" scoped>
-.base-info-container {
-}
-</style>

@@ -9,19 +9,19 @@
 <script>
 // 全局使用中文
 import zhCN from "ant-design-vue/es/locale/zh_CN";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
 import { logInfo } from "utils";
+import { useStore } from "vuex";
 
 export default {
   setup() {
-    // vue 实例
-    const { ctx } = getCurrentInstance();
+    const store = useStore();
 
     const locale = zhCN;
 
     // 通过计算属性获取store的值
-    const currentEnv = computed(() => ctx.$store.getters.currentEnv);
-    const sysLoading = computed(() => ctx.$store.getters.sysLoading);
+    const currentEnv = computed(() => store.getters.currentEnv);
+    const sysLoading = computed(() => store.getters.sysLoading);
 
     console.log(`current environment is ${currentEnv.value}`);
 
