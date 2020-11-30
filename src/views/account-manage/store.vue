@@ -16,7 +16,7 @@
         :rules="rules"
         class="account-detail-container"
       >
-        <div class="account-detail-content">
+        <div ref="accountContent" class="account-detail-content">
           <div class="account-detail-content__title mt-0" id="baseInfo">
             基本信息
           </div>
@@ -49,7 +49,7 @@
                           :field-names="{
                             label: 'name',
                             value: 'name',
-                            children: 'childs'
+                            children: 'childs',
                           }"
                           placeholder="请选择所在省市"
                         ></a-cascader>
@@ -59,10 +59,7 @@
                 </div>
                 <div class="info-table__tr">
                   <div class="info-table__td head-pic img-shade">
-                    <img
-                      :src="form.face"
-                      @error="setDefaultHeadImg"
-                    />
+                    <img :src="form.face" @error="setDefaultHeadImg" />
                     <div class="img-shade-actions">
                       <a-upload
                         class="img-shade-actions__btn"
@@ -256,6 +253,7 @@ import JsonCity from "mock/city.json";
 import JsonData from "mock/data.json";
 // 工具
 import { strToArr, arrToStr, compareDate } from "utils";
+import { docElmScrollTo } from "utils/scroll-to.js";
 import { validEmail, validMobile } from "utils/validate";
 
 export default {
@@ -264,18 +262,18 @@ export default {
     // 弹窗可见性
     visible: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 详情id
     id: {
       type: String,
-      default: null
+      default: null,
     },
     // 类型
     type: {
       type: Number,
-      default: 1 // 1 新增, 2 编辑, 3 查看
-    }
+      default: 1, // 1 新增, 2 编辑, 3 查看
+    },
   },
   setup(props, context) {
     const { ctx } = getCurrentInstance();
@@ -290,7 +288,7 @@ export default {
     const workTimePH = ref("请选择日期");
 
     // 勾选尚未毕业
-    const handleGraduateChange = e => {
+    const handleGraduateChange = (e) => {
       const value = e.target.checked;
       if (value) {
         form.workTime = "";
@@ -304,9 +302,9 @@ export default {
     const provinceList = JsonCity;
 
     // 专业领域
-    const professionList = JsonData.profession.map(e => ({
+    const professionList = JsonData.profession.map((e) => ({
       label: e.name,
-      value: e.name
+      value: e.name,
     }));
 
     // 邮箱后缀
@@ -319,13 +317,13 @@ export default {
     const defaultFaceImg = require("@/assets/images/head.jpg");
 
     // 设置默认头像
-    const setDefaultHeadImg = e => {
+    const setDefaultHeadImg = (e) => {
       e.currentTarget.src = defaultFaceImg.value;
       e.currentTarget.onerror = null;
     };
 
     // 头像上传前
-    const handleBeforeUpload = file => {
+    const handleBeforeUpload = (file) => {
       return beforeUpload(file, function(file) {
         // 双重检查，避免在“所有文件”中选择其他文件
         if (
@@ -345,7 +343,7 @@ export default {
     const uploadLoading = ref(false);
 
     // 上传状态改变
-    const handleUploadChange = info => {
+    const handleUploadChange = (info) => {
       if (info.file.status === "uploading") {
         uploadLoading.value = true;
         return;
@@ -359,17 +357,17 @@ export default {
     };
 
     // 上传头像
-    const uploadAvatar = params => {
+    const uploadAvatar = (params) => {
       // console.log("uploadFile", params);
       const file = params.file;
 
       uploadToBomb(file)
-        .then(res => {
+        .then((res) => {
           if (res.length) {
             form.face = res[0].url;
           }
         })
-        .catch(err => console.log(err))
+        .catch((err) => console.log(err))
         .finally(() => (uploadLoading.value = false));
     };
 
@@ -386,7 +384,7 @@ export default {
       job: null,
       workTime: null,
       isGraduate: null,
-      profession: []
+      profession: [],
     };
 
     // 表单
@@ -438,53 +436,53 @@ export default {
     // 表单规则
     const rules = reactive({
       realname: [
-        { required: true, message: "请输入真实姓名", trigger: "blur" }
+        { required: true, message: "请输入真实姓名", trigger: "blur" },
       ],
       province: [
         {
           type: "array",
           required: true,
           message: "请选择所在省市",
-          trigger: "change"
-        }
+          trigger: "change",
+        },
       ],
       birthdate: [
         {
           type: "object",
           required: true,
           validator: validBirthDate,
-          trigger: "change"
-        }
+          trigger: "change",
+        },
       ],
       gender: [{ required: true, message: "请选择性别", trigger: "change" }],
       mobile: [{ required: true, validator: validateMobile, trigger: "blur" }],
       email: [{ required: true, validator: validateEmail, trigger: "blur" }],
       companyName: [
-        { required: true, message: "请输入工作单位名称", trigger: "blur" }
+        { required: true, message: "请输入工作单位名称", trigger: "blur" },
       ],
       job: [
         {
           required: true,
           message: "请选择职位",
-          trigger: "change"
-        }
+          trigger: "change",
+        },
       ],
       workTime: [
         {
           type: "object",
           required: true,
           validator: validateWorkTime,
-          trigger: "change"
-        }
+          trigger: "change",
+        },
       ],
       profession: [
         {
           type: "array",
           required: true,
           message: "请选择专业领域",
-          trigger: "change"
-        }
-      ]
+          trigger: "change",
+        },
+      ],
     });
 
     // 提交loading
@@ -514,7 +512,7 @@ export default {
           // 新增
           if (props.type === 1) {
             Api.AddAccount(params)
-              .then(res => {
+              .then((res) => {
                 if (res.code == 200) {
                   ctx.$message.success("添加成功");
                   context.emit("submit", 1);
@@ -527,7 +525,7 @@ export default {
           // 编辑
           else {
             Api.EditAccount(params, props.id)
-              .then(res => {
+              .then((res) => {
                 if (res.code == 200) {
                   ctx.$message.success("编辑成功");
                   context.emit("submit", 2);
@@ -538,7 +536,7 @@ export default {
               .finally(() => (submitLoading.value = false));
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("error", err);
         });
     };
@@ -556,7 +554,7 @@ export default {
       infoLoading.value = true;
 
       Api.GetAccInfo(props.id)
-        .then(res => {
+        .then((res) => {
           const { code, data } = res;
           // 获取到数据
           if (code == 200) {
@@ -575,16 +573,17 @@ export default {
               job,
               workTime,
               isGraduate,
-              profession
+              profession,
+              remark,
             } = data;
 
             form.face = face ? face : null;
-
             form.realname = realname;
             form.province = [province, city, area];
             form.birthdate = moment(birthdate, "YYYY-MM-DD");
             form.gender = gender;
             form.mobile = mobile;
+            form.remark = remark;
 
             if (email) {
               const emailSplit = email.split("@");
@@ -604,7 +603,7 @@ export default {
             ctx.$message.error("无法获取账户信息!");
           }
         })
-        .catch(err => console.log(err))
+        .catch((err) => console.log(err))
         .finally(() => (infoLoading.value = false));
     };
 
@@ -614,13 +613,16 @@ export default {
     // 监听可见性
     watch(
       () => props.visible,
-      val => {
+      (val) => {
         if (val) {
           ctx.$nextTick(() => {
             emailSuffixValue.value = "@qq.com";
             ctx.$refs.submitForm.resetFields();
             ctx.$refs.submitForm.clearValidate();
             form.face = null;
+            console.log(ctx.$refs.accountContent);
+            const doc = document.getElementsByClassName("ant-modal-body")[0];
+            docElmScrollTo(doc, 0);
           });
 
           switch (props.type) {
@@ -660,9 +662,9 @@ export default {
       handleBeforeUpload,
       uploadAvatar,
       uploadLoading,
-      handleUploadChange
+      handleUploadChange,
     };
-  }
+  },
 };
 </script>
 
