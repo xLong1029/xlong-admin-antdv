@@ -45,17 +45,14 @@
 <script>
 import { reactive, toRaw, ref, computed } from "vue";
 import { message } from "ant-design-vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import common from "common";
 import { validPassword, isEqual } from "utils/validate";
 import Api from "api/user";
 
 export default {
   name: "ChangePassword",
   setup() {
-    const store = useStore();
-
-    const router = useRouter();
+    const { store, router } = common();
 
     // 用户token
     const token = computed(() => store.getters.token);

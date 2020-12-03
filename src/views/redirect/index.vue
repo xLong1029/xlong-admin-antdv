@@ -1,11 +1,10 @@
 <script>
-import { useRouter, useRoute } from "vue-router";
+import common from "common";
 
 export default {
   name: "Redirect",
   setup() {
-    const router = useRouter();
-    const route = useRoute();
+    const { route, router } = common();
 
     const { params, query } = route;
     const { path } = params;

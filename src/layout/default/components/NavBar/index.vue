@@ -22,8 +22,6 @@
 <script>
 /* eslint-disable */
 import { ref, computed, watch } from "vue";
-import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 import common from "common";
 import NavItem from "./NavItem";
 
@@ -31,11 +29,7 @@ export default {
   name: "AppNavBar",
   components: { NavItem },
   setup() {
-    const router = useRouter();
-
-    const store = useStore();
-
-    const { toPage } = common();
+    const { toPage, router, store } = common();
 
     const logo = require("@/assets/images/logo.jpg");
 

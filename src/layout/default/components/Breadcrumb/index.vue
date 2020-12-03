@@ -30,15 +30,12 @@
 
 <script>
 import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
 import common from "common";
 
 export default {
   name: "Breadcrumb",
   setup() {
-    const router = useRouter();
-
-    const { goBack } = common();
+    const { goBack, router } = common();
 
     const levelList = ref([]);
 

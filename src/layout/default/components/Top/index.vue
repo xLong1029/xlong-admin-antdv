@@ -92,17 +92,11 @@
 import { computed } from "vue";
 import { message } from "ant-design-vue";
 import common from "common";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
 
 export default {
   name: "AppTop",
   setup() {
-    const store = useStore();
-
-    const router = useRouter();
-
-    const { showDevMoadl, toPage } = common();
+    const { showDevMoadl, toPage, store, router } = common();
 
     const user = computed(() => store.getters.user);
 

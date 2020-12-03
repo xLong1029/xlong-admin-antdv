@@ -1,7 +1,12 @@
 import { Modal } from "ant-design-vue";
-import router from "router";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 export default function() {
+  const route = useRoute();
+  const router = useRouter();
+  const store = useStore();
+
   function showDevMoadl() {
     Modal.info({
       title: "温馨提示",
@@ -19,6 +24,9 @@ export default function() {
   }
 
   return {
+    route,
+    router,
+    store,
     showDevMoadl,
     goBack,
     toPage

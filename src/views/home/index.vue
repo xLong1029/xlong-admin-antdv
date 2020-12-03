@@ -148,11 +148,9 @@
 <script>
 import { computed, reactive, toRaw, ref, watch, createVNode } from "vue";
 import { message } from "ant-design-vue";
-import { useRouter } from "vue-router";
 import { Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import common from "common";
-import { useStore } from "vuex";
 import {
   setLocalS,
   getLocalS,
@@ -165,11 +163,7 @@ import {
 export default {
   name: "Home",
   setup() {
-    const store = useStore();
-
-    const router = useRouter();
-
-    const { showDevMoadl, toPage } = common();
+    const { showDevMoadl, toPage, store, router } = common();
 
     // 系统名称
     const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
