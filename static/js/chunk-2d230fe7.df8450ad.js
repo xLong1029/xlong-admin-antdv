@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d230fe7"],{ef3c:function(e,c,a){"use strict";a.r(c);a("d8f4"),a("8dc4");var t=a("35ed"),n={name:"Redirect",setup:function(){var e=Object(t["d"])(),c=Object(t["c"])(),a=c.params,n=c.query,p=a.path;e.replace({path:"/"+p,query:n})}};c["default"]=n}}]);
