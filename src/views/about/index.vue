@@ -19,8 +19,10 @@
 <script>
 export default {
   name: "About",
+
   setup() {
     const qrcode = require("assets/images/qrcode.jpg");
+
     return {
       qrcode
     };

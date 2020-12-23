@@ -31,6 +31,14 @@ export default {
   setup() {
     const { toPage, router, store } = common();
 
+    // 监听路由变化
+    watch(
+      () => router.currentRoute.value,
+      (val) => {
+        currentMenu.value = getActiveMenu();
+      }
+    );
+
     const logo = require("@/assets/images/logo.jpg");
 
     const permissionRoutes = computed(() => store.getters.permissionRoutes);
@@ -51,13 +59,7 @@ export default {
 
     currentMenu.value = getActiveMenu();
 
-    // 监听路由变化
-    watch(
-      () => router.currentRoute.value,
-      (val) => {
-        currentMenu.value = getActiveMenu();
-      }
-    );
+    
 
     return {
       logo,

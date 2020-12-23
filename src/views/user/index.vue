@@ -48,18 +48,17 @@
 </template>
 
 <script>
-import { computed, ref, watch } from "vue";
-import { useStore } from "vuex";
+import { computed, onMounted, ref, watch } from "vue";
+// 通用模块
 import common from "common";
 
 export default {
   name: "UserCenter",
+
   setup() {
-    const store = useStore();
+    const { toPage, store } = common();
 
-    const { toPage } = common();
-
-    const menuList = [
+    const menuList = ref([
       {
         icon: "user1",
         title: "个人信息",
@@ -87,7 +86,23 @@ export default {
         url: "/user/company-info",
         roles: null
       }
-    ];
+    ]);
+
+    // 监听list变化
+    watch(
+      () => menuList.value,
+      val => {
+        listItemNumInRow.value = getListItemNumInRow(val);
+      }
+    );
+
+    // 监听角色变化
+    watch(
+      () => store.getters.roles,
+      val => {
+        filterList.value = getFilterListByRoles(val);
+      }
+    );
 
     const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
@@ -114,9 +129,9 @@ export default {
     // 获取权限列表
     const getFilterListByRoles = roles => {
       if (!roles || !roles.length) {
-        return [menuList[0]];
+        return [menuList.value[0]];
       }
-      return menuList.filter(e => {
+      return menuList.value.filter(e => {
         if (!e.roles) return true;
 
         const hasPermission = roles.some(role => e.roles.includes(role));
@@ -126,28 +141,14 @@ export default {
       });
     };
 
-    // 监听list变化
-    watch(
-      () => menuList.value,
-      val => {
-        listItemNumInRow.value = getListItemNumInRow(val);
-      }
-    );
-
-    // 监听角色变化
-    watch(
-      () => store.getters.roles,
-      val => {
-        filterList.value = getFilterListByRoles(val);
-      }
-    );
-
     const handleAlertClose = () => {
       alertVisible.value = false;
     };
 
-    listItemNumInRow.value = getListItemNumInRow(menuList);
-    filterList.value = getFilterListByRoles(roles.value);
+    onMounted(() => {
+      listItemNumInRow.value = getListItemNumInRow(menuList.value);
+      filterList.value = getFilterListByRoles(roles.value);
+    });
 
     return {
       realName,

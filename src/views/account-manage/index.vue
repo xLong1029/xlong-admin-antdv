@@ -83,10 +83,10 @@
 <script>
 import { computed, reactive, onMounted, ref } from "vue";
 import { message } from "ant-design-vue";
+import moment from "moment";
+// 通用模块
 import table from "common/table.js";
 import common from "common/index.js";
-import moment from "moment";
-import { useStore } from "vuex";
 // Api
 import Api from "api/account-manage";
 // 组件
@@ -94,17 +94,18 @@ import AccountStore from "./store.vue";
 
 export default {
   name: "AccountList",
+
   components: { AccountStore },
+
   emits: {
     close: val => {
       console.log(8888, val);
       return true;
     }
   },
-  setup() {
-    const store = useStore();
 
-    const { showDevMoadl } = common();
+  setup() {
+    const { showDevMoadl, store } = common();
 
     const roles = computed(() => store.getters.roles);
 

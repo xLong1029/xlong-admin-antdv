@@ -146,11 +146,20 @@
 </template>
 
 <script>
-import { computed, reactive, toRaw, ref, watch, createVNode } from "vue";
-import { message } from "ant-design-vue";
-import { Modal } from "ant-design-vue";
+import {
+  computed,
+  reactive,
+  toRaw,
+  ref,
+  watch,
+  createVNode,
+  onMounted
+} from "vue";
+import { message, Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
+// 通用模块
 import common from "common";
+// 工具
 import {
   setLocalS,
   getLocalS,
@@ -162,8 +171,35 @@ import {
 
 export default {
   name: "Home",
+
   setup() {
     const { showDevMoadl, toPage, store, router } = common();
+
+    // 是否记住密码
+    const remeberPwd = ref(false);
+
+    // 监听己住密码与token的改变
+    watch(
+      () => [remeberPwd.value, store.getters.token],
+      ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
+        console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
+        if (!newRemeberPwd && getLocalS("username")) {
+          delLocalS("username");
+          delLocalS("password");
+        }
+
+        // 退出登录
+        if (!newRemeberPwd && !newToken) {
+          form.username = "";
+          form.password = "";
+        }
+      }
+    );
+
+    // 提交loading
+    const submitLoading = ref(false);
+
+    const loginForm = ref(null);
 
     // 系统名称
     const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
@@ -197,40 +233,6 @@ export default {
       ],
       password: [{ required: true, message: "请输入密码", trigger: "blur" }]
     });
-
-    // 是否记住密码
-    const remeberPwd = ref(false);
-
-    // 判断本地存储用户名是否存在
-    if (getLocalS("username")) {
-      // 获取本地存储的用户名和密码
-      form.username = getLocalS("username");
-      form.password = decrypt(getLocalS("password"));
-      remeberPwd.value = true;
-    }
-
-    // 监听己住密码与token的改变
-    watch(
-      () => [remeberPwd.value, store.getters.token],
-      ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
-        console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
-        if (!newRemeberPwd && getLocalS("username")) {
-          delLocalS("username");
-          delLocalS("password");
-        }
-
-        // 退出登录
-        if (!newRemeberPwd && !newToken) {
-          form.username = "";
-          form.password = "";
-        }
-      }
-    );
-
-    // 提交loading
-    const submitLoading = ref(false);
-
-    const loginForm = ref(null);
 
     // 登录
     const onSubmit = () => {
@@ -332,6 +334,16 @@ export default {
         onCancel() {}
       });
     };
+
+    onMounted(() => {
+      // 判断本地存储用户名是否存在
+      if (getLocalS("username")) {
+        // 获取本地存储的用户名和密码
+        form.username = getLocalS("username");
+        form.password = decrypt(getLocalS("password"));
+        remeberPwd.value = true;
+      }
+    });
 
     return {
       nickName,

@@ -246,8 +246,8 @@
 <script>
 import { watch, ref, reactive, toRaw, nextTick } from "vue";
 import { message } from "ant-design-vue";
-import Api from "api/account-manage/index.js";
 import moment from "moment";
+// 通用模块
 import upload from "common/upload.js";
 // Json数据
 import JsonCity from "mock/city.json";
@@ -256,9 +256,12 @@ import JsonData from "mock/data.json";
 import { strToArr, arrToStr, compareDate } from "utils";
 import { docElmScrollTo } from "utils/scroll-to.js";
 import { validEmail, validMobile } from "utils/validate";
+// Api
+import Api from "api/account-manage/index.js";
 
 export default {
   name: "AccountStore",
+
   props: {
     // 弹窗可见性
     visible: {
@@ -276,7 +279,36 @@ export default {
       default: 1 // 1 新增, 2 编辑, 3 查看
     }
   },
+
   setup(props, context) {
+    // 监听可见性
+    watch(
+      () => props.visible,
+      async val => {
+        if (val) {
+          await nextTick();
+          emailSuffixValue.value = "@qq.com";
+          submitForm.value.resetFields();
+          submitForm.value.clearValidate();
+          form.face = null;
+          const doc = document.getElementsByClassName("ant-modal-body")[0];
+          docElmScrollTo(doc, 0);
+
+          switch (props.type) {
+            case 1:
+              title.value = "新增账户";
+              break;
+            case 2:
+              title.value = "编辑账户";
+              getInfo(props.id);
+              break;
+            default:
+              console.log("type is error");
+          }
+        }
+      }
+    );
+
     // 标题
     const title = ref("账户详情");
 
@@ -610,34 +642,6 @@ export default {
 
     // 提交loading
     const confirmLoading = ref(false);
-
-    // 监听可见性
-    watch(
-      () => props.visible,
-      async val => {
-        if (val) {
-          await nextTick();
-          emailSuffixValue.value = "@qq.com";
-          submitForm.value.resetFields();
-          submitForm.value.clearValidate();
-          form.face = null;
-          const doc = document.getElementsByClassName("ant-modal-body")[0];
-          docElmScrollTo(doc, 0);
-
-          switch (props.type) {
-            case 1:
-              title.value = "新增账户";
-              break;
-            case 2:
-              title.value = "编辑账户";
-              getInfo(props.id);
-              break;
-            default:
-              console.log("type is error");
-          }
-        }
-      }
-    );
 
     return {
       title,

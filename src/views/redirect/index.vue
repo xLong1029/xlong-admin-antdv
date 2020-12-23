@@ -3,6 +3,7 @@ import common from "common";
 
 export default {
   name: "Redirect",
+
   setup() {
     const { route, router } = common();
 

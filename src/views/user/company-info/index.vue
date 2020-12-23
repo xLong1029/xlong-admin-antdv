@@ -27,20 +27,24 @@
 <script>
 import { ref, computed, onMounted } from "vue";
 import { message } from "ant-design-vue";
-import { useStore } from "vuex";
+// 组件
 import BaseInfo from "./base-info";
 import MemberList from "./member";
+// 通用模块
+import common from "common";
+// Api
 import Api from "api/company";
 
 export default {
   name: "CompanyInfo",
+
   components: { BaseInfo, MemberList },
+
   setup() {
     // const { ctx } = getCurrentInstance(); // 实例
 
-    const store = useStore();
+    const { store, setPageLoding, pageLoading } = common();
 
-    const pageLoading = computed(() => store.getters.pageLoading);
     const companyId = computed(() => store.getters.companyId);
     const showBaseInfoChangeBtn = computed(
       () =>
@@ -49,11 +53,13 @@ export default {
           store.getters.roles.indexOf("manage") >= 0)
     );
 
+    // tab数据
     const tabDatas = ref({
       companyBaseInfo: {},
       companyMembers: {}
     });
 
+    // 禁止编辑
     const disableEdit = ref(true);
 
     const tabs = [
@@ -71,12 +77,11 @@ export default {
       }
     ];
 
+    // 当前激活tab
     const activeName = ref("base");
 
-    // 设置页面加载Loading
-    const setPageLoding = val => {
-      store.dispatch("app/setPageLoading", val);
-    };
+    // 是否变更单位信息
+    const isChange = ref(false);
 
     // 获取单位信息
     const getCompnayInfo = () => {
@@ -94,8 +99,6 @@ export default {
         .catch(err => console.log(err))
         .finally(() => setPageLoding(false));
     };
-
-    const isChange = ref(false);
 
     // 变更单位信息
     const changeInfo = val => {

@@ -138,10 +138,12 @@ import { message } from "ant-design-vue";
 import { useStore } from "vuex";
 // 校验
 import { validBusinessLicence, validIDcard, validPhone } from "utils/validate";
+// Api
 import Api from "api/company";
 
 export default {
   name: "BaseInfo",
+
   props: {
     // 当前激活类型
     activeTabName: {
@@ -164,13 +166,49 @@ export default {
       default: true
     }
   },
+
   setup(props, context) {
     const store = useStore();
 
-    const pageLoading = computed(() => store.getters.pageLoading);
+    // 监听data的变化
+    watch(
+      () => props.data,
+      val => {
+        let data =
+          val && Object.keys(val).length ? { ...val } : { ...defaultForm };
+
+        const {
+          companyName,
+          creditCode,
+          companyNature,
+          companyAddress,
+          legalPersonName,
+          legalPersonNumber,
+          contacter,
+          contacterPhone
+        } = data;
+
+        form.companyName = companyName;
+        form.creditCode = creditCode;
+        form.companyNature = companyNature;
+        form.companyAddress = companyAddress;
+        form.legalPersonName = legalPersonName;
+        form.legalPersonNumber = legalPersonNumber;
+        form.contacter = contacter;
+        form.contacterPhone = contacterPhone;
+      }
+    );
 
     const labelColSpan = 5;
     const wrapperColSpan = 19;
+
+    // 单位id
+    const companyId = computed(() => store.getters.companyId);
+
+    // 提交loading
+    const submitLoading = ref(false);
+
+    const submitForm = ref(null);
 
     const companyNatureList = [
       "事业单位",
@@ -251,43 +289,6 @@ export default {
       ]
     });
 
-    // 监听data的变化
-    watch(
-      () => props.data,
-      val => {
-        let data =
-          val && Object.keys(val).length ? { ...val } : { ...defaultForm };
-
-        const {
-          companyName,
-          creditCode,
-          companyNature,
-          companyAddress,
-          legalPersonName,
-          legalPersonNumber,
-          contacter,
-          contacterPhone
-        } = data;
-
-        form.companyName = companyName;
-        form.creditCode = creditCode;
-        form.companyNature = companyNature;
-        form.companyAddress = companyAddress;
-        form.legalPersonName = legalPersonName;
-        form.legalPersonNumber = legalPersonNumber;
-        form.contacter = contacter;
-        form.contacterPhone = contacterPhone;
-      }
-    );
-
-    // 提交loading
-    const submitLoading = ref(false);
-
-    // 单位id
-    const companyId = computed(() => store.getters.companyId);
-
-    const submitForm = ref(null);
-
     // 提交修改
     const onSubmit = () => {
       submitForm.value
@@ -317,7 +318,6 @@ export default {
     };
 
     return {
-      pageLoading,
       labelColSpan,
       wrapperColSpan,
       form,

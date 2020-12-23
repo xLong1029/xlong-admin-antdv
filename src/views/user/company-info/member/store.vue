@@ -99,12 +99,14 @@
 <script>
 import { watch, ref, reactive, onMounted, computed, nextTick } from "vue";
 import { message } from "ant-design-vue";
-import { useStore } from "vuex";
+// 通用模块
 import common from "common";
+// Api
 import Api from "api/company";
 
 export default {
   name: "MemberStore",
+
   props: {
     // 弹窗可见性
     visible: {
@@ -122,13 +124,40 @@ export default {
       default: 1 // 1 新增, 2 编辑, 3 查看
     }
   },
+
   setup(props, context) {
-    const store = useStore();
+    const { store, showDevMoadl } = common();
+
+    // 监听可见性
+    watch(
+      () => props.visible,
+      async val => {
+        if (val) {
+          await nextTick();
+          submitForm.value.resetFields();
+
+          switch (props.type) {
+            case 1:
+              title.value = "新增人员";
+
+              break;
+            case 2:
+              title.value = "编辑人员";
+              getInfo(props.id);
+              break;
+            case 3:
+              title.value = "查看详情";
+              getInfo(props.id);
+              break;
+            default:
+              console.log("type is error");
+          }
+        }
+      }
+    );
 
     // 当前用户角色
     const roles = computed(() => store.getters.roles);
-
-    const { showDevMoadl } = common();
 
     // 标题
     const title = ref("人员信息详情");
@@ -176,6 +205,11 @@ export default {
       }
     ];
 
+    // loading
+    const infoLoading = ref(false);
+
+    const submitForm = ref(null);
+
     // 确认弹窗
     const handleOk = () => {
       if (props.type < 3) {
@@ -189,9 +223,6 @@ export default {
     const handleCancel = () => {
       context.emit("close", false);
     };
-
-    // loading
-    const infoLoading = ref(false);
 
     // 获取信息
     const getInfo = () => {
@@ -214,36 +245,6 @@ export default {
         .catch(err => console.log(err))
         .finally(() => (infoLoading.value = false));
     };
-
-    const submitForm = ref(null);
-
-    // 监听可见性
-    watch(
-      () => props.visible,
-      async val => {
-        if (val) {
-          await nextTick();
-          submitForm.value.resetFields();
-
-          switch (props.type) {
-            case 1:
-              title.value = "新增人员";
-
-              break;
-            case 2:
-              title.value = "编辑人员";
-              getInfo(props.id);
-              break;
-            case 3:
-              title.value = "查看详情";
-              getInfo(props.id);
-              break;
-            default:
-              console.log("type is error");
-          }
-        }
-      }
-    );
 
     onMounted(() => {});
 

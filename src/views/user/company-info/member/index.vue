@@ -97,25 +97,28 @@
 
 <script>
 import { computed, reactive, onMounted } from "vue";
+// 通用模块
 import table from "common/table.js";
 import common from "common";
-import { useStore } from "vuex";
+// Api
 import Api from "api/company";
+// 组件
 import MemberStore from "./store.vue";
 
 export default {
   name: "MemberList",
+
   components: { MemberStore },
+
   emits: {
     close: val => {
       console.log(8888, val);
       return true;
     }
   },
-  setup() {
-    const store = useStore();
 
-    const { showDevMoadl } = common();
+  setup() {
+    const { store, showDevMoadl } = common();
 
     // 企业Id
     const companyId = computed(() => store.getters.companyId);

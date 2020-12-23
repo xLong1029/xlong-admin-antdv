@@ -21,7 +21,7 @@
           </a-breadcrumb-item>
         </a-breadcrumb>
       </div>
-      <a-button v-if="$route.meta.needBack" class="back-btn" @click="goBack"
+      <a-button v-if="$route.meta.needBack" class="back-btn" @click="onGoBack"
         >返回</a-button
       >
     </div>
@@ -35,7 +35,18 @@ import common from "common";
 export default {
   name: "Breadcrumb",
   setup() {
-    const { goBack, router } = common();
+    const { onGoBack, router } = common();
+
+    // 监听路由变化
+    watch(
+      () => router.currentRoute.value,
+      val => {
+        if (val.path.startsWith("/redirect/")) {
+          return;
+        }
+        getBreadcrumb();
+      }
+    );
 
     const levelList = ref([]);
 
@@ -76,20 +87,9 @@ export default {
 
     getBreadcrumb();
 
-    // 监听路由变化
-    watch(
-      () => router.currentRoute.value,
-      val => {
-        if (val.path.startsWith("/redirect/")) {
-          return;
-        }
-        getBreadcrumb();
-      }
-    );
-
     return {
       levelList,
-      goBack,
+      onGoBack,
       handleLink
     };
   }

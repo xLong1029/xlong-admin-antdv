@@ -60,7 +60,6 @@
 <script>
 import { reactive, toRaw, ref, computed, onMounted } from "vue";
 import { message } from "ant-design-vue";
-import { useStore } from "vuex";
 // Api
 import Api from "api/user";
 // 工具
@@ -70,12 +69,21 @@ import ImgUpload from "components/Upload/ImgUplaod.vue";
 import ImgPreview from "components/Preview/ImgPreview.vue";
 // 通用方法
 import preview from "common/preview.js";
+import common from "common";
 
 export default {
   name: "UserInfo",
+
   components: { ImgUpload, ImgPreview },
+
   setup() {
-    const store = useStore();
+    const { store, setPageLoding, pageLoading } = common();
+
+    const {
+      imgPreviewModal,
+      handleImgPreview,
+      handleCancelImgPreview
+    } = preview();
 
     // 表单配置
     const labelColSpan = 6;
@@ -83,7 +91,7 @@ export default {
 
     // 当前用户信息和系统配置
     const token = computed(() => store.getters.token);
-    const pageLoading = computed(() => store.getters.pageLoading);
+
     const userId = computed(() => store.getters.userId);
 
     // 表单
@@ -104,10 +112,10 @@ export default {
       gender: [{ required: true, message: "请选择性别", trigger: "change" }]
     });
 
-    // 设置页面加载Loading
-    const setPageLoding = val => {
-      store.dispatch("app/setPageLoading", val);
-    };
+    // 提交loading
+    const submitLoading = ref(false);
+
+    const submitForm = ref(null);
 
     // 头像上传成功
     const handleUploadSuccess = file => {
@@ -122,12 +130,6 @@ export default {
       console.log(file, index);
       form.userFace = list;
     };
-
-    const {
-      imgPreviewModal,
-      handleImgPreview,
-      handleCancelImgPreview
-    } = preview();
 
     // 获取个人资料
     const getProfile = () => {
@@ -179,11 +181,6 @@ export default {
         .catch(err => console.log(err))
         .finally(() => setPageLoding(false));
     };
-
-    // 提交loading
-    const submitLoading = ref(false);
-
-    const submitForm = ref(null);
 
     // 提交修改
     const onSubmit = () => {

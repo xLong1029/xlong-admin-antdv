@@ -45,12 +45,16 @@
 <script>
 import { reactive, toRaw, ref, computed } from "vue";
 import { message } from "ant-design-vue";
+// 通用模块
 import common from "common";
+// 校验
 import { validPassword, isEqual } from "utils/validate";
+// Api
 import Api from "api/user";
 
 export default {
   name: "ChangePassword",
+
   setup() {
     const { store, router } = common();
 
@@ -60,6 +64,10 @@ export default {
     // 表单配置
     const labelColSpan = 6;
     const wrapperColSpan = 18;
+
+    // 提交loading
+    const submitLoading = ref(false);
+    const submitForm = ref(null);
 
     // 表单
     const form = reactive({
@@ -108,10 +116,6 @@ export default {
         }
       ]
     });
-
-    // 提交loading
-    const submitLoading = ref(false);
-    const submitForm = ref(null);
 
     // 登录
     const onSubmit = () => {

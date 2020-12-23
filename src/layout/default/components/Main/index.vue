@@ -18,15 +18,13 @@
 </template>
 
 <script>
-import { computed } from "vue";
-import { useStore } from "vuex";
+// 通用方法
+import common from "common";
 
 export default {
   name: "AppMain",
   setup() {
-    const store = useStore();
-
-    const pageLoading = computed(() => store.getters.pageLoading);
+    const { pageLoading } = common();
 
     return {
       pageLoading
