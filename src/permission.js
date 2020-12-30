@@ -47,7 +47,6 @@ router.beforeEach(async (to, from, next) => {
         next({ ...to, replace: true });
       }
     } catch (err) {
-      console.log(9999, err);
       // 重登录
       message.error(err || "用户信息已失效，请重新登录");
 
