@@ -1,4 +1,3 @@
-/* eslint-disable */
 import Api from "api/user";
 import { resetRouter } from "router";
 import { strToArr } from "utils";

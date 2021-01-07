@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { asyncRoutes, constantRoutes, resetRouter } from "router";
 import router from "router";
 
@@ -57,12 +56,16 @@ const actions = {
 
       const accessedRoutes = filterAsyncRoutes(asyncRoutes, roles);
       // 404重定向配置放结尾
-      accessedRoutes.push({ path: "/:catchAll(.*)", redirect: "/404", hidden: true });
-      
+      accessedRoutes.push({
+        path: "/:catchAll(.*)",
+        redirect: "/404",
+        hidden: true
+      });
+
       // 动态添加路由，从前面插入
       accessedRoutes.forEach(e => {
         router.addRoute(e);
-      })
+      });
 
       commit("SET_ROUTES", accessedRoutes);
       resolve(accessedRoutes);
