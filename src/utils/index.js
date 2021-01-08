@@ -1,4 +1,3 @@
-/* eslint-disable */ 
 /**
  * 根据时间辍返回对应的时间 如 YYYY-MM-DD HH:mm:ss  YYYY-MM-DD
  * @param {Object} date 时间对象
