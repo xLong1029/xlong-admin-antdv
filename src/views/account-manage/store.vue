@@ -281,6 +281,9 @@ export default {
   },
 
   setup(props, context) {
+    // 默认头像
+    const defaultFaceImg = require("@/assets/images/head.jpg");
+
     // 监听可见性
     watch(
       () => props.visible,
@@ -290,7 +293,7 @@ export default {
           emailSuffixValue.value = "@qq.com";
           submitForm.value.resetFields();
           submitForm.value.clearValidate();
-          form.face = null;
+          form.face = defaultFaceImg;
           const doc = document.getElementsByClassName("ant-modal-body")[0];
           docElmScrollTo(doc, 0);
 
@@ -344,12 +347,9 @@ export default {
 
     const { fileAccept, beforeUpload, uploadToBomb } = upload();
 
-    // 默认头像
-    const defaultFaceImg = require("@/assets/images/head.jpg");
-
     // 设置默认头像
     const setDefaultHeadImg = e => {
-      e.currentTarget.src = defaultFaceImg.value;
+      e.currentTarget.src = defaultFaceImg;
       e.currentTarget.onerror = null;
     };
 
@@ -404,6 +404,7 @@ export default {
 
     // 默认表单
     const defaultForm = {
+      face: defaultFaceImg,
       realname: null,
       province: [],
       birthdate: null,
@@ -610,7 +611,7 @@ export default {
               remark
             } = data;
 
-            form.face = face ? face : null;
+            form.face = face ? face : defaultFaceImg;
             form.realname = realname;
             form.province = [province, city, area];
             form.birthdate = moment(birthdate, "YYYY-MM-DD");

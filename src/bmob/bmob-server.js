@@ -1,8 +1,8 @@
 /*
  * 功能 : 封装bmob的增删改查数据方法。
  * 作者 : 罗永梅（381612175@qq.com）
- * 日期 : 2020-11-09
- * 版本 : version 2.3
+ * 日期 : 2021-01-08
+ * 版本 : version 2.4
  */
 /* eslint-disable */
 import { APPLICATION_ID, REST_API_KEY, SERCRET_KEY, SECURITY_CODE } from 'config/index.js';
@@ -74,7 +74,7 @@ export default {
     AddOne: (tableName, params) => {
         let query = Bmob.Query(tableName)
         // 删除参数中的objectId值
-        objOmit(params, ['objectId', 'createdAt', 'updatedAt'])
+        params = objOmit(params, ['objectId', 'createdAt', 'updatedAt'])
         return new Promise((resolve, reject) => {
             // 循环执行set操作
             for (let i in params) {
@@ -99,7 +99,7 @@ export default {
     EditOne: (tableName, objectId, params) => {
         let query = Bmob.Query(tableName)
         // 删除参数中的objectId值
-        objOmit(params, ['objectId', 'createdAt', 'updatedAt'])
+        params = objOmit(params, ['objectId', 'createdAt', 'updatedAt'])
         // 获取对象并修改
         return new Promise((resolve, reject) => {
             query.get(objectId).then(res => {
