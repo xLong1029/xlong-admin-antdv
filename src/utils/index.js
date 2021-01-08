@@ -405,8 +405,11 @@ export function getFileStream(data, name) {
  * @param {*} uselessKeys 不需要的属性序列
  */
 export function objOmit(obj, uselessKeys) {
-  uselessKeys.forEach(key => delete obj[key])
-  return obj
+  if (!uselessKeys.length) return obj;
+  
+  const objCopy = { ...obj };
+  uselessKeys.forEach(key => delete objCopy[key]);
+  return objCopy;
 }
 
 /**
