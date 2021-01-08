@@ -178,7 +178,7 @@ export default {
     // 是否记住密码
     const remeberPwd = ref(false);
 
-    // 监听己住密码与token的改变
+    // 监听记住密码与token的改变
     watch(
       () => [remeberPwd.value, store.getters.token],
       ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {

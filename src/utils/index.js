@@ -1,4 +1,3 @@
-/* eslint-disable */ 
 /**
  * 根据时间辍返回对应的时间 如 YYYY-MM-DD HH:mm:ss  YYYY-MM-DD
  * @param {Object} date 时间对象
@@ -6,66 +5,80 @@
  * @param {String} dateWord 默认返回2018年01月15日 如填写 - 的。则返回 2018-01-15
  * @param {String} timeWord 默认返回16时26分30秒 如填写 : 的。则返回 16:26:30
  */
-export function timeTrans(date, format = 'YYYY-MM-DD HH:mm:ss', dateWord = '', timeWord = '') {
-  const YType = dateWord === '' ? '年' : dateWord
-  const MType = dateWord === '' ? '月' : dateWord
-  const DType = dateWord === '' ? '日' : ''
+export function timeTrans(
+  date,
+  format = "YYYY-MM-DD HH:mm:ss",
+  dateWord = "",
+  timeWord = ""
+) {
+  const YType = dateWord === "" ? "年" : dateWord;
+  const MType = dateWord === "" ? "月" : dateWord;
+  const DType = dateWord === "" ? "日" : "";
 
-  const hType = timeWord === '' ? '时' : timeWord
-  const mType = timeWord === '' ? '分' : timeWord
-  const sType = timeWord === '' ? '秒' : ''
+  const hType = timeWord === "" ? "时" : timeWord;
+  const mType = timeWord === "" ? "分" : timeWord;
+  const sType = timeWord === "" ? "秒" : "";
 
-  let dataValue = ''
-  const Y = date.getFullYear() + YType
-  const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + MType
-  const D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + DType
-  const h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + hType
-  const m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + mType
-  const s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()) + sType
+  let dataValue = "";
+  const Y = date.getFullYear() + YType;
+  const M =
+    (date.getMonth() + 1 < 10
+      ? "0" + (date.getMonth() + 1)
+      : date.getMonth() + 1) + MType;
+  const D =
+    (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + DType;
+  const h =
+    (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + hType;
+  const m =
+    (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+    mType;
+  const s =
+    (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()) +
+    sType;
   switch (format) {
-    case 'YYYY-MM-DD HH:mm:ss':
-      dataValue = Y + M + D + ' ' + h + m + s
-      break
-    case 'YYYY':
-      dataValue = date.getFullYear().toString()
-      break
-    case 'MM':
-      dataValue = M.substring(0, M.length - 1)
-      break
-    case 'DD':
-      dataValue = D.substring(0, D.length - 1)
-      break
-    case 'YYYY-MM':
-      dataValue = Y + M.substring(0, M.length - 1)
-      break
-    case 'YYYY-MM-DD':
-      dataValue = Y + M + D
-      break
-    case 'MM-DD':
-      dataValue = M + D.substring(0, D.length - 1)
-      break
-    case 'HH':
-      dataValue = h.substring(0, h.length - 1)
-      break
-    case 'mm':
-      dataValue = m.substring(0, m.length - 1)
-      break
-    case 'ss':
-      dataValue = s.toString()
-      break
-    case 'HH:mm':
-      dataValue = h + m.substring(0, m.length - 1)
-      break
-    case 'HH:mm:ss':
-      dataValue = h + m + s
-      break
-    case 'mm:ss':
-      dataValue = m + s
-      break
+    case "YYYY-MM-DD HH:mm:ss":
+      dataValue = Y + M + D + " " + h + m + s;
+      break;
+    case "YYYY":
+      dataValue = date.getFullYear().toString();
+      break;
+    case "MM":
+      dataValue = M.substring(0, M.length - 1);
+      break;
+    case "DD":
+      dataValue = D.substring(0, D.length - 1);
+      break;
+    case "YYYY-MM":
+      dataValue = Y + M.substring(0, M.length - 1);
+      break;
+    case "YYYY-MM-DD":
+      dataValue = Y + M + D;
+      break;
+    case "MM-DD":
+      dataValue = M + D.substring(0, D.length - 1);
+      break;
+    case "HH":
+      dataValue = h.substring(0, h.length - 1);
+      break;
+    case "mm":
+      dataValue = m.substring(0, m.length - 1);
+      break;
+    case "ss":
+      dataValue = s.toString();
+      break;
+    case "HH:mm":
+      dataValue = h + m.substring(0, m.length - 1);
+      break;
+    case "HH:mm:ss":
+      dataValue = h + m + s;
+      break;
+    case "mm:ss":
+      dataValue = m + s;
+      break;
     default:
-      throw new Error('没有找到对应的时间')
+      throw new Error("没有找到对应的时间");
   }
-  return dataValue
+  return dataValue;
 }
 
 /**
@@ -75,18 +88,18 @@ export function timeTrans(date, format = 'YYYY-MM-DD HH:mm:ss', dateWord = '', t
  * @returns {Object}
  */
 export function getQueryObject(url) {
-  url = url == null ? window.location.href : url
-  const search = url.substring(url.lastIndexOf('?') + 1)
-  const obj = {}
-  const reg = /([^?&=]+)=([^?&=]*)/g
+  url = url == null ? window.location.href : url;
+  const search = url.substring(url.lastIndexOf("?") + 1);
+  const obj = {};
+  const reg = /([^?&=]+)=([^?&=]*)/g;
   search.replace(reg, (rs, $1, $2) => {
-    const name = decodeURIComponent($1)
-    let val = decodeURIComponent($2)
-    val = String(val)
-    obj[name] = val
-    return rs
-  })
-  return obj
+    const name = decodeURIComponent($1);
+    let val = decodeURIComponent($2);
+    val = String(val);
+    obj[name] = val;
+    return rs;
+  });
+  return obj;
 }
 
 /**
@@ -96,13 +109,13 @@ export function getQueryObject(url) {
  * @returns {Array}
  */
 export function cleanArray(actual) {
-  const newArray = []
+  const newArray = [];
   for (let i = 0; i < actual.length; i++) {
     if (actual[i]) {
-      newArray.push(actual[i])
+      newArray.push(actual[i]);
     }
   }
-  return newArray
+  return newArray;
 }
 
 /**
@@ -110,13 +123,13 @@ export function cleanArray(actual) {
  * @returns {Array}
  */
 export function param(json) {
-  if (!json) return ''
+  if (!json) return "";
   return cleanArray(
     Object.keys(json).map(key => {
-      if (json[key] === undefined) return ''
-      return encodeURIComponent(key) + '=' + encodeURIComponent(json[key])
+      if (json[key] === undefined) return "";
+      return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
     })
-  ).join('&')
+  ).join("&");
 }
 
 /**
@@ -126,19 +139,19 @@ export function param(json) {
  * @returns {Object}
  */
 export function param2Obj(url) {
-  const search = url.split('?')[1]
+  const search = url.split("?")[1];
   if (!search) {
-    return {}
+    return {};
   }
   return JSON.parse(
     '{"' +
-    decodeURIComponent(search)
-      .replace(/"/g, '\\"')
-      .replace(/&/g, '","')
-      .replace(/=/g, '":"')
-      .replace(/\+/g, ' ') +
-    '"}'
-  )
+      decodeURIComponent(search)
+        .replace(/"/g, '\\"')
+        .replace(/&/g, '","')
+        .replace(/=/g, '":"')
+        .replace(/\+/g, " ") +
+      '"}'
+  );
 }
 
 /**
@@ -148,9 +161,9 @@ export function param2Obj(url) {
  * @returns {string}
  */
 export function html2Text(val) {
-  const div = document.createElement('div')
-  div.innerHTML = val
-  return div.textContent || div.innerText
+  const div = document.createElement("div");
+  div.innerHTML = val;
+  return div.textContent || div.innerText;
 }
 
 /**
@@ -161,22 +174,22 @@ export function html2Text(val) {
  * @returns {Object}
  */
 export function objectMerge(target, source) {
-  if (typeof target !== 'object') {
-    target = {}
+  if (typeof target !== "object") {
+    target = {};
   }
   if (Array.isArray(source)) {
-    return source.slice()
+    return source.slice();
   }
 
   Object.keys(source).forEach(property => {
-    const sourceProperty = source[property]
-    if (typeof sourceProperty === 'object') {
-      target[property] = objectMerge(target[property], sourceProperty)
+    const sourceProperty = source[property];
+    if (typeof sourceProperty === "object") {
+      target[property] = objectMerge(target[property], sourceProperty);
     } else {
-      target[property] = sourceProperty
+      target[property] = sourceProperty;
     }
-  })
-  return target
+  });
+  return target;
 }
 
 /**
@@ -188,38 +201,38 @@ export function objectMerge(target, source) {
  * @return {*}
  */
 export function debounce(func, wait, immediate) {
-  let timeout, args, context, timestamp, result
+  let timeout, args, context, timestamp, result;
 
-  const later = function () {
+  const later = function() {
     // 据上一次触发时间间隔
-    const last = +new Date() - timestamp
+    const last = +new Date() - timestamp;
 
     // 上次被包装函数被调用时间间隔 last 小于设定时间间隔 wait
     if (last < wait && last > 0) {
-      timeout = setTimeout(later, wait - last)
+      timeout = setTimeout(later, wait - last);
     } else {
-      timeout = null
+      timeout = null;
       // 如果设定为immediate===true，因为开始边界已经调用过了此处无需调用
       if (!immediate) {
-        result = func.apply(context, args)
-        if (!timeout) context = args = null
+        result = func.apply(context, args);
+        if (!timeout) context = args = null;
       }
     }
-  }
+  };
 
-  return function (...args) {
-    context = this
-    timestamp = +new Date()
-    const callNow = immediate && !timeout
+  return function(...args) {
+    context = this;
+    timestamp = +new Date();
+    const callNow = immediate && !timeout;
     // 如果延时不存在，重新设定延时
-    if (!timeout) timeout = setTimeout(later, wait)
+    if (!timeout) timeout = setTimeout(later, wait);
     if (callNow) {
-      result = func.apply(context, args)
-      context = args = null
+      result = func.apply(context, args);
+      context = args = null;
     }
 
-    return result
-  }
+    return result;
+  };
 }
 
 /**
@@ -228,8 +241,8 @@ export function debounce(func, wait, immediate) {
  * @param {Array} source
  */
 export function deepClone(source) {
-  const copy = JSON.stringify(source)
-  return JSON.parse(copy)
+  const copy = JSON.stringify(source);
+  return JSON.parse(copy);
 }
 
 /**
@@ -239,7 +252,7 @@ export function deepClone(source) {
  * @returns {Array}
  */
 export function uniqueArr(arr) {
-  return Array.from(new Set(arr))
+  return Array.from(new Set(arr));
 }
 
 /**
@@ -249,7 +262,7 @@ export function uniqueArr(arr) {
  * @returns {boolean}
  */
 export function hasClass(ele, cls) {
-  return !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
+  return !!ele.className.match(new RegExp("(\\s|^)" + cls + "(\\s|$)"));
 }
 
 /**
@@ -259,7 +272,7 @@ export function hasClass(ele, cls) {
  * @param {string} cls
  */
 export function aDDClass(ele, cls) {
-  if (!hasClass(ele, cls)) ele.className += ' ' + cls
+  if (!hasClass(ele, cls)) ele.className += " " + cls;
 }
 
 /**
@@ -270,8 +283,8 @@ export function aDDClass(ele, cls) {
  */
 export function removeClass(ele, cls) {
   if (hasClass(ele, cls)) {
-    const reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
-    ele.className = ele.className.replace(reg, ' ')
+    const reg = new RegExp("(\\s|^)" + cls + "(\\s|$)");
+    ele.className = ele.className.replace(reg, " ");
   }
 }
 
@@ -283,18 +296,18 @@ export function removeClass(ele, cls) {
  */
 export function toggleClass(element, className) {
   if (!element || !className) {
-    return
+    return;
   }
-  let classString = element.className
-  const nameIndex = classString.indexOf(className)
+  let classString = element.className;
+  const nameIndex = classString.indexOf(className);
   if (nameIndex === -1) {
-    classString += '' + className
+    classString += "" + className;
   } else {
     classString =
       classString.substr(0, nameIndex) +
-      classString.substr(nameIndex + className.length)
+      classString.substr(nameIndex + className.length);
   }
-  element.className = classString
+  element.className = classString;
 }
 
 /**
@@ -305,7 +318,7 @@ export function toggleClass(element, className) {
  * @returns {String}
  */
 export function arrToStr(arr, l) {
-  return arr.join(l)
+  return arr.join(l);
 }
 
 /**
@@ -316,7 +329,7 @@ export function arrToStr(arr, l) {
  * @returns {Array}
  */
 export function strToArr(string, s) {
-  return string.split(s)
+  return string.split(s);
 }
 
 /**
@@ -328,7 +341,9 @@ export function strToArr(string, s) {
  * @returns {Array}
  */
 export function limitArr(list, start, limit) {
-  return list.filter((item, index) => index < limit * start && index >= limit * (start - 1))
+  return list.filter(
+    (item, index) => index < limit * start && index >= limit * (start - 1)
+  );
 }
 
 /**
@@ -337,13 +352,13 @@ export function limitArr(list, start, limit) {
  * @returns {Number}
  */
 export function getScrollTop() {
-  let scroll_top = 0
+  let scroll_top = 0;
   if (document.documentElement && document.documentElement.scrollTop) {
-    scroll_top = document.documentElement.scrollTop
+    scroll_top = document.documentElement.scrollTop;
   } else if (document.body) {
-    scroll_top = document.body.scrollTop
+    scroll_top = document.body.scrollTop;
   }
-  return scroll_top
+  return scroll_top;
 }
 
 /**
@@ -353,10 +368,10 @@ export function getScrollTop() {
  * @param {String} thisUrl url地址，若不传则获取当前地址
  */
 export function getUrlQuery(name, thisUrl) {
-  const reg = new RegExp('(^|\\?|&)' + name + '=([^&]*)(\\s|&|$)', 'i')
-  const url = thisUrl || location.href
-  if (reg.test(url)) return decodeURI(RegExp.$2.replace(/\+/g, ' '))
-  else return false
+  const reg = new RegExp("(^|\\?|&)" + name + "=([^&]*)(\\s|&|$)", "i");
+  const url = thisUrl || location.href;
+  if (reg.test(url)) return decodeURI(RegExp.$2.replace(/\+/g, " "));
+  else return false;
 }
 
 /**
@@ -365,12 +380,12 @@ export function getUrlQuery(name, thisUrl) {
  * @returns {*} msg
  */
 export function logInfo(msg) {
-  const production = process.env.NODE_ENV === 'production'
+  const production = process.env.NODE_ENV === "production";
   if (!production) {
-    console.log(msg)
-    return true
+    console.log(msg);
+    return true;
   }
-  return false
+  return false;
 }
 
 /**
@@ -383,18 +398,18 @@ export function getFileStream(data, name) {
   // 判断是否有msSaveOrOpenBlob，在客户端上以本地方式保存文件（任意大小），方法如同从 Internet 下载文件
   if (window.navigator.msSaveOrOpenBlob) {
     // msSaveBlob只能保存，不能在线打开
-    navigator.msSaveBlob(data, name)
+    navigator.msSaveBlob(data, name);
   } else {
     // 创建a标签
-    const link = document.createElement('a')
+    const link = document.createElement("a");
     // 创建URL
-    link.href = window.URL.createObjectURL(data)
+    link.href = window.URL.createObjectURL(data);
     // 设置下载名称
-    link.download = name
+    link.download = name;
     // 触发标签点击事件
-    link.click()
+    link.click();
     // 释放URL
-    window.URL.revokeObjectURL(link.href)
+    window.URL.revokeObjectURL(link.href);
   }
 }
 
@@ -405,8 +420,11 @@ export function getFileStream(data, name) {
  * @param {*} uselessKeys 不需要的属性序列
  */
 export function objOmit(obj, uselessKeys) {
-  uselessKeys.forEach(key => delete obj[key])
-  return obj
+  if (!uselessKeys.length) return obj;
+
+  const objCopy = { ...obj };
+  uselessKeys.forEach(key => delete objCopy[key]);
+  return objCopy;
 }
 
 /**
@@ -415,13 +433,13 @@ export function objOmit(obj, uselessKeys) {
  * @param {*} value 值
  */
 export function encrypt(value) {
-  let code = ''
+  let code = "";
   for (let i = 0; i < value.length; i++) {
-    const r = value.charCodeAt(i)
-    code += String.fromCharCode(r + 2)
+    const r = value.charCodeAt(i);
+    code += String.fromCharCode(r + 2);
   }
   // 对字符串进行特殊字符编码，分号（;）、逗号（,）、等号（=）以及空格问题
-  return escape(code)
+  return escape(code);
 }
 
 /**
@@ -431,13 +449,13 @@ export function encrypt(value) {
  */
 export function decrypt(value) {
   // 对字符串进行特殊字符解码，分号（;）、逗号（,）、等号（=）以及空格问题
-  value = unescape(value)
-  let correct = ''
+  value = unescape(value);
+  let correct = "";
   for (let i = 0; i < value.length; i++) {
-    const r = value.charCodeAt(i)
-    correct += String.fromCharCode(r - 2)
+    const r = value.charCodeAt(i);
+    correct += String.fromCharCode(r - 2);
   }
-  return correct
+  return correct;
 }
 
 /**
@@ -447,7 +465,7 @@ export function decrypt(value) {
  * @param {*} value 值
  */
 export function setLocalS(key, value) {
-  localStorage.setItem(key, value)
+  localStorage.setItem(key, value);
 }
 
 /**
@@ -456,9 +474,9 @@ export function setLocalS(key, value) {
  * @param {*} key key名
  */
 export function getLocalS(key) {
-  const res = localStorage.getItem(key)
-  if (res && res !== 'null') return res
-  else return false
+  const res = localStorage.getItem(key);
+  if (res && res !== "null") return res;
+  else return false;
 }
 
 /**
@@ -467,14 +485,14 @@ export function getLocalS(key) {
  * @param {*} key key名
  */
 export function delLocalS(key) {
-  localStorage.removeItem(key)
+  localStorage.removeItem(key);
 }
 
 /**
  * localstorage清空所有本地储存
  */
 export function clearLocalS() {
-  localStorage.clear()
+  localStorage.clear();
 }
 
 /**
@@ -485,14 +503,18 @@ export function clearLocalS() {
  */
 export function compareDate(dateOne, dateTwo) {
   // 字符串
-  if (typeof (dateOne) === 'string' && typeof (dateTwo) === 'string') {
-    return ((new Date(dateOne.replace(/-/g, "\/"))) <= (new Date(dateTwo.replace(/-/g, "\/"))))
+  if (typeof dateOne === "string" && typeof dateTwo === "string") {
+    return (
+      new Date(dateOne.replace(/-/g, "/")) <=
+      new Date(dateTwo.replace(/-/g, "/"))
+    );
   }
   // DATE对象
-  else if (typeof (dateOne) === 'object' && typeof (dateTwo) === 'object') return (dateOne <= dateTwo)
+  else if (typeof dateOne === "object" && typeof dateTwo === "object")
+    return dateOne <= dateTwo;
   else {
-    console.log('日期比较格式不统一')
-    return false
+    console.log("日期比较格式不统一");
+    return false;
   }
 }
 
