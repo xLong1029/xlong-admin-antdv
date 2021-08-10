@@ -2,7 +2,7 @@
  * 功能 : 封装数据交互api接口(数据使用的是bmob云数据，请求方法使用bmob云规定方法)。
  * 用处 : 用户信息操作相关api
  * 作者 : 罗永梅（381612175@qq.com）
- * 日期 : 2020-11-19
+ * 日期 : 2021-08-10
  */
 import BmobServer from "bmob/bmob-server.js";
 import Bmob from "hydrogen-js-sdk";
@@ -89,5 +89,14 @@ export default {
         })
         .catch(err => reject(err));
     });
+  },
+  /**
+   * 退出登录，清理Bmob本地全部缓存
+   *
+   * @param {*} params 修改的参数对象
+   * @param {*} token token
+   */
+  Logout: () => {
+    Bmob.User.logout();
   }
 };
