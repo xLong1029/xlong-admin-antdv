@@ -5,7 +5,7 @@
         <img class="logo" :src="logo" />
       </div>
       <!-- 导航 -->
-      <div class="nav-list-container">
+      <div class="nav-list-container ml-20">
         <a-menu v-model:selectedKeys="currentMenu" mode="horizontal">
           <nav-item
             v-for="route in permissionRoutes"
@@ -58,8 +58,6 @@ export default {
     };
 
     currentMenu.value = getActiveMenu();
-
-    
 
     return {
       logo,
