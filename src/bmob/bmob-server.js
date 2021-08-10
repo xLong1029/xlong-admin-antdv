@@ -12,8 +12,8 @@ import Bmob from "hydrogen-js-sdk";
 export default {
     // 初始化
     Init: () => {
-        Bmob.initialize(APPLICATION_ID, REST_API_KEY); // 初始化 SDK版本 2.0.0 以下保留之前的初始化方法
-        // Bmob.initialize(SERCRET_KEY, SECURITY_CODE); // 初始化 SDK版本 2.0.0 以及之后版本
+        // Bmob.initialize(APPLICATION_ID, REST_API_KEY); // 初始化 SDK版本 2.0.0 以下保留之前的初始化方法
+        Bmob.initialize(SERCRET_KEY, SECURITY_CODE); // 初始化 SDK版本 2.0.0 以及之后版本
     },
     // 获取查询数据对象
     GetQuery: (tableName) => {

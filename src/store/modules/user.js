@@ -88,6 +88,7 @@ const actions = {
   // 登出
   logout({ commit }) {
     return new Promise(resolve => {
+      Api.Logout();
       clearAccount(commit);
       resolve();
     });
