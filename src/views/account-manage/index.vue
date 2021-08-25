@@ -105,7 +105,7 @@ export default {
   },
 
   setup() {
-    const { showDevMoadl, store } = common();
+    const { showDevModel, store } = common();
 
     const roles = computed(() => store.getters.roles);
 
@@ -342,7 +342,7 @@ export default {
       rowSelection,
       handleTableChange,
       roles,
-      showDevMoadl,
+      showDevModel,
       accountStoreModal,
       openAccountStoreMoadl,
       closeAccountStoreModal,

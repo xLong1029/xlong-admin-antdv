@@ -2,7 +2,7 @@
   <div class="top-container flex">
     <div class="wrapper-container flex">
       <div class="top-container-left">
-        <span class="link flex" @click="showDevMoadl">
+        <span class="link flex" @click="showDevModel">
           <mail-outlined />
           <span class="hidden-xs-only">意见反馈</span>
         </span>
@@ -96,7 +96,7 @@ import common from "common";
 export default {
   name: "AppTop",
   setup() {
-    const { showDevMoadl, toPage, store, router } = common();
+    const { showDevModel, toPage, store, router } = common();
 
     const user = computed(() => store.getters.user);
 
@@ -113,7 +113,7 @@ export default {
     };
 
     return {
-      showDevMoadl,
+      showDevModel,
       toPage,
       user,
       logout
