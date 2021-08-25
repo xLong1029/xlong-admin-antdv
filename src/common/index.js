@@ -24,7 +24,7 @@ export default function() {
   /**
    * 显示开发提示框
    */
-  function showDevModel() {
+  function showDevModal() {
     Modal.info({
       title: "温馨提示",
       centered: true,
@@ -52,7 +52,7 @@ export default function() {
     store,
     pageLoading,
     setPageLoding,
-    showDevModel,
+    showDevModal,
     onGoBack,
     toPage
   };

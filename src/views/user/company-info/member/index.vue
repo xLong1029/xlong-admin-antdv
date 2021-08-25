@@ -14,7 +14,7 @@
         <a-button type="primary" @click="openMemberStoreMoadl(null, 1)"
           >添加</a-button
         >
-        <a-popconfirm title="确认删除?" @confirm="showDevModel()">
+        <a-popconfirm title="确认删除?" @confirm="showDevModal()">
           <a-button :disabled="rowSelection.selectedRowKeys.length === 0"
             >删除</a-button
           >
@@ -22,12 +22,12 @@
         <a-button
           type="primary"
           :disabled="rowSelection.selectedRowKeys.length === 0"
-          @click="showDevModel"
+          @click="showDevModal"
           >启用</a-button
         >
         <a-button
           :disabled="rowSelection.selectedRowKeys.length === 0"
-          @click="showDevModel"
+          @click="showDevModal"
           >禁用</a-button
         >
       </a-space>
@@ -69,7 +69,7 @@
               <edit-outlined class="mr-5" />编辑
             </a>
             <a-divider type="vertical" />
-            <a-popconfirm title="确认删除?" @confirm="showDevModel()">
+            <a-popconfirm title="确认删除?" @confirm="showDevModal()">
               <a> <delete-outlined class="mr-5" />删除 </a>
             </a-popconfirm>
           </template>
@@ -118,7 +118,7 @@ export default {
   },
 
   setup() {
-    const { store, showDevModel } = common();
+    const { store, showDevModal } = common();
 
     // 企业Id
     const companyId = computed(() => store.getters.companyId);
@@ -216,7 +216,7 @@ export default {
       rowSelection,
       handleTableChange,
       roles,
-      showDevModel,
+      showDevModal,
       memberStoreModal,
       openMemberStoreMoadl,
       closeMemberStoreModal

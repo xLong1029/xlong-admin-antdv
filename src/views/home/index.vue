@@ -84,7 +84,7 @@
                       class="password-remember"
                       >记住密码</a-checkbox
                     >
-                    <span class="password-forget" @click="showDevModel()"
+                    <span class="password-forget" @click="showDevModal()"
                       >忘记密码？</span
                     >
                   </div>
@@ -96,7 +96,7 @@
                       class="mr-10"
                       >登录</a-button
                     >
-                    <a-button @click="showDevModel()">注册</a-button>
+                    <a-button @click="showDevModal()">注册</a-button>
                   </div>
                 </div>
               </template>
@@ -173,7 +173,7 @@ export default {
   name: "Home",
 
   setup() {
-    const { showDevModel, toPage, store, router } = common();
+    const { showDevModal, toPage, store, router } = common();
 
     // 是否记住密码
     const remeberPwd = ref(false);
@@ -349,7 +349,7 @@ export default {
       nickName,
       systemTitle,
       bannerList,
-      showDevModel,
+      showDevModal,
       openOperationManual,
       form,
       rules,

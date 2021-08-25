@@ -126,7 +126,7 @@ export default {
   },
 
   setup(props, context) {
-    const { store, showDevModel } = common();
+    const { store, showDevModal } = common();
 
     // 监听可见性
     watch(
@@ -213,7 +213,7 @@ export default {
     // 确认弹窗
     const handleOk = () => {
       if (props.type < 3) {
-        showDevModel();
+        showDevModal();
       }
 
       handleCancel();
@@ -251,7 +251,7 @@ export default {
     return {
       title,
       infoLoading,
-      showDevModel,
+      showDevModal,
       handleOk,
       handleCancel,
       form,
