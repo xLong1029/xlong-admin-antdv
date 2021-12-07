@@ -64,7 +64,7 @@ export default function() {
   }
 
   /**
-   * 清楚勾选
+   * 清除勾选
    */
   function clearSelect() {
     rowSelection.selectedRowKeys = [];
