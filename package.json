@@ -1,6 +1,8 @@
 {
   "name": "xlong-admin-antdv",
-  "version": "0.1.0",
+  "description": "a management system for study only",
+  "author": "xLong <381612175@qq.com>",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
