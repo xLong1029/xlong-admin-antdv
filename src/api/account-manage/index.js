@@ -29,7 +29,7 @@ export default {
   /**
    * 获取账户信息
    *
-   * @param {*} id 查询的objectId
+   * @param {*} id 查询的对象Id
    */
   GetAccInfo: (id) => {
     return request({

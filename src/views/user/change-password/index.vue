@@ -150,7 +150,7 @@ const onSubmit = () => {
               console.log(err);
               router.push({ name: "Home" });
             }
-          } else message.warning(msg);
+          } else message.error(msg);
         })
         .catch((err) => message.error(err.error))
         .finally(() => (submitLoading.value = false));

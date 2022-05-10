@@ -1,11 +1,12 @@
 /*
  * 模块 : 表格相关配置
  * 作者 : 罗永梅（381612175@qq.com）
- * 日期 : 2020-11-27
- * 版本 : version 1.0
+ * 日期 : 2022-05-10
+ * 版本 : version 2.0
  */
 
 import { ref, reactive } from "vue";
+import { message } from "ant-design-vue";
 
 export default function() {
   // 列表加载
@@ -29,14 +30,14 @@ export default function() {
     // 显示每页条数
     showSizeChanger: true,
     // 显示总数
-    showTotal: total => `共 ${total} 个`
+    showTotal: (total) => `共 ${total} 个`,
   });
 
   const rowSelection = reactive({
     selectedRowKeys: [],
-    onChange: selectedRowKeys => {
+    onChange: (selectedRowKeys) => {
       rowSelection.selectedRowKeys = selectedRowKeys;
-    }
+    },
   });
 
   /**
@@ -52,15 +53,21 @@ export default function() {
 
     listLoading.value = true;
     apiGetList(pageNo, pageSize)
-      .then(res => {
-        const { data, page } = res;
-        listLoading.value = false;
-        listData.value = data;
-        pageConfig.current = page.page;
-        pageConfig.pageSize = page.size;
-        pageConfig.total = page.count;
+      .then((res) => {
+        const {
+          code,
+          data: { list, page },
+          messgae: msg,
+        } = res;
+        if (code === 200) {
+          listLoading.value = false;
+          listData.value = list;
+          pageConfig.current = page.page;
+          pageConfig.pageSize = page.size;
+          pageConfig.total = page.count;
+        } else message.error(msg)
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }
 
   /**
@@ -77,6 +84,6 @@ export default function() {
     pageConfig,
     rowSelection,
     getList,
-    clearSelect
+    clearSelect,
   };
 }

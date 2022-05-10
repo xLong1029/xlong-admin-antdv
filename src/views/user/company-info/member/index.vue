@@ -38,20 +38,20 @@
       :loading="listLoading"
       :columns="columns"
       :data-source="listData"
-      :row-key="record => record.objectId"
+      :row-key="(record) => record.id"
       :pagination="pageConfig"
       :row-selection="rowSelection"
       @change="handleTableChange"
     >
-      <template #role="{ text: role }">
+      <template #roles="{ text: roles }">
         <span>
-          <a-tag v-if="role === 'admin'" color="blue" class="mr-10"
+          <a-tag v-if="roles.indexOf('admin') >= 0" color="blue" class="mr-10"
             >超级管理员</a-tag
           >
-          <a-tag v-if="role === 'manage'" color="green" class="mr-10"
+          <a-tag v-if="roles.indexOf('manage') >= 0" color="green" class="mr-10"
             >系统管理员</a-tag
           >
-          <a-tag v-if="role === 'user'" color="orange" class="mr-10"
+          <a-tag v-if="roles.indexOf('user') >= 0" color="orange" class="mr-10"
             >普通用户</a-tag
           >
         </span>
@@ -61,8 +61,8 @@
           <template
             v-if="
               roles.indexOf('admin') >= 0 ||
-                roles.indexOf(record.role) >= 0 ||
-                record.role === 'user'
+              roles.indexOf(record.role) >= 0 ||
+              record.role === 'user'
             "
           >
             <a @click="openMemberStoreMoadl(record, 2)">
@@ -95,7 +95,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed, reactive, onMounted } from "vue";
 // 通用模块
 import useTable from "common/table.js";
@@ -105,122 +105,88 @@ import Api from "api/company";
 // 组件
 import MemberStore from "./store.vue";
 
-export default {
-  name: "MemberList",
+// eslint-disable-next-line
+const emit = defineEmits(["close"]);
 
-  components: { MemberStore },
+const { store, showDevModal } = useCommon();
 
-  emits: {
-    close: val => {
-      console.log(8888, val);
-      return true;
-    }
+// 企业Id
+const companyId = computed(() => store.getters.companyId);
+// 当前角色
+const roles = computed(() => store.getters.roles);
+
+// 表格配置
+const { listLoading, listData, pageConfig, rowSelection, getList, search } =
+  useTable();
+
+// 表格列
+const columns = [
+  {
+    title: "账号",
+    dataIndex: "username",
+    key: "username",
+    width: 150,
+    fixed: "left",
   },
+  {
+    title: "真实姓名",
+    dataIndex: "realName",
+    key: "realName",
+  },
+  {
+    title: "性别",
+    dataIndex: "gender",
+    key: "gender",
+  },
+  {
+    title: "角色",
+    key: "roles",
+    dataIndex: "roles",
+    slots: { customRender: "roles" },
+  },
+  {
+    title: "操作",
+    key: "action",
+    slots: { customRender: "action" },
+    width: 150,
+    fixed: "right",
+  },
+];
 
-  setup() {
-    const { store, showDevModal } = useCommon();
+// 人员信息存储弹窗
+const memberStoreModal = reactive({
+  visible: false,
+  id: null,
+  type: 1, // 1 新增, 2 编辑, 3 查看
+});
 
-    // 企业Id
-    const companyId = computed(() => store.getters.companyId);
-    // 当前角色
-    const roles = computed(() => store.getters.roles);
+// 初始化
+onMounted(() => {
+  getList(pageConfig.current, pageConfig.pageSize, apiGetList);
+});
 
-    // 表格配置
-    const {
-      listLoading,
-      listData,
-      pageConfig,
-      rowSelection,
-      getList,
-      search
-    } = useTable();
-
-    // 表格列
-    const columns = [
-      {
-        title: "账号",
-        dataIndex: "username",
-        key: "username",
-        width: 150,
-        fixed: "left"
-      },
-      {
-        title: "真实姓名",
-        dataIndex: "realName",
-        key: "realName"
-      },
-      {
-        title: "性别",
-        dataIndex: "gender",
-        key: "gender"
-      },
-      {
-        title: "角色",
-        key: "role",
-        dataIndex: "role",
-        slots: { customRender: "role" }
-      },
-      {
-        title: "操作",
-        key: "action",
-        slots: { customRender: "action" },
-        width: 150,
-        fixed: "right"
-      }
-    ];
-
-    // 人员信息存储弹窗
-    const memberStoreModal = reactive({
-      visible: false,
-      id: null,
-      type: 1 // 1 新增, 2 编辑, 3 查看
-    });
-
-    // 打开人员信息弹窗
-    const openMemberStoreMoadl = (record, type) => {
-      memberStoreModal.visible = true;
-      memberStoreModal.id = record ? record.objectId : null;
-      memberStoreModal.type = type;
-    };
-
-    // 关闭人员信息弹窗
-    const closeMemberStoreModal = val => {
-      memberStoreModal.visible = val;
-      memberStoreModal.id = null;
-      memberStoreModal.type = 1;
-    };
-
-    // 表格改变事件
-    const handleTableChange = (pagination, filters, sorter) => {
-      console.log(pagination, filters, sorter);
-
-      getList(pagination.current, pagination.pageSize, apiGetList);
-    };
-
-    // 获取列表
-    const apiGetList = (pageNo, pageSize) =>
-      Api.GetMemberList({ companyId: companyId.value }, pageNo, pageSize);
-
-    // 初始化
-    onMounted(() => {
-      getList(pageConfig.current, pageConfig.pageSize, apiGetList);
-    });
-
-    return {
-      listLoading,
-      listData,
-      pageConfig,
-      getList,
-      search,
-      columns,
-      rowSelection,
-      handleTableChange,
-      roles,
-      showDevModal,
-      memberStoreModal,
-      openMemberStoreMoadl,
-      closeMemberStoreModal
-    };
-  }
+// 打开人员信息弹窗
+const openMemberStoreMoadl = (record, type) => {
+  memberStoreModal.visible = true;
+  memberStoreModal.id = record?.id;
+  memberStoreModal.type = type;
 };
+
+// 关闭人员信息弹窗
+const closeMemberStoreModal = (val) => {
+  memberStoreModal.visible = val;
+  memberStoreModal.id = null;
+  memberStoreModal.type = 1;
+};
+
+// 表格改变事件
+const handleTableChange = (pagination, filters, sorter) => {
+  console.log(pagination, filters, sorter);
+
+  getList(pagination.current, pagination.pageSize, apiGetList);
+};
+
+// 获取列表
+const apiGetList = (pageNo, pageSize) =>
+  Api.GetMemberList({ companyId: companyId.value }, pageNo, pageSize);
 </script>

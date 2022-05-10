@@ -1,4 +1,6 @@
 import { handleMock, handleResponse } from "./../mock-handle.js";
+import { infos } from "./user";
+import { deepClone } from "utils";
 import Mock from "mockjs";
 
 export const companys = [
@@ -48,6 +50,51 @@ export default [
           return handleResponse(200, "success");
         } else {
           return handleResponse(404, "找不该企业");
+        }
+      }),
+  },
+  {
+    url: "/api/company/memberList",
+    method: "get",
+    response: (config) =>
+      handleMock(config, ({ config }) => {
+        const { params, pageNo, pageSize } = config.query;
+
+        const page = parseInt(pageNo);
+        const size = parseInt(pageSize);
+
+        // 筛选
+        const filters = JSON.parse(params);
+        let list = infos.filter((e) => e.companyId === filters.companyId);
+
+        // 深克隆
+        const filterList = deepClone(list);
+
+        list = list.slice((page - 1) * size, page * size);
+
+        return handleResponse(200, "success", {
+          list,
+          page: {
+            count: filterList.length,
+            page,
+            size,
+          },
+        });
+      }),
+  },
+  {
+    url: "/api/company/memberInfo",
+    method: "get",
+    response: (config) =>
+      handleMock(config, ({ config }) => {
+        console.log(config);
+        const { id } = config.query;
+
+        const user = infos.find((e) => e.id == id);
+        if (user) {
+          return handleResponse(200, "success", user);
+        } else {
+          return handleResponse(404, "找不到该人员");
         }
       }),
   },

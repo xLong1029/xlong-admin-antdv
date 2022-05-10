@@ -23,11 +23,11 @@
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
             <a-form-item label="角色">
-              <a-tag v-if="form.role == 'admin'" color="blue">超级管理员</a-tag>
-              <a-tag v-if="form.role == 'manage'" color="green"
+              <a-tag v-if="form.roles.indexOf('admin') >= 0" color="blue">超级管理员</a-tag>
+              <a-tag v-if="form.roles.indexOf('manage') >= 0" color="green"
                 >系统管理员</a-tag
               >
-              <a-tag v-if="form.role == 'user'" color="orange">普通用户</a-tag>
+              <a-tag v-if="form.roles.indexOf('user') >= 0" color="orange">普通用户</a-tag>
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -53,9 +53,9 @@
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-            <a-form-item label="角色" name="role">
+            <a-form-item label="角色" name="roles">
               <a-select
-                v-model:value="form.role"
+                v-model:value="form.roles"
                 class="width-100"
                 placeholder="请选择角色"
               >
@@ -96,7 +96,7 @@
   </a-modal>
 </template>
 
-<script>
+<script setup>
 import { watch, ref, reactive, onMounted, computed, nextTick } from "vue";
 import { message } from "ant-design-vue";
 // 通用模块
@@ -104,164 +104,129 @@ import useCommon from "common";
 // Api
 import Api from "api/company";
 
-export default {
-  name: "MemberStore",
-
-  props: {
-    // 弹窗可见性
-    visible: {
-      type: Boolean,
-      default: false
-    },
-    // 详情id
-    id: {
-      type: String,
-      default: null
-    },
-    // 类型
-    type: {
-      type: Number,
-      default: 1 // 1 新增, 2 编辑, 3 查看
-    }
+// eslint-disable-next-line
+const props = defineProps({
+  // 弹窗可见性
+  visible: {
+    type: Boolean,
+    default: false,
   },
+  // 详情id
+  id: {
+    type: String,
+    default: null,
+  },
+  // 类型
+  type: {
+    type: Number,
+    default: 1, // 1 新增, 2 编辑, 3 查看
+  },
+});
 
-  setup(props, context) {
-    const { store, showDevModal } = useCommon();
+// eslint-disable-next-line
+const emit = defineEmits(["change"]);
 
-    // 监听可见性
-    watch(
-      () => props.visible,
-      async val => {
-        if (val) {
-          await nextTick();
-          submitForm.value.resetFields();
+const { store, showDevModal } = useCommon();
 
-          switch (props.type) {
-            case 1:
-              title.value = "新增人员";
+// 监听可见性
+watch(
+  () => props.visible,
+  async (val) => {
+    if (val) {
+      await nextTick();
+      submitForm.value.resetFields();
 
-              break;
-            case 2:
-              title.value = "编辑人员";
-              getInfo(props.id);
-              break;
-            case 3:
-              title.value = "查看详情";
-              getInfo(props.id);
-              break;
-            default:
-              console.log("type is error");
-          }
-        }
+      switch (props.type) {
+        case 1:
+          title.value = "新增人员";
+
+          break;
+        case 2:
+          title.value = "编辑人员";
+          getInfo(props.id);
+          break;
+        case 3:
+          title.value = "查看详情";
+          getInfo(props.id);
+          break;
+        default:
+          console.log("type is error");
       }
-    );
-
-    // 当前用户角色
-    const roles = computed(() => store.getters.roles);
-
-    // 标题
-    const title = ref("人员信息详情");
-
-    // 默认表单
-    const defaultForm = {
-      username: null,
-      realName: null,
-      gender: null,
-      role: null,
-      nickName: null
-    };
-
-    // 表单配置
-    const labelColSpan = 6;
-    const wrapperColSpan = 18;
-
-    // 表单
-    const form = reactive({ ...defaultForm });
-
-    // 表单规则
-    const rules = reactive({
-      username: [{ required: true, message: "请输入账号", trigger: "blur" }],
-      realName: [
-        { required: true, message: "请输入真实姓名", trigger: "blur" }
-      ],
-      gender: [{ required: true, message: "请选择性别", trigger: "change" }],
-      role: [{ required: true, message: "请选择角色", trigger: "change" }],
-      nickName: [{ required: true, message: "请输入昵称", trigger: "blur" }]
-    });
-
-    // 角色列表
-    const roleList = [
-      {
-        label: "超级管理员",
-        value: "admin"
-      },
-      {
-        label: "系统管理员",
-        value: "manage"
-      },
-      {
-        label: "普通用户",
-        value: "user"
-      }
-    ];
-
-    // loading
-    const infoLoading = ref(false);
-
-    const submitForm = ref(null);
-
-    // 确认弹窗
-    const handleOk = () => {
-      if (props.type < 3) {
-        showDevModal();
-      }
-
-      handleCancel();
-    };
-
-    // 取消弹窗
-    const handleCancel = () => {
-      context.emit("close", false);
-    };
-
-    // 获取信息
-    const getInfo = () => {
-      infoLoading.value = true;
-      Api.GetMemberInfo(props.id)
-        .then(res => {
-          const { code, data } = res;
-          // 获取到数据
-          if (code == 200) {
-            const { username, realName, gender, role, nickName } = data;
-            form.username = username;
-            form.realName = realName;
-            form.gender = gender;
-            form.role = role;
-            form.nickName = nickName;
-          } else {
-            message.error("无法获取人员信息!");
-          }
-        })
-        .catch(err => console.log(err))
-        .finally(() => (infoLoading.value = false));
-    };
-
-    onMounted(() => {});
-
-    return {
-      title,
-      infoLoading,
-      showDevModal,
-      handleOk,
-      handleCancel,
-      form,
-      rules,
-      roleList,
-      labelColSpan,
-      wrapperColSpan,
-      roles,
-      submitForm
-    };
+    }
   }
+);
+
+// 当前用户角色
+const roles = computed(() => store.getters.roles);
+
+// 标题
+const title = ref("人员信息详情");
+
+// 默认表单
+const defaultForm = {
+  username: null,
+  realName: null,
+  gender: null,
+  roles: null,
+  nickName: null,
 };
+
+// 表单配置
+const labelColSpan = 6;
+const wrapperColSpan = 18;
+
+// 表单
+const form = reactive({ ...defaultForm });
+
+// 表单规则
+const rules = reactive({
+  username: [{ required: true, message: "请输入账号", trigger: "blur" }],
+  realName: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
+  gender: [{ required: true, message: "请选择性别", trigger: "change" }],
+  roles: [{ required: true, message: "请选择角色", trigger: "change" }],
+  nickName: [{ required: true, message: "请输入昵称", trigger: "blur" }],
+});
+
+// loading
+const infoLoading = ref(false);
+
+const submitForm = ref(null);
+
+// 确认弹窗
+const handleOk = () => {
+  if (props.type < 3) {
+    showDevModal();
+  }
+
+  handleCancel();
+};
+
+// 取消弹窗
+const handleCancel = () => {
+  emit("close", false);
+};
+
+// 获取信息
+const getInfo = () => {
+  infoLoading.value = true;
+  console.log(props.id);
+  Api.GetMemberInfo(props.id)
+    .then((res) => {
+      const { code, data } = res;
+      console.log(res);
+      
+      // 获取到数据
+      if (code == 200) {
+        for(let i in data){
+          form[i] = data[i];
+        }
+      } else {
+        message.error("无法获取人员信息!");
+      }
+    })
+    .catch((err) => console.log(err))
+    .finally(() => (infoLoading.value = false));
+};
+
+onMounted(() => {});
 </script>

@@ -34,33 +34,36 @@ export default {
       data
     });
   },
-  // /**
-  //  * 获取人员列表
-  //  *
-  //  * @param {*} params 查询参数对象
-  //  * @param {*} pageNo 当前页码
-  //  * @param {*} pageSize 每页显示几条数据
-  //  */
-  // GetMemberList: (params, pageNo, pageSize) => {
-  //   let query = BmobServer.GetQuery("_User");
-  //   query.equalTo("companyId", "==", params.companyId);
-
-  //   return new Promise((resolve, reject) => {
-  //     BmobServer.GetListData(query, pageNo, pageSize)
-  //       .then((res) => resolve(res))
-  //       .catch((err) => reject(err));
-  //   });
-  // },
-  // /**
-  //  * 获取人员信息
-  //  *
-  //  * @param {*} id 查询的objectId
-  //  */
-  // GetMemberInfo: (id) => {
-  //   return new Promise((resolve, reject) => {
-  //     BmobServer.GetOne("_User", id)
-  //       .then((res) => resolve(res))
-  //       .catch((err) => reject(err));
-  //   });
-  // },
+  /**
+   * 获取人员列表
+   *
+   * @param {*} params 查询参数对象
+   * @param {*} pageNo 当前页码
+   * @param {*} pageSize 每页显示几条数据
+   */
+  GetMemberList: (params, pageNo, pageSize) => {
+    return request({
+      url: `/api/company/memberList`,
+      method: "get",
+      params: {
+        params,
+        pageNo,
+        pageSize,
+      },
+    });
+  },
+  /**
+   * 获取人员信息
+   *
+   * @param {*} id 查询的对象Id
+   */
+  GetMemberInfo: (id) => {
+    return request({
+      url: `/api/company/memberInfo`,
+      method: "get",
+      params: {
+        id
+      },
+    });
+  },
 };

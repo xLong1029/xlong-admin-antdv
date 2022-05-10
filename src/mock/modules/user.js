@@ -21,7 +21,7 @@ const users = [
   },
 ];
 
-const infos = [
+export const infos = [
   {
     id: "ozdUQQQe",
     avatar: "https://img1.baidu.com/it/u=2383052339,2925526515&fm=26&fmt=auto",
