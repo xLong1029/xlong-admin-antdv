@@ -2,7 +2,7 @@
   <!-- eslint-disable -->
   <component v-if="!currentItem.hidden" :is="menuComponent" :item="currentItem" :url="resolvePath(currentItem.path)">
     <template v-if="currentItem.children && currentItem.children.length">
-      <nav-item
+      <NavItem
         v-for="route in currentItem.children"
         :key="resolvePath(route.path)"
         :item="route"
@@ -14,7 +14,7 @@
 
 <script>
 /* eslint-disable */
-import { getCurrentInstance, ref } from "vue";
+import { ref } from "vue";
 import path from "path";
 import { isExternal } from "@/utils/validate";
 import MenuItem from "./MenuItem";
@@ -34,7 +34,6 @@ export default {
     }
   },
   setup(props) {
-    const { ctx } = getCurrentInstance();
 
     let currentItem = ref(null);
 
@@ -80,6 +79,8 @@ export default {
     };
 
     const menuComponent = getComponent(props.item.children, props.item);
+
+    console.log(menuComponent);
 
     return {
       menuComponent,

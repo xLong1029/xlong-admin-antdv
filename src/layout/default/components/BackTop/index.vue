@@ -5,25 +5,20 @@
   </a>
 </template>
 
-<script>
+<script setup>
 /* eslint-disable */
 // 工具
 import { scrollTo } from "utils/scroll-to.js";
 
-export default {
-  props: {
-    visible: {
-      type: Boolean,
-      default: false
-    }
+// eslint-disable-next-line
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false,
   },
-  setup() {
-    const toTop = () => scrollTo(0);
-    return {
-      toTop
-    };
-  }
-};
+});
+
+const toTop = () => scrollTo(0);
 </script>
 
 <style lang="less" scoped>

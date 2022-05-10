@@ -10,39 +10,35 @@
     <img alt="preview-img" :src="imgUrl" @error="setDefaultImg" />
   </a-modal>
 </template>
-<script>
-export default {
-  name: "ImgPreview",
-  props: {
-    title: {
-      type: String,
-      default: "预览图片"
-    },
-    visible: {
-      type: Boolean,
-      default: false
-    },
-    imgUrl: {
-      type: String,
-      default: ""
-    }
+
+<script setup>
+// eslint-disable-next-line
+const props = defineProps({
+  title: {
+    type: String,
+    default: "预览图片",
   },
-  setup(props, context) {
-    const handleCancelPreview = () => {
-      context.emit("close", false);
-    };
+  visible: {
+    type: Boolean,
+    default: false,
+  },
+  imgUrl: {
+    type: String,
+    default: "",
+  },
+});
 
-    // 设置默认图片
-    const setDefaultImg = e => {
-      e.currentTarget.src = require("@/assets/images/no-found-pic.jpg");
-      e.currentTarget.onerror = null;
-    };
+// eslint-disable-next-line
+const emit = defineEmits(["close"]);
 
-    return {
-      handleCancelPreview,
-      setDefaultImg
-    };
-  }
+const handleCancelPreview = () => {
+  emit("close", false);
+};
+
+// 设置默认图片
+const setDefaultImg = (e) => {
+  e.currentTarget.src = require("@/assets/images/no-found-pic.jpg");
+  e.currentTarget.onerror = null;
 };
 </script>
 <style lang="less">

@@ -86,7 +86,7 @@
         </template>
       </template>
     </a-table>
-    <member-store
+    <MemberStore
       v-model:visible="memberStoreModal.visible"
       :id="memberStoreModal.id"
       :type="memberStoreModal.type"

@@ -7,7 +7,7 @@
       <!-- 导航 -->
       <div class="nav-list-container ml-20">
         <a-menu v-model:selectedKeys="currentMenu" mode="horizontal">
-          <nav-item
+          <NavItem
             v-for="route in permissionRoutes"
             :key="route.path"
             :item="route"
@@ -19,17 +19,12 @@
   </div>
 </template>
 
-<script>
-/* eslint-disable */
+<script setup>
 import { ref, computed, watch } from "vue";
 import useCommon from "common";
 import NavItem from "./NavItem";
 
-export default {
-  name: "AppNavBar",
-  components: { NavItem },
-  setup() {
-    const { toPage, router, store } = useCommon();
+const { toPage, router, store } = useCommon();
 
     // 监听路由变化
     watch(
@@ -58,15 +53,6 @@ export default {
     };
 
     currentMenu.value = getActiveMenu();
-
-    return {
-      logo,
-      permissionRoutes,
-      currentMenu,
-      toPage,
-    };
-  },
-};
 </script>
 
 <style lang="less" scoped>

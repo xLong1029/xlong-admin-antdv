@@ -1,21 +1,28 @@
 <template>
   <a-layout>
-    <a-layout-header :style="{ position: 'fixed', zIndex: 99, width: '100%', background: '#fff' }">
-      <app-top />
-      <app-nav-bar />
+    <a-layout-header
+      :style="{
+        position: 'fixed',
+        zIndex: 99,
+        width: '100%',
+        background: '#fff',
+      }"
+    >
+      <AppTop />
+      <AppNavBar />
     </a-layout-header>
     <a-layout-content :style="{ paddingTop: '121px' }">
-      <breadcrumb />
-      <app-main />
+      <Breadcrumb />
+      <AppMain />
     </a-layout-content>
     <a-layout-footer>
-      <app-footer />
+      <AppFooter />
     </a-layout-footer>
-    <back-top v-model:visible="backTopvisible" />
+    <BackTop v-model:visible="backTopvisible" />
   </a-layout>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from "vue";
 import {
   AppMain,
@@ -23,35 +30,18 @@ import {
   AppFooter,
   AppTop,
   Breadcrumb,
-  BackTop
+  BackTop,
 } from "./components/index.js";
 
-export default {
-  name: "LayoutDefault",
-  components: {
-    AppMain,
-    AppNavBar,
-    AppFooter,
-    AppTop,
-    Breadcrumb,
-    BackTop
-  },
-  setup() {
-    const backTopvisible = ref(false);
+const backTopvisible = ref(false);
 
-    onMounted(() => {
-      window.addEventListener("scroll", () => {
-        const { documentElement, body } = document;
-        let scrollTop = documentElement.scrollTop || body.scrollTop;
-        backTopvisible.value = scrollTop > 94 ? true : false;
-      });
-    });
-
-    return {
-      backTopvisible
-    };
-  }
-};
+onMounted(() => {
+  window.addEventListener("scroll", () => {
+    const { documentElement, body } = document;
+    let scrollTop = documentElement.scrollTop || body.scrollTop;
+    backTopvisible.value = scrollTop > 94 ? true : false;
+  });
+});
 </script>
 
 <style lang="less" scoped>

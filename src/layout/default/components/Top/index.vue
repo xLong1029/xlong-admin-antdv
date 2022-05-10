@@ -88,36 +88,24 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed } from "vue";
 import { message } from "ant-design-vue";
 import useCommon from "common";
 
-export default {
-  name: "AppTop",
-  setup() {
-    const { showDevModal, toPage, store, router } = useCommon();
+const { showDevModal, toPage, store, router } = useCommon();
 
-    const user = computed(() => store.getters.user);
+const user = computed(() => store.getters.user);
 
-    const logout = async () => {
-      try {
-        await store.dispatch("user/logout");
-        await store.dispatch("permission/generateRoutes", null);
-        message.success("您已退出该系统");
-        router.push({ name: "Home" });
-      } catch (err) {
-        console.log(err);
-        router.push({ name: "Home" });
-      }
-    };
-
-    return {
-      showDevModal,
-      toPage,
-      user,
-      logout
-    };
+const logout = async () => {
+  try {
+    await store.dispatch("user/logout");
+    await store.dispatch("permission/generateRoutes", null);
+    message.success("您已退出该系统");
+    router.push({ name: "Home" });
+  } catch (err) {
+    console.log(err);
+    router.push({ name: "Home" });
   }
 };
 </script>

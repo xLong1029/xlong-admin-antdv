@@ -64,22 +64,13 @@
   </footer>
 </template>
 
-<script>
-/* eslint-disable */
-export default {
-  name: "AppFooter",
-  setup() {
-    const qrcodeList = [
+<script setup>
+ const qrcodeList = [
       {
         imgUrl: require("assets/images/qrcode.jpg"),
         title: "xLong设计"
       }
     ];
-    return {
-      qrcodeList
-    };
-  }
-};
 </script>
 
 <style lang="less" scoped>

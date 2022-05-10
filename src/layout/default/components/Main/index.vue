@@ -17,20 +17,11 @@
   </a-spin>
 </template>
 
-<script>
+<script setup>
 // 通用方法
 import useCommon from "common";
 
-export default {
-  name: "AppMain",
-  setup() {
-    const { pageLoading } = useCommon();
-
-    return {
-      pageLoading
-    };
-  }
-};
+const { pageLoading } = useCommon();
 </script>
 
 <style lang="less" scoped>

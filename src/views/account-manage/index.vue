@@ -70,7 +70,7 @@
         </a-popconfirm>
       </template>
     </a-table>
-    <account-store
+    <AccountStore
       v-model:visible="accountStoreModal.visible"
       :id="accountStoreModal.id"
       :type="accountStoreModal.type"
