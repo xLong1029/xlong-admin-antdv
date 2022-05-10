@@ -1,32 +1,20 @@
 import axios from "axios";
-import { Message } from "element-ui";
+import { message } from "ant-design-vue";
 import store from "@/store";
 
 export function handelRequestError(error) {
   switch (error.response.status) {
     case 401:
-      Message({
-        message: "未授权！请重新登录",
-        type: "error",
-        duration: 5 * 1000
-      });
+      message.error("未授权！请重新登录");
       setTimeout(() => {
         store.dispatch("user/logout");
       }, 500);
       break;
     case 403:
-      Message({
-        message: error.response.content,
-        type: "error",
-        duration: 5 * 1000
-      });
+      message.error(error.response.content);
       break;
     case 500:
-      Message({
-        message: "系统繁忙",
-        type: "error",
-        duration: 5 * 1000
-      });
+      message.error("系统繁忙");
       break;
     default:
       break;
