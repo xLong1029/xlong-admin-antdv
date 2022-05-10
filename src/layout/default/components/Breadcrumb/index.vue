@@ -1,6 +1,6 @@
 <template>
   <div class="breadcrumb-container">
-    <div class="wrapper-container">
+    <div class="wrapper-container" style="position: relative">
       <div class="breadcrumb-container-wrapper">
         <span class="fl">当前位置：</span>
         <a-breadcrumb>

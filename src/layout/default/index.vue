@@ -48,7 +48,7 @@ onMounted(() => {
 .ant-layout-header {
   background: #fff;
   height: 120px;
-  line-height: inherit;
+  // line-height: inherit;
   padding: 0;
   z-index: 99 !important;
 }

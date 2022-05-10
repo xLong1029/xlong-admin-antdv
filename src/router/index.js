@@ -1,13 +1,8 @@
-/* eslint-disable */
+
 import LayoutDefault from "@/layout/default";
 import { createRouter, createWebHashHistory } from "vue-router";
 
 export const constantRoutes = [
-  {
-    path: "/404",
-    component: () => import("@/views/error-page/404"),
-    hidden: true
-  },
   {
     path: "/",
     component: LayoutDefault,
@@ -37,6 +32,11 @@ export const constantRoutes = [
         path: "redirect/:path*",
         component: () => import("@/views/redirect/index"),
         hidden: true,
+      },
+      {
+        path: "/404",
+        component: () => import("@/views/error-page/404"),
+        hidden: true
       },
     ]
   }

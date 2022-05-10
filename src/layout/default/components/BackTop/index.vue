@@ -6,7 +6,6 @@
 </template>
 
 <script setup>
-/* eslint-disable */
 // 工具
 import { scrollTo } from "utils/scroll-to.js";
 

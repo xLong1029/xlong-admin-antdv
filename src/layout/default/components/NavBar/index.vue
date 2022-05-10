@@ -26,33 +26,33 @@ import NavItem from "./NavItem";
 
 const { toPage, router, store } = useCommon();
 
-    // 监听路由变化
-    watch(
-      () => router.currentRoute.value,
-      (val) => {
-        currentMenu.value = getActiveMenu();
-      }
-    );
-
-    const logo = require("@/assets/images/logo.jpg");
-
-    const permissionRoutes = computed(() => store.getters.permissionRoutes);
-
-    const currentMenu = ref([]);
-
-    // 获取当前激活菜单
-    const getActiveMenu = () => {
-      const route = router.currentRoute.value;
-      const { meta, matched, path } = route;
-
-      if (meta.activeMenu) {
-        return [meta.activeMenu];
-      }
-
-      return matched[0].children.length > 1 ? [path] : [matched[0].path];
-    };
-
+// 监听路由变化
+watch(
+  () => router.currentRoute.value,
+  () => {
     currentMenu.value = getActiveMenu();
+  }
+);
+
+const logo = require("@/assets/images/logo.jpg");
+
+const permissionRoutes = computed(() => store.getters.permissionRoutes);
+
+const currentMenu = ref([]);
+
+// 获取当前激活菜单
+const getActiveMenu = () => {
+  const route = router.currentRoute.value;
+  const { meta, matched, path } = route;
+
+  if (meta.activeMenu) {
+    return [meta.activeMenu];
+  }
+
+  return matched[0].children.length > 1 ? [path] : [matched[0].path];
+};
+
+currentMenu.value = getActiveMenu();
 </script>
 
 <style lang="less" scoped>
@@ -65,6 +65,7 @@ const { toPage, router, store } = useCommon();
 
   ::v-deep(.ant-menu-horizontal) {
     border-bottom: none;
+    line-height: 46px;
   }
 }
 
