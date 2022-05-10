@@ -10,9 +10,9 @@
       <a-form-item label="账号" name="username">
         {{ form.username }}
       </a-form-item>
-      <a-form-item label="头像" name="userFace" class="mb-0">
+      <a-form-item label="头像" name="avatar" class="mb-0">
         <img-upload
-          :file-list="form.userFace"
+          :file-list="form.avatar"
           upload-btn-text="上传头像"
           :limit-num="1"
           @delete="handleUploadImgDelete"
@@ -88,7 +88,7 @@ const userId = computed(() => store.getters.userId);
 // 表单
 const form = reactive({
   username: null,
-  userFace: [],
+  avatar: [],
   nickName: null,
   realName: null,
   gender: null,
@@ -109,63 +109,40 @@ const submitForm = ref(null);
 // 头像上传成功
 const handleUploadSuccess = (file) => {
   // 多图片上传时
-  const length = form.userFace.length;
-  file.uid = length ? form.userFace[length - 1].uid++ : 1; // 解决浏览器报警告“<TransitionGroup> children must be keyed. ”
-  form.userFace = [file];
+  const length = form.avatar.length;
+  file.uid = length ? form.avatar[length - 1].uid++ : 1; // 解决浏览器报警告“<TransitionGroup> children must be keyed. ”
+  form.avatar = [file];
 };
 
 // 删除上传的图片
 const handleUploadImgDelete = ({ file, index, list }) => {
-  console.log(file, index);
-  form.userFace = list;
+  // console.log(file, index);
+  form.avatar = list;
 };
 
 // 获取个人资料
 const getProfile = () => {
   setPageLoding(true);
-  Api.GetUser(token.value)
+  Api.GetUser()
     .then((res) => {
-      const { code, data } = res;
+      const { code, data, message: msg } = res;
       // 获取到数据
       if (code == 200) {
-        const {
-          username,
-          userFace,
-          nickName,
-          realName,
-          gender,
-          objectId,
-          role,
-        } = data;
+        for (let i in data) {
+          form[i] = data[i];
+        }
+        form.avatar = [
+          {
+            uid: 1, // 解决浏览器报警告“<TransitionGroup> children must be keyed. ”
+            url: data.avatar,
+          },
+        ];
 
-        form.username = username;
-        form.userFace = userFace
-          ? [
-              {
-                uid: 1,
-                url: userFace,
-              },
-            ]
-          : [];
-        form.nickName = nickName;
-        form.realName = realName;
-        form.gender = gender;
+        data.roles = data.roles ? strToArr(data.roles, ",") : null;
 
         // 更新用户信息
-        store.commit("user/SET_USER", {
-          id: objectId,
-          avatar: userFace ? userFace : null,
-          gender,
-          username,
-          realName,
-          nickName,
-          userId: objectId,
-          roles: role ? strToArr(role, ",") : null,
-        });
-      } else {
-        message.error("无法获取用户数据!");
-        console.log("无该用户");
-      }
+        store.commit("user/SET_USER", { ...data });
+      } else message.error(msg);
     })
     .catch((err) => console.log(err))
     .finally(() => setPageLoding(false));
@@ -181,11 +158,12 @@ const onSubmit = () => {
 
       let params = { ...data };
 
-      params.userFace = data.userFace.length ? data.userFace[0].url : null;
+      params.avatar = data.avatar.length ? data.avatar[0].url : null;
 
       Api.EditProfile(params, userId.value)
         .then((res) => {
-          if (res.code == 200) {
+          const { code } = res;
+          if (code == 200) {
             getProfile();
             message.success("资料修改成功！");
           } else message.error("资料修改失败！");

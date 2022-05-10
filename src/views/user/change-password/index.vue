@@ -51,6 +51,10 @@ import useCommon from "common";
 import { validPassword, isEqual } from "utils/validate";
 // Api
 import Api from "api/user";
+// 工具
+import {
+  delLocalS
+} from "utils";
 
 const { store, router } = useCommon();
 
@@ -128,20 +132,25 @@ const onSubmit = () => {
       // 修改密码 Api
       Api.ChangePwd(params, token.value)
         .then(async (res) => {
-          const { code, msg } = res;
+          console.log(res);
+
+          const { code, message: msg } = res;
           if (code == 200) {
             // 登出 action方法
             try {
               await store.dispatch("user/logout");
               await store.dispatch("permission/generateRoutes", null);
+
+              // 清除记住的密码
+              delLocalS("username");
+              delLocalS("password");
               message.success("密码修改成功!请重新登录");
               router.push({ name: "Home" });
             } catch (err) {
               console.log(err);
               router.push({ name: "Home" });
             }
-          } else if (code == 404) message.warning(msg);
-          else message.error("密码修改失败！");
+          } else message.warning(msg);
         })
         .catch((err) => message.error(err.error))
         .finally(() => (submitLoading.value = false));

@@ -230,7 +230,7 @@ const rules = reactive({
 
 onMounted(() => {
   // 判断本地存储用户名是否存在
-  if (getLocalS("username")) {
+  if (getLocalS("username") && getLocalS("password")) {
     // 获取本地存储的用户名和密码
     form.username = getLocalS("username");
     form.password = AESDecrypt(getLocalS("password"));
@@ -267,9 +267,8 @@ const onSubmit = () => {
 
         router.push({ name: "UserCenter" });
       } catch (err) {
-        console.log(err);
         if (err.message) {
-          message.error(message);
+          message.error(err.message);
         }
         submitLoading.value = false;
       }
