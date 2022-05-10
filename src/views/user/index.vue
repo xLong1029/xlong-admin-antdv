@@ -3,9 +3,7 @@
     <a-alert
       v-if="alertVisible"
       :message="`尊敬的${realName}：`"
-      :description="
-        `您好！欢迎您使用${systemTitle}，我们将在这里为您提供便捷的在线服务。(这里只展示3个菜单内容，其他的可自行扩展)`
-      "
+      :description="`您好！欢迎您使用${systemTitle}，我们将在这里为您提供便捷的在线服务。(这里只展示3个菜单内容，其他的可自行扩展)`"
       type="info"
       closable
       show-icon
@@ -22,7 +20,7 @@
         :class="{
           'column-two': filterList.length % 2 === 0,
           'column-three': filterList.length % 3 === 0,
-          'column-four': filterList.length % 4 === 0
+          'column-four': filterList.length % 4 === 0,
         }"
       >
         <a-col
@@ -47,121 +45,108 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed, onMounted, ref, watch } from "vue";
 // 通用模块
-import common from "common";
+import useCommon from "common";
 
-export default {
-  name: "UserCenter",
+const { toPage, store } = useCommon();
 
-  setup() {
-    const { toPage, store } = common();
+const menuList = ref([
+  {
+    icon: "user1",
+    title: "个人信息",
+    visible: true,
+    desc: "您可以在这里查看或变更您的个人信息。",
+    outLink: false,
+    url: "/user/info",
+    roles: null,
+  },
+  {
+    icon: "mima",
+    title: "修改密码",
+    visible: true,
+    desc: "您可以在这里变更您的账号密码。",
+    outLink: false,
+    url: "/user/change-password",
+    roles: null,
+  },
+  {
+    icon: "danwei",
+    title: "单位信息",
+    visible: true,
+    desc: "您可以在这里查看、变更您的单位信息。",
+    outLink: false,
+    url: "/user/company-info",
+    roles: null,
+  },
+]);
 
-    const menuList = ref([
-      {
-        icon: "user1",
-        title: "个人信息",
-        visible: true,
-        desc: "您可以在这里查看或变更您的个人信息。",
-        outLink: false,
-        url: "/user/info",
-        roles: null
-      },
-      {
-        icon: "mima",
-        title: "修改密码",
-        visible: true,
-        desc: "您可以在这里变更您的账号密码。",
-        outLink: false,
-        url: "/user/change-password",
-        roles: null
-      },
-      {
-        icon: "danwei",
-        title: "单位信息",
-        visible: true,
-        desc: "您可以在这里查看、变更您的单位信息。",
-        outLink: false,
-        url: "/user/company-info",
-        roles: null
-      }
-    ]);
+const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
 
-    // 监听list变化
-    watch(
-      () => menuList.value,
-      val => {
-        listItemNumInRow.value = getListItemNumInRow(val);
-      }
-    );
+const realName = computed(() => store.getters.realName);
+const roles = computed(() => store.getters.roles);
 
-    // 监听角色变化
-    watch(
-      () => store.getters.roles,
-      val => {
-        filterList.value = getFilterListByRoles(val);
-      }
-    );
+const listItemNumInRow = ref(6);
 
-    const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
+const filterList = ref([]);
 
-    const realName = computed(() => store.getters.realName);
-    const roles = computed(() => store.getters.roles);
+const alertVisible = ref(true);
 
-    const listItemNumInRow = ref(6);
+// 监听list变化
+watch(
+  () => menuList.value,
+  (val) => {
+    listItemNumInRow.value = getListItemNumInRow(val);
+  }
+);
 
-    const filterList = ref([]);
+// 监听角色变化
+watch(
+  () => store.getters.roles,
+  (val) => {
+    filterList.value = getFilterListByRoles(val);
+  }
+);
 
-    const alertVisible = ref(true);
+onMounted(() => {
+  listItemNumInRow.value = getListItemNumInRow(menuList.value);
+  filterList.value = getFilterListByRoles(roles.value);
+});
 
-    // 获取列表一行显示几个
-    const getListItemNumInRow = list => {
-      if (list.length % 4 === 0) {
-        return 6;
-      } else if (list.length % 3 === 0) {
-        return 8;
-      } else {
-        return 12;
-      }
-    };
 
-    // 获取权限列表
-    const getFilterListByRoles = roles => {
-      if (!roles || !roles.length) {
-        return [menuList.value[0]];
-      }
-      return menuList.value.filter(e => {
-        if (!e.roles) return true;
 
-        const hasPermission = roles.some(role => e.roles.includes(role));
-        if (hasPermission) {
-          return e;
-        }
-      });
-    };
-
-    const handleAlertClose = () => {
-      alertVisible.value = false;
-    };
-
-    onMounted(() => {
-      listItemNumInRow.value = getListItemNumInRow(menuList.value);
-      filterList.value = getFilterListByRoles(roles.value);
-    });
-
-    return {
-      realName,
-      systemTitle,
-      alertVisible,
-      handleAlertClose,
-      filterList,
-      listItemNumInRow,
-      toPage
-    };
+// 获取列表一行显示几个
+const getListItemNumInRow = (list) => {
+  if (list.length % 4 === 0) {
+    return 6;
+  } else if (list.length % 3 === 0) {
+    return 8;
+  } else {
+    return 12;
   }
 };
+
+// 获取权限列表
+const getFilterListByRoles = (roles) => {
+  if (!roles || !roles.length) {
+    return [menuList.value[0]];
+  }
+  return menuList.value.filter((e) => {
+    if (!e.roles) return true;
+
+    const hasPermission = roles.some((role) => e.roles.includes(role));
+    if (hasPermission) {
+      return e;
+    }
+  });
+};
+
+const handleAlertClose = () => {
+  alertVisible.value = false;
+};
 </script>
+
 <style lang="less" scoped>
 .user-center-container {
   padding: 20px 0;

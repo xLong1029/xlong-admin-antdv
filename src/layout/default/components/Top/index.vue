@@ -91,12 +91,12 @@
 <script>
 import { computed } from "vue";
 import { message } from "ant-design-vue";
-import common from "common";
+import useCommon from "common";
 
 export default {
   name: "AppTop",
   setup() {
-    const { showDevModal, toPage, store, router } = common();
+    const { showDevModal, toPage, store, router } = useCommon();
 
     const user = computed(() => store.getters.user);
 

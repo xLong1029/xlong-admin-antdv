@@ -145,7 +145,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import {
   computed,
   reactive,
@@ -153,215 +153,189 @@ import {
   ref,
   watch,
   createVNode,
-  onMounted
+  onMounted,
 } from "vue";
 import { message, Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 // 通用模块
-import common from "common";
+import useCommon from "common";
 // 工具
 import {
   setLocalS,
   getLocalS,
   delLocalS,
-  encrypt,
-  decrypt,
-  strToArr
+  AESEncrypt,
+  AESDecrypt,
+  strToArr,
 } from "utils";
 
-export default {
-  name: "Home",
+const { toPage, store, router } = useCommon();
 
-  setup() {
-    const { showDevModal, toPage, store, router } = common();
+// 是否记住密码
+const remeberPwd = ref(false);
 
-    // 是否记住密码
-    const remeberPwd = ref(false);
-
-    // 监听记住密码与token的改变
-    watch(
-      () => [remeberPwd.value, store.getters.token],
-      ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
-        console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
-        if (!newRemeberPwd && getLocalS("username")) {
-          delLocalS("username");
-          delLocalS("password");
-        }
-
-        // 退出登录
-        if (!newRemeberPwd && !newToken) {
-          form.username = "";
-          form.password = "";
-        }
-      }
-    );
-
-    // 提交loading
-    const submitLoading = ref(false);
-
-    const loginForm = ref(null);
-
-    // 系统名称
-    const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
-
-    // 当前用户昵称
-    const nickName = computed(() => store.getters.nickName);
-
-    // banner
-    const bannerList = [
-      {
-        imgUrl: require("@/assets/banner-images/1.jpg")
-      },
-      {
-        imgUrl: require("@/assets/banner-images/2.jpg")
-      },
-      {
-        imgUrl: require("@/assets/banner-images/3.jpg")
-      }
-    ];
-
-    // 表单
-    const form = reactive({
-      username: "",
-      password: ""
-    });
-
-    // 表单规则
-    const rules = reactive({
-      username: [
-        { required: true, message: "请输入手机号码", trigger: "blur" }
-      ],
-      password: [{ required: true, message: "请输入密码", trigger: "blur" }]
-    });
-
-    // 登录
-    const onSubmit = () => {
-      loginForm.value
-        .validate()
-        .then(async () => {
-          const params = toRaw(form);
-          try {
-            submitLoading.value = true;
-            const userInfo = await store.dispatch("user/login", params);
-            if (remeberPwd.value) {
-              // 本地存储用户名和密码
-              setLocalS("username", params.username);
-              setLocalS("password", encrypt(params.password));
-            }
-
-            const {
-              nickName,
-              username,
-              realName,
-              gender,
-              objectId,
-              companyId,
-              userFace,
-              role
-            } = userInfo;
-
-            const info = {
-              avatar: userFace ? userFace : null,
-              roles: role ? strToArr(role, ",") : null,
-              nickName,
-              username,
-              realName,
-              gender,
-              userId: objectId,
-              companyId
-            };
-
-            // 获取可通过的路由
-            await store.dispatch("permission/generateRoutes", info.roles);
-
-            // 更新用户信息
-            store.commit("user/SET_USER", info);
-
-            message.success(
-              `尊敬的${userInfo.nickName}，欢迎使用${systemTitle}`
-            );
-            submitLoading.value = false;
-
-            router.push({ name: "UserCenter" });
-          } catch (err) {
-            if (err.code === 101) {
-              message.error("用户名或密码不正确");
-            } else {
-              message.error(err.error ? err.error : err);
-            }
-
-            submitLoading.value = false;
-          }
-        })
-        .catch(err => {
-          console.log("error", err);
-        });
-    };
-
-    const urlPrefix = process.env.VUE_APP_URL_PREFIX;
-
-    // 打开操作手册
-    const openOperationManual = () => {
-      window.open(
-        `${urlPrefix}/static/files/XLONG家里蹲信息化管理系统操作手册.pdf`,
-        "_blank"
-      );
-    };
+// 监听记住密码与token的改变
+watch(
+  () => [remeberPwd.value, store.getters.token],
+  ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
+    console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
+    if (!newRemeberPwd && getLocalS("username")) {
+      delLocalS("username");
+      delLocalS("password");
+    }
 
     // 退出登录
-    const logout = () => {
-      Modal.confirm({
-        title: "确认退出该系统吗？",
-        icon: createVNode(ExclamationCircleOutlined),
-        centered: true,
-        async onOk() {
-          try {
-            await store.dispatch("user/logout");
-            await store.dispatch("permission/generateRoutes", null);
-            message.success("您已退出该系统");
-
-            if (!remeberPwd.value) {
-              form.username = "";
-              form.password = "";
-
-              // 清除校验
-              loginForm.value.clearValidate();
-            }
-          } catch (err) {
-            console.log(err);
-          }
-        },
-        onCancel() {}
-      });
-    };
-
-    onMounted(() => {
-      // 判断本地存储用户名是否存在
-      if (getLocalS("username")) {
-        // 获取本地存储的用户名和密码
-        form.username = getLocalS("username");
-        form.password = decrypt(getLocalS("password"));
-        remeberPwd.value = true;
-      }
-    });
-
-    return {
-      nickName,
-      systemTitle,
-      bannerList,
-      showDevModal,
-      openOperationManual,
-      form,
-      rules,
-      remeberPwd,
-      submitLoading,
-      onSubmit,
-      logout,
-      toPage,
-      loginForm
-    };
+    if (!newRemeberPwd && !newToken) {
+      form.username = "";
+      form.password = "";
+    }
   }
+);
+
+// 提交loading
+const submitLoading = ref(false);
+
+const loginForm = ref(null);
+
+// 系统名称
+const systemTitle = process.env.VUE_APP_SYSYTEM_TITLE;
+
+// 当前用户昵称
+const nickName = computed(() => store.getters.nickName);
+
+// banner
+const bannerList = [
+  {
+    imgUrl: require("@/assets/banner-images/1.jpg"),
+  },
+  {
+    imgUrl: require("@/assets/banner-images/2.jpg"),
+  },
+  {
+    imgUrl: require("@/assets/banner-images/3.jpg"),
+  },
+];
+
+// 表单
+const form = reactive({
+  username: "",
+  password: "",
+});
+
+// 表单规则
+const rules = reactive({
+  username: [{ required: true, message: "请输入手机号码", trigger: "blur" }],
+  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+});
+
+// 登录
+const onSubmit = () => {
+  loginForm.value
+    .validate()
+    .then(async () => {
+      const params = toRaw(form);
+      try {
+        submitLoading.value = true;
+        const userInfo = await store.dispatch("user/login", params);
+        if (remeberPwd.value) {
+          // 本地存储用户名和密码
+          setLocalS("username", params.username);
+          setLocalS("password", AESEncrypt(params.password));
+        }
+
+        const {
+          nickName,
+          username,
+          realName,
+          gender,
+          objectId,
+          companyId,
+          userFace,
+          role,
+        } = userInfo;
+
+        const info = {
+          avatar: userFace ? userFace : null,
+          roles: role ? strToArr(role, ",") : null,
+          nickName,
+          username,
+          realName,
+          gender,
+          userId: objectId,
+          companyId,
+        };
+
+        // 获取可通过的路由
+        await store.dispatch("permission/generateRoutes", info.roles);
+
+        // 更新用户信息
+        store.commit("user/SET_USER", info);
+
+        message.success(`尊敬的${userInfo.nickName}，欢迎使用${systemTitle}`);
+        submitLoading.value = false;
+
+        router.push({ name: "UserCenter" });
+      } catch (err) {
+        if (err.code === 101) {
+          message.error("用户名或密码不正确");
+        } else {
+          message.error(err.error ? err.error : err);
+        }
+
+        submitLoading.value = false;
+      }
+    })
+    .catch((err) => {
+      console.log("error", err);
+    });
 };
+
+const urlPrefix = process.env.VUE_APP_URL_PREFIX;
+
+// 打开操作手册
+const openOperationManual = () => {
+  window.open(
+    `${urlPrefix}/static/files/XLONG家里蹲信息化管理系统操作手册.pdf`,
+    "_blank"
+  );
+};
+
+// 退出登录
+const logout = () => {
+  Modal.confirm({
+    title: "确认退出该系统吗？",
+    icon: createVNode(ExclamationCircleOutlined),
+    centered: true,
+    async onOk() {
+      try {
+        await store.dispatch("user/logout");
+        await store.dispatch("permission/generateRoutes", null);
+        message.success("您已退出该系统");
+
+        if (!remeberPwd.value) {
+          form.username = "";
+          form.password = "";
+
+          // 清除校验
+          loginForm.value.clearValidate();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    onCancel() {},
+  });
+};
+
+onMounted(() => {
+  // 判断本地存储用户名是否存在
+  if (getLocalS("username")) {
+    // 获取本地存储的用户名和密码
+    form.username = getLocalS("username");
+    form.password = AESDecrypt(getLocalS("password"));
+    remeberPwd.value = true;
+  }
+});
 </script>
 
 <style lang="less" scoped>
@@ -459,9 +433,6 @@ export default {
     .operation-guide {
       width: 900px;
       margin: auto;
-      // ::v-deep(.ant-col) {
-      //   justify-content: center;
-      // }
 
       &__item {
         display: flex;

@@ -248,7 +248,7 @@ import { watch, ref, reactive, toRaw, nextTick } from "vue";
 import { message } from "ant-design-vue";
 import moment from "moment";
 // 通用模块
-import upload from "common/upload.js";
+import useUpload from "common/upload.js";
 // Json数据
 import JsonCity from "mock/city.json";
 import JsonData from "mock/data.json";
@@ -345,7 +345,7 @@ export default {
     const emailSuffixList = JsonData.emailSuffix;
     const emailSuffixValue = ref("@qq.com");
 
-    const { fileAccept, beforeUpload, uploadToBomb } = upload();
+    const { fileAccept, beforeUpload, uploadFileDemo } = useUpload();
 
     // 设置默认头像
     const setDefaultHeadImg = e => {
@@ -392,11 +392,9 @@ export default {
       // console.log("uploadFile", params);
       const file = params.file;
 
-      uploadToBomb(file)
+      uploadFileDemo(file)
         .then(res => {
-          if (res.length) {
-            form.face = res[0].url;
-          }
+          form.face = res.data.url;
         })
         .catch(err => console.log(err))
         .finally(() => (uploadLoading.value = false));

@@ -98,8 +98,8 @@
 <script>
 import { computed, reactive, onMounted } from "vue";
 // 通用模块
-import table from "common/table.js";
-import common from "common";
+import useTable from "common/table.js";
+import useCommon from "common";
 // Api
 import Api from "api/company";
 // 组件
@@ -118,7 +118,7 @@ export default {
   },
 
   setup() {
-    const { store, showDevModal } = common();
+    const { store, showDevModal } = useCommon();
 
     // 企业Id
     const companyId = computed(() => store.getters.companyId);
@@ -133,7 +133,7 @@ export default {
       rowSelection,
       getList,
       search
-    } = table();
+    } = useTable();
 
     // 表格列
     const columns = [

@@ -19,12 +19,12 @@
 
 <script>
 // 通用方法
-import common from "common";
+import useCommon from "common";
 
 export default {
   name: "AppMain",
   setup() {
-    const { pageLoading } = common();
+    const { pageLoading } = useCommon();
 
     return {
       pageLoading

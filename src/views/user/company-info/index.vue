@@ -24,116 +24,94 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, onMounted } from "vue";
 import { message } from "ant-design-vue";
 // 组件
 import BaseInfo from "./base-info";
 import MemberList from "./member";
 // 通用模块
-import common from "common";
+import useCommon from "common";
 // Api
 import Api from "api/company";
 
-export default {
-  name: "CompanyInfo",
+const { store, setPageLoding, pageLoading } = useCommon();
 
-  components: { BaseInfo, MemberList },
+const companyId = computed(() => store.getters.companyId);
+const showBaseInfoChangeBtn = computed(
+  () =>
+    activeName.value === "base" &&
+    (store.getters.roles.indexOf("admin") >= 0 ||
+      store.getters.roles.indexOf("manage") >= 0)
+);
 
-  setup() {
-    // const { ctx } = getCurrentInstance(); // 实例
+// tab数据
+const tabDatas = ref({
+  companyBaseInfo: {},
+  companyMembers: {},
+});
 
-    const { store, setPageLoding, pageLoading } = common();
+// 禁止编辑
+const disableEdit = ref(true);
 
-    const companyId = computed(() => store.getters.companyId);
-    const showBaseInfoChangeBtn = computed(
-      () =>
-        activeName.value === "base" &&
-        (store.getters.roles.indexOf("admin") >= 0 ||
-          store.getters.roles.indexOf("manage") >= 0)
-    );
+const tabs = [
+  {
+    label: "基本信息",
+    name: "base",
+    data: "companyBaseInfo",
+    component: BaseInfo,
+  },
+  {
+    label: "人员信息",
+    name: "member",
+    data: "companyMembers",
+    component: MemberList,
+  },
+];
 
-    // tab数据
-    const tabDatas = ref({
-      companyBaseInfo: {},
-      companyMembers: {}
-    });
+// 当前激活tab
+const activeName = ref("base");
 
-    // 禁止编辑
-    const disableEdit = ref(true);
+// 是否变更单位信息
+const isChange = ref(false);
 
-    const tabs = [
-      {
-        label: "基本信息",
-        name: "base",
-        data: "companyBaseInfo",
-        component: "BaseInfo"
-      },
-      {
-        label: "人员信息",
-        name: "member",
-        data: "companyMembers",
-        component: "MemberList"
+// 获取单位信息
+const getCompnayInfo = () => {
+  setPageLoding(true);
+  Api.GetCompanyInfo(companyId.value)
+    .then((res) => {
+      const { code, data } = res;
+      // 获取到数据
+      if (code == 200) {
+        tabDatas.value.companyBaseInfo = { ...data };
+      } else {
+        message.error("数据获取失败，请稍后重试");
       }
-    ];
+    })
+    .catch((err) => console.log(err))
+    .finally(() => setPageLoding(false));
+};
 
-    // 当前激活tab
-    const activeName = ref("base");
-
-    // 是否变更单位信息
-    const isChange = ref(false);
-
-    // 获取单位信息
-    const getCompnayInfo = () => {
-      setPageLoding(true);
-      Api.GetCompanyInfo(companyId.value)
-        .then(res => {
-          const { code, data } = res;
-          // 获取到数据
-          if (code == 200) {
-            tabDatas.value.companyBaseInfo = { ...data };
-          } else {
-            message.error("数据获取失败，请稍后重试");
-          }
-        })
-        .catch(err => console.log(err))
-        .finally(() => setPageLoding(false));
-    };
-
-    // 变更单位信息
-    const changeInfo = val => {
-      disableEdit.value = !val;
-      isChange.value = val;
-      if (!val) {
-        getCompnayInfo();
-      }
-    };
-
-    // tab内容改变
-    const tabContentChange = val => {
-      if (val === "变更基本信息" || val === "取消变更基本信息") {
-        changeInfo(false);
-        getCompnayInfo();
-      }
-    };
-
-    onMounted(() => {
-      getCompnayInfo();
-    });
-
-    return {
-      tabs,
-      activeName,
-      pageLoading,
-      tabDatas,
-      disableEdit,
-      changeInfo,
-      isChange,
-      tabContentChange,
-      showBaseInfoChangeBtn
-    };
+// 变更单位信息
+const changeInfo = (val) => {
+  disableEdit.value = !val;
+  isChange.value = val;
+  if (!val) {
+    getCompnayInfo();
   }
 };
+
+// tab内容改变
+const tabContentChange = (val) => {
+  if (val === "变更基本信息" || val === "取消变更基本信息") {
+    changeInfo(false);
+    getCompnayInfo();
+  }
+};
+
+onMounted(() => {
+  getCompnayInfo();
+});
 </script>
 <style lang="less" scoped>
 .company-info-container {

@@ -100,7 +100,7 @@
 import { watch, ref, reactive, onMounted, computed, nextTick } from "vue";
 import { message } from "ant-design-vue";
 // 通用模块
-import common from "common";
+import useCommon from "common";
 // Api
 import Api from "api/company";
 
@@ -126,7 +126,7 @@ export default {
   },
 
   setup(props, context) {
-    const { store, showDevModal } = common();
+    const { store, showDevModal } = useCommon();
 
     // 监听可见性
     watch(

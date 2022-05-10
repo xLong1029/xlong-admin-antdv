@@ -1,16 +1,10 @@
-<script>
-import common from "common";
+<script setup>
+import useCommon from "common";
 
-export default {
-  name: "Redirect",
+const { route, router } = useCommon();
 
-  setup() {
-    const { route, router } = common();
+const { params, query } = route;
+const { path } = params;
 
-    const { params, query } = route;
-    const { path } = params;
-
-    router.replace({ path: "/" + path, query });
-  }
-};
+router.replace({ path: "/" + path, query });
 </script>

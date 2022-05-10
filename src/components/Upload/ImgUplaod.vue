@@ -19,7 +19,7 @@
 <script>
 import { ref } from "vue";
 import { message } from "ant-design-vue";
-import upload from "common/upload.js";
+import useUpload from "common/upload.js";
 
 export default {
   name: "ImgUpload",
@@ -38,7 +38,7 @@ export default {
     }
   },
   setup(props, context) {
-    const { fileAccept, beforeUpload, uploadToBomb } = upload();
+    const { fileAccept, beforeUpload, uploadFileDemo } = useUpload();
 
     // 默认头像
     const defaultFaceImg = require("@/assets/images/head.jpg");
@@ -87,11 +87,9 @@ export default {
     const uploadImg = params => {
       const file = params.file;
 
-      uploadToBomb(file)
+      uploadFileDemo(file)
         .then(res => {
-          if (res.length) {
-            context.emit("upload-success", res[0]);
-          }
+          context.emit("upload-success", res.data);
         })
         .catch(err => {
           console.log(err);

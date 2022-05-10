@@ -22,14 +22,14 @@
 <script>
 /* eslint-disable */
 import { ref, computed, watch } from "vue";
-import common from "common";
+import useCommon from "common";
 import NavItem from "./NavItem";
 
 export default {
   name: "AppNavBar",
   components: { NavItem },
   setup() {
-    const { toPage, router, store } = common();
+    const { toPage, router, store } = useCommon();
 
     // 监听路由变化
     watch(

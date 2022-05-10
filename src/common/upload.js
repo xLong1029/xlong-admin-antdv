@@ -6,7 +6,7 @@
  */
 import { ref } from "vue";
 import { message } from "ant-design-vue";
-import Bmob from "hydrogen-js-sdk";
+import { Random } from "mockjs";
 
 export default function() {
   // 默认图片
@@ -67,27 +67,35 @@ export default function() {
 
     return true;
   };
+
   /**
-   * 上传至Bomb
+   * 上传文件（模拟）
    *
    * @param {*} file 文件
    */
-  const uploadToBomb = file => {
-    const _file = Bmob.File(file.name, file);
+   const uploadFileDemo = file => {
+    return new Promise((resolve) => {
+      const { name, size, type } = file;
 
-    return new Promise((resolve, reject) => {
-      _file.save().then(
-        res => {
-          message.success("上传成功");
-          resolve(res);
-        },
-        err => {
-          message.warning("服务器繁忙，请稍后重试");
-          reject(err);
-        }
-      );
+      // 转bse64
+      let reader = new FileReader();
+      reader.readAsDataURL(file); // 这里也可以直接写参数event.raw
+      reader.onload = () => {
+        const url = reader.result;
+        const data = {
+          name,
+          size,
+          type,
+          urlType: "base64",
+          url,
+          uid:Random.guid()
+        };
+        const res = { code: 200, data, mesaage: "上传成功" };
+        resolve(res);
+      };
     });
   };
+
 
   return {
     defaultImg,
@@ -96,6 +104,6 @@ export default function() {
     setDefaultImg,
     getSizeText,
     beforeUpload,
-    uploadToBomb
+    uploadFileDemo
   };
 }

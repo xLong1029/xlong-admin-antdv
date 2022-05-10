@@ -1,3 +1,12 @@
+/*
+ * 功能 : 封装一些主要工具方法
+ * 作者 : 罗永梅（381612175@qq.com）
+ * 日期 : 2022-05-09
+ * 版本 : version 2.0
+ */
+
+const CryptoJS = require("crypto-js");
+
 /**
  * 根据时间辍返回对应的时间 如 YYYY-MM-DD HH:mm:ss  YYYY-MM-DD
  * @param {Object} date 时间对象
@@ -428,35 +437,32 @@ export function objOmit(obj, uselessKeys) {
 }
 
 /**
- * 加密（简单模拟）
+ * AES加密
  *
- * @param {*} value 值
+ * @param {String} str 内容
+ * @param {*} key 密钥
+ * @param {*} iv
  */
-export function encrypt(value) {
-  let code = "";
-  for (let i = 0; i < value.length; i++) {
-    const r = value.charCodeAt(i);
-    code += String.fromCharCode(r + 2);
-  }
-  // 对字符串进行特殊字符编码，分号（;）、逗号（,）、等号（=）以及空格问题
-  return escape(code);
-}
+ export const AESEncrypt = (str, key = "xLong", iv = "") => {
+  return CryptoJS.AES.AESEncrypt(str, iv, CryptoJS.enc.Utf8.parse(key), {
+    mode: CryptoJS.mode.ECB,
+    padding: CryptoJS.pad.Pkcs7,
+  }).toString();
+};
 
 /**
- * 解密（简单模拟）
+ * AES解密
  *
- * @param {*} value 值
+ * @param {String} str 内容
+ * @param {*} key 密钥
+ * @param {*} iv
  */
-export function decrypt(value) {
-  // 对字符串进行特殊字符解码，分号（;）、逗号（,）、等号（=）以及空格问题
-  value = unescape(value);
-  let correct = "";
-  for (let i = 0; i < value.length; i++) {
-    const r = value.charCodeAt(i);
-    correct += String.fromCharCode(r - 2);
-  }
-  return correct;
-}
+export const AESDecrypt = (str, key = "xLong", iv = "") => {
+  return CryptoJS.AES.decrypt(str, iv, CryptoJS.enc.Utf8.parse(key), {
+    mode: CryptoJS.mode.ECB,
+    padding: CryptoJS.pad.Pkcs7,
+  }).toString(CryptoJS.enc.Utf8);
+};
 
 /**
  * localstorage写入本地缓存

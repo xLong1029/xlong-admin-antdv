@@ -16,19 +16,11 @@
     </a-card>
   </div>
 </template>
-<script>
-export default {
-  name: "About",
 
-  setup() {
-    const qrcode = require("assets/images/qrcode.jpg");
-
-    return {
-      qrcode
-    };
-  }
-};
+<script setup>
+const qrcode = require("assets/images/qrcode.jpg");
 </script>
+
 <style lang="less" scoped>
 .about-container {
   text-align: center;

@@ -85,8 +85,8 @@ import { computed, reactive, onMounted, ref } from "vue";
 import { message } from "ant-design-vue";
 import moment from "moment";
 // 通用模块
-import table from "common/table.js";
-import common from "common/index.js";
+import useTable from "common/table.js";
+import useCommon from "common/index.js";
 // Api
 import Api from "api/account-manage";
 // 组件
@@ -105,7 +105,7 @@ export default {
   },
 
   setup() {
-    const { showDevModal, store } = common();
+    const { showDevModal, store } = useCommon();
 
     const roles = computed(() => store.getters.roles);
 
@@ -117,7 +117,7 @@ export default {
       rowSelection,
       clearSelect,
       getList
-    } = table();
+    } = useTable();
 
     const columns = [
       {

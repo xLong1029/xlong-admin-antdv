@@ -57,7 +57,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { reactive, toRaw, ref, computed, onMounted } from "vue";
 import { message } from "ant-design-vue";
 // Api
@@ -68,169 +68,140 @@ import { strToArr } from "utils";
 import ImgUpload from "components/Upload/ImgUplaod.vue";
 import ImgPreview from "components/Preview/ImgPreview.vue";
 // 通用方法
-import preview from "common/preview.js";
-import common from "common";
+import usePreview from "common/preview.js";
+import useCommon from "common";
 
-export default {
-  name: "UserInfo",
+const { store, setPageLoding } = useCommon();
 
-  components: { ImgUpload, ImgPreview },
+const { imgPreviewModal, handleImgPreview, handleCancelImgPreview } =
+  usePreview();
 
-  setup() {
-    const { store, setPageLoding, pageLoading } = common();
+// 表单配置
+const labelColSpan = 6;
+const wrapperColSpan = 18;
 
-    const {
-      imgPreviewModal,
-      handleImgPreview,
-      handleCancelImgPreview
-    } = preview();
+// 当前用户信息和系统配置
+const token = computed(() => store.getters.token);
 
-    // 表单配置
-    const labelColSpan = 6;
-    const wrapperColSpan = 18;
+const userId = computed(() => store.getters.userId);
 
-    // 当前用户信息和系统配置
-    const token = computed(() => store.getters.token);
+// 表单
+const form = reactive({
+  username: null,
+  userFace: [],
+  nickName: null,
+  realName: null,
+  gender: null,
+});
 
-    const userId = computed(() => store.getters.userId);
+// 表单规则
+const rules = reactive({
+  nickName: [{ required: true, message: "请输入昵称", trigger: "blur" }],
+  realName: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
+  gender: [{ required: true, message: "请选择性别", trigger: "change" }],
+});
 
-    // 表单
-    const form = reactive({
-      username: null,
-      userFace: [],
-      nickName: null,
-      realName: null,
-      gender: null
-    });
+// 提交loading
+const submitLoading = ref(false);
 
-    // 表单规则
-    const rules = reactive({
-      nickName: [{ required: true, message: "请输入昵称", trigger: "blur" }],
-      realName: [
-        { required: true, message: "请输入真实姓名", trigger: "blur" }
-      ],
-      gender: [{ required: true, message: "请选择性别", trigger: "change" }]
-    });
+const submitForm = ref(null);
 
-    // 提交loading
-    const submitLoading = ref(false);
-
-    const submitForm = ref(null);
-
-    // 头像上传成功
-    const handleUploadSuccess = file => {
-      // 多图片上传时
-      const length = form.userFace.length;
-      file.uid = length ? form.userFace[length - 1].uid++ : 1; // 解决浏览器报警告“<TransitionGroup> children must be keyed. ”
-      form.userFace = [file];
-    };
-
-    // 删除上传的图片
-    const handleUploadImgDelete = ({ file, index, list }) => {
-      console.log(file, index);
-      form.userFace = list;
-    };
-
-    // 获取个人资料
-    const getProfile = () => {
-      setPageLoding(true);
-      Api.GetUser(token.value)
-        .then(res => {
-          const { code, data } = res;
-          // 获取到数据
-          if (code == 200) {
-            const {
-              username,
-              userFace,
-              nickName,
-              realName,
-              gender,
-              objectId,
-              role
-            } = data;
-
-            form.username = username;
-            form.userFace = userFace
-              ? [
-                  {
-                    uid: 1,
-                    url: userFace
-                  }
-                ]
-              : [];
-            form.nickName = nickName;
-            form.realName = realName;
-            form.gender = gender;
-
-            // 更新用户信息
-            store.commit("user/SET_USER", {
-              id: objectId,
-              avatar: userFace ? userFace : null,
-              gender,
-              username,
-              realName,
-              nickName,
-              userId: objectId,
-              roles: role ? strToArr(role, ",") : null
-            });
-          } else {
-            message.error("无法获取用户数据!");
-            console.log("无该用户");
-          }
-        })
-        .catch(err => console.log(err))
-        .finally(() => setPageLoding(false));
-    };
-
-    // 提交修改
-    const onSubmit = () => {
-      submitForm.value
-        .validate()
-        .then(() => {
-          submitLoading.value = true;
-          const data = toRaw(form);
-
-          let params = { ...data };
-
-          params.userFace = data.userFace.length ? data.userFace[0].url : null;
-
-          Api.EditProfile(params, userId.value)
-            .then(res => {
-              if (res.code == 200) {
-                getProfile();
-                message.success("资料修改成功！");
-              } else message.error("资料修改失败！");
-            })
-            .catch(err => console.log(err))
-            .finally(() => (submitLoading.value = false));
-        })
-        .catch(err => {
-          console.log("error", err);
-        });
-    };
-
-    // 初始化
-    onMounted(() => {
-      getProfile();
-    });
-
-    return {
-      labelColSpan,
-      wrapperColSpan,
-      form,
-      rules,
-      submitLoading,
-      pageLoading,
-      onSubmit,
-      imgPreviewModal,
-      handleImgPreview,
-      handleCancelImgPreview,
-      handleUploadSuccess,
-      handleUploadImgDelete,
-      submitForm
-    };
-  }
+// 头像上传成功
+const handleUploadSuccess = (file) => {
+  // 多图片上传时
+  const length = form.userFace.length;
+  file.uid = length ? form.userFace[length - 1].uid++ : 1; // 解决浏览器报警告“<TransitionGroup> children must be keyed. ”
+  form.userFace = [file];
 };
+
+// 删除上传的图片
+const handleUploadImgDelete = ({ file, index, list }) => {
+  console.log(file, index);
+  form.userFace = list;
+};
+
+// 获取个人资料
+const getProfile = () => {
+  setPageLoding(true);
+  Api.GetUser(token.value)
+    .then((res) => {
+      const { code, data } = res;
+      // 获取到数据
+      if (code == 200) {
+        const {
+          username,
+          userFace,
+          nickName,
+          realName,
+          gender,
+          objectId,
+          role,
+        } = data;
+
+        form.username = username;
+        form.userFace = userFace
+          ? [
+              {
+                uid: 1,
+                url: userFace,
+              },
+            ]
+          : [];
+        form.nickName = nickName;
+        form.realName = realName;
+        form.gender = gender;
+
+        // 更新用户信息
+        store.commit("user/SET_USER", {
+          id: objectId,
+          avatar: userFace ? userFace : null,
+          gender,
+          username,
+          realName,
+          nickName,
+          userId: objectId,
+          roles: role ? strToArr(role, ",") : null,
+        });
+      } else {
+        message.error("无法获取用户数据!");
+        console.log("无该用户");
+      }
+    })
+    .catch((err) => console.log(err))
+    .finally(() => setPageLoding(false));
+};
+
+// 提交修改
+const onSubmit = () => {
+  submitForm.value
+    .validate()
+    .then(() => {
+      submitLoading.value = true;
+      const data = toRaw(form);
+
+      let params = { ...data };
+
+      params.userFace = data.userFace.length ? data.userFace[0].url : null;
+
+      Api.EditProfile(params, userId.value)
+        .then((res) => {
+          if (res.code == 200) {
+            getProfile();
+            message.success("资料修改成功！");
+          } else message.error("资料修改失败！");
+        })
+        .catch((err) => console.log(err))
+        .finally(() => (submitLoading.value = false));
+    })
+    .catch((err) => {
+      console.log("error", err);
+    });
+};
+
+// 初始化
+onMounted(() => {
+  getProfile();
+});
 </script>
 <style lang="less" scoped>
 .user-info-container {

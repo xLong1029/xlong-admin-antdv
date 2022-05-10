@@ -8,9 +8,6 @@ import store from "./store";
 // 路由权限
 import "./permission.js";
 
-import BmobServer from "./bmob/bmob-server";
-BmobServer.Init();
-
 // 按需加载antd组件
 import Antd from "ant-design-vue";
 
@@ -18,6 +15,10 @@ import Antd from "ant-design-vue";
 import "./styles/index.less";
 // 字体样式
 import "./assets/font/iconfont.css";
+
+// 启动Mock
+import { setupMock } from "./mock/mock-server";
+setupMock();
 
 // 按需使用图标
 import {

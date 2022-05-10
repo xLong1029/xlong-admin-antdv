@@ -32,6 +32,7 @@ export default {
   name: "Contact"
 };
 </script>
+
 <style lang="less" scoped>
 .contact-container {
   text-align: center;

@@ -30,12 +30,12 @@
 
 <script>
 import { ref, watch } from "vue";
-import common from "common";
+import useCommon from "common";
 
 export default {
   name: "Breadcrumb",
   setup() {
-    const { onGoBack, router } = common();
+    const { onGoBack, router } = useCommon();
 
     // 监听路由变化
     watch(
