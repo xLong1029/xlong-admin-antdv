@@ -1,3 +1,6 @@
+import { account } from "./account-manage";
+import { strToArr } from "utils";
+
 export const jobList = [
   {
     id: 1,
@@ -15036,6 +15039,22 @@ export default [
         code: 200,
         message: "success",
         data: articleTags,
+      };
+    },
+  },
+  {
+    url: "/api/list/emailSuffix",
+    method: "get",
+    response: () => {
+      const emailList = account.list.map(e => e.email);
+      emailList.forEach(e => {
+        const arr = strToArr(e, "@");
+        e = arr.length > 1 ? arr[1] : arr[0]
+      });
+      return {
+        code: 200,
+        message: "success",
+        data: emailList,
       };
     },
   },

@@ -44,7 +44,7 @@
       :loading="listLoading"
       :columns="columns"
       :data-source="listData"
-      :row-key="record => record.id"
+      :row-key="(record) => record.id"
       :pagination="pageConfig"
       :row-selection="rowSelection"
       @change="handleTableChange"
@@ -80,7 +80,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed, reactive, onMounted, ref } from "vue";
 import { message } from "ant-design-vue";
 import moment from "moment";
@@ -92,271 +92,231 @@ import Api from "api/account-manage";
 // 组件
 import AccountStore from "./store.vue";
 
-export default {
-  name: "AccountList",
+const { store } = useCommon();
 
-  components: { AccountStore },
+const roles = computed(() => store.getters.roles);
 
-  emits: {
-    close: val => {
-      console.log(8888, val);
-      return true;
-    }
+const {
+  listLoading,
+  searchLoading,
+  listData,
+  pageConfig,
+  rowSelection,
+  clearSelect,
+  getList,
+} = useTable();
+
+const columns = [
+  {
+    title: "真实姓名",
+    dataIndex: "realname",
+    key: "realname",
+    width: 150,
+    fixed: "left",
   },
-
-  setup() {
-    const { showDevModal, store } = useCommon();
-
-    const roles = computed(() => store.getters.roles);
-
-    const {
-      listLoading,
-      searchLoading,
-      listData,
-      pageConfig,
-      rowSelection,
-      clearSelect,
-      getList
-    } = useTable();
-
-    const columns = [
+  {
+    title: "状态",
+    dataIndex: "enabledState",
+    key: "enabledState",
+    slots: { customRender: "enabledStateText" },
+    width: 100,
+    filters: [
       {
-        title: "真实姓名",
-        dataIndex: "realname",
-        key: "realname",
-        width: 150,
-        fixed: "left"
+        text: "启用",
+        value: 1,
       },
       {
-        title: "状态",
-        dataIndex: "enabledState",
-        key: "enabledState",
-        slots: { customRender: "enabledStateText" },
-        width: 100,
-        filters: [
-          {
-            text: "启用",
-            value: 1
-          },
-          {
-            text: "禁用",
-            value: -1
-          }
-        ],
-        filterMultiple: false,
-        onFilter: (value, record) => record.enabledState === value
+        text: "禁用",
+        value: -1,
+      },
+    ],
+    filterMultiple: false,
+    onFilter: (value, record) => record.enabledState === value,
+  },
+  {
+    title: "性别",
+    dataIndex: "gender",
+    key: "gender",
+    width: 100,
+    filters: [
+      {
+        text: "男",
+        value: "男",
       },
       {
-        title: "性别",
-        dataIndex: "gender",
-        key: "gender",
-        width: 100,
-        filters: [
-          {
-            text: "男",
-            value: "男"
-          },
-          {
-            text: "女",
-            value: "女"
-          }
-        ],
-        filterMultiple: false,
-        onFilter: (value, record) => record.gender === value
+        text: "女",
+        value: "女",
       },
-      {
-        title: "手机号码",
-        key: "mobile",
-        dataIndex: "mobile",
-        width: 150
-      },
-      {
-        title: "电子邮箱",
-        key: "email",
-        dataIndex: "email",
-        width: 150
-      },
-      {
-        title: "所在省市",
-        dataIndex: "province",
-        key: "province",
-        slots: { customRender: "provinceAndCity" },
-        width: 200
-      },
-      {
-        title: "所在单位",
-        dataIndex: "companyName",
-        key: "companyName",
-        width: 200
-      },
-      {
-        title: "职位",
-        dataIndex: "job",
-        key: "job",
-        width: 120
-      },
-      {
-        title: "创建时间",
-        dataIndex: "createTime",
-        key: "createTime",
-        width: 150,
-        sorter: (a, b) => moment(a.createTime).isBefore(b.createTime)
-      },
-      {
-        title: "更新时间",
-        dataIndex: "updateTime",
-        key: "updateTime",
-        width: 150,
-      },
-      {
-        title: "操作",
-        key: "action",
-        slots: { customRender: "action" },
-        width: 150,
-        fixed: "right"
-      }
-    ];
+    ],
+    filterMultiple: false,
+    onFilter: (value, record) => record.gender === value,
+  },
+  {
+    title: "手机号码",
+    key: "mobile",
+    dataIndex: "mobile",
+    width: 150,
+  },
+  {
+    title: "电子邮箱",
+    key: "email",
+    dataIndex: "email",
+    width: 150,
+  },
+  {
+    title: "所在省市",
+    dataIndex: "province",
+    key: "province",
+    slots: { customRender: "provinceAndCity" },
+    width: 200,
+  },
+  {
+    title: "所在单位",
+    dataIndex: "companyName",
+    key: "companyName",
+    width: 200,
+  },
+  {
+    title: "职位",
+    dataIndex: "job",
+    key: "job",
+    width: 120,
+  },
+  {
+    title: "创建时间",
+    dataIndex: "createTime",
+    key: "createTime",
+    width: 150,
+    sorter: (a, b) => moment(a.createTime).isBefore(b.createTime),
+  },
+  {
+    title: "更新时间",
+    dataIndex: "updateTime",
+    key: "updateTime",
+    width: 150,
+  },
+  {
+    title: "操作",
+    key: "action",
+    slots: { customRender: "action" },
+    width: 150,
+    fixed: "right",
+  },
+];
 
-    const accountStoreModal = reactive({
-      visible: false,
-      id: null,
-      type: 1 // 1 新增, 2 编辑, 3 查看
-    });
+const accountStoreModal = reactive({
+  visible: false,
+  id: null,
+  type: 1, // 1 新增, 2 编辑, 3 查看
+});
 
-    // 打开账户存储弹窗
-    const openAccountStoreMoadl = (record, type) => {
-      accountStoreModal.visible = true;
-      accountStoreModal.id = record?.id;
-      accountStoreModal.type = type;
-    };
+// 打开账户存储弹窗
+const openAccountStoreMoadl = (record, type) => {
+  accountStoreModal.visible = true;
+  accountStoreModal.id = record?.id;
+  accountStoreModal.type = type;
+};
 
-    // 关闭账户存储弹窗
-    const closeAccountStoreModal = val => {
-      accountStoreModal.visible = val;
-      accountStoreModal.id = null;
-      accountStoreModal.type = 1;
-    };
+// 关闭账户存储弹窗
+const closeAccountStoreModal = (val) => {
+  accountStoreModal.visible = val;
+  accountStoreModal.id = null;
+  accountStoreModal.type = 1;
+};
 
-    // 获取列表
-    const apiGetList = (pageNo, pageSize) =>
-      Api.GetAccList(filterParams, pageNo, pageSize);
+// 获取列表
+const apiGetList = (pageNo, pageSize) =>
+  Api.GetAccList(filterParams, pageNo, pageSize);
 
-    // 表格改变事件
-    const handleTableChange = (pagination, filters, sorter) => {
-      console.log(pagination, filters, sorter);
+// 表格改变事件
+const handleTableChange = (pagination, filters, sorter) => {
+  console.log(pagination, filters, sorter);
 
-      getList(pagination.current, pagination.pageSize, apiGetList);
-    };
+  getList(pagination.current, pagination.pageSize, apiGetList);
+};
 
-    const filterParams = reactive({});
+const filterParams = reactive({});
 
-    const handleFilterParamsChange = e => {
-      const value = e.target.value;
-      // 清空
-      if (!value) {
-        getList(1, pageConfig.pageSize, apiGetList);
-      }
-    };
-
-    // 搜索
-    function onSearch() {
-      getList(1, pageConfig.pageSize, apiGetList);
-    }
-
-    // 账户存储成功
-    const handleAccountStoreSuccess = type => {
-      // 新增操作返回第一页
-      if (type === 1) {
-        pageConfig.current = 1;
-      }
-      getList(pageConfig.current, pageConfig.pageSize, apiGetList);
-    };
-
-    // 删除loading
-    const delLoading = ref(false);
-
-    // 删除账户
-    const handleDelelteAccount = id => {
-      if (!id && !rowSelection.selectedRowKeys.length) {
-        message.warning("请勾选要删除的账户");
-      }
-
-      const ids = id ? [id] : rowSelection.selectedRowKeys
-
-      delLoading.value = !id;
-
-      Api.DeleteAcc(ids)
-        .then(res => {
-          const { code, message: msg } = res;
-          if (code == 200) {
-            message.success("删除成功!");
-            getList(pageConfig.current, pageConfig.pageSize, apiGetList);
-            clearSelect();
-          } else message.error(msg);
-        })
-        .catch(err => console.log(err))
-        .finally(() => (delLoading.value = false));
-    };
-
-    // 启/禁用loading
-    const enableLoading = ref(false);
-    const disableLoading = ref(false);
-
-    // 启/禁用账户
-    const handleEnableAccount = enabledState => {
-      // console.log(rowSelection.selectedRowKeys);
-
-      enabledState === 1
-        ? (enableLoading.value = true)
-        : (disableLoading.value = true);
-
-      Api.EnableAcc(enabledState, rowSelection.selectedRowKeys)
-        .then(res => {
-          const { code, message: msg } = res;
-          if (code == 200) {
-            message.success("操作成功!");
-            getList(pageConfig.current, pageConfig.pageSize, apiGetList);
-          } else message.warning(msg);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => {
-          enabledState === 1
-            ? (enableLoading.value = false)
-            : (disableLoading.value = false);
-          clearSelect();
-        });
-    };
-
-    onMounted(() => {
-      getList(pageConfig.current, pageConfig.pageSize, apiGetList);
-    });
-
-    return {
-      listLoading,
-      searchLoading,
-      listData,
-      pageConfig,
-      getList,
-      onSearch,
-      columns,
-      rowSelection,
-      handleTableChange,
-      roles,
-      showDevModal,
-      accountStoreModal,
-      openAccountStoreMoadl,
-      closeAccountStoreModal,
-      handleAccountStoreSuccess,
-      delLoading,
-      handleDelelteAccount,
-      enableLoading,
-      disableLoading,
-      handleEnableAccount,
-      filterParams,
-      handleFilterParamsChange
-    };
+const handleFilterParamsChange = (e) => {
+  const value = e.target.value;
+  // 清空
+  if (!value) {
+    getList(1, pageConfig.pageSize, apiGetList);
   }
 };
+
+// 搜索
+function onSearch() {
+  getList(1, pageConfig.pageSize, apiGetList);
+}
+
+// 账户存储成功
+const handleAccountStoreSuccess = (type) => {
+  // 新增操作返回第一页
+  if (type === 1) {
+    pageConfig.current = 1;
+  }
+  getList(pageConfig.current, pageConfig.pageSize, apiGetList);
+};
+
+// 删除loading
+const delLoading = ref(false);
+
+// 删除账户
+const handleDelelteAccount = (id) => {
+  if (!id && !rowSelection.selectedRowKeys.length) {
+    message.warning("请勾选要删除的账户");
+  }
+
+  const ids = id ? [id] : rowSelection.selectedRowKeys;
+
+  delLoading.value = !id;
+
+  Api.DeleteAcc(ids)
+    .then((res) => {
+      const { code, message: msg } = res;
+      if (code == 200) {
+        message.success("删除成功!");
+        getList(pageConfig.current, pageConfig.pageSize, apiGetList);
+        clearSelect();
+      } else message.error(msg);
+    })
+    .catch((err) => console.log(err))
+    .finally(() => (delLoading.value = false));
+};
+
+// 启/禁用loading
+const enableLoading = ref(false);
+const disableLoading = ref(false);
+
+// 启/禁用账户
+const handleEnableAccount = (enabledState) => {
+  // console.log(rowSelection.selectedRowKeys);
+
+  enabledState === 1
+    ? (enableLoading.value = true)
+    : (disableLoading.value = true);
+
+  Api.EnableAcc(enabledState, rowSelection.selectedRowKeys)
+    .then((res) => {
+      const { code, message: msg } = res;
+      if (code == 200) {
+        message.success("操作成功!");
+        getList(pageConfig.current, pageConfig.pageSize, apiGetList);
+      } else message.warning(msg);
+    })
+    .catch((err) => console.log(err))
+    .finally(() => {
+      enabledState === 1
+        ? (enableLoading.value = false)
+        : (disableLoading.value = false);
+      clearSelect();
+    });
+};
+
+onMounted(() => {
+  getList(pageConfig.current, pageConfig.pageSize, apiGetList);
+});
 </script>
 
 <style lang="less" scoped>

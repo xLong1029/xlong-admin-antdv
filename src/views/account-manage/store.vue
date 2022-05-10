@@ -23,7 +23,7 @@
           <div class="account-detail-content__cont">
             <div class="info-table">
               <div class="flex">
-                <div style="width:100%">
+                <div style="width: 100%">
                   <div class="info-table__tr">
                     <div class="info-table__th">
                       <span class="required">真实姓名</span>
@@ -49,7 +49,7 @@
                           :field-names="{
                             label: 'name',
                             value: 'name',
-                            children: 'childs'
+                            children: 'childs',
                           }"
                           placeholder="请选择所在省市"
                         ></a-cascader>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="info-table__tr">
                   <div class="info-table__td head-pic img-shade">
-                    <img :src="form.face" @error="setDefaultHeadImg" />
+                    <img :src="form.avatar" @error="setDefaultHeadImg" />
                     <div class="img-shade-actions">
                       <a-upload
                         class="img-shade-actions__btn"
@@ -243,433 +243,408 @@
   </a-modal>
 </template>
 
-<script>
-import { watch, ref, reactive, toRaw, nextTick } from "vue";
+<script setup>
+import { watch, ref, reactive, toRaw, nextTick, onMounted } from "vue";
 import { message } from "ant-design-vue";
 import moment from "moment";
 // 通用模块
 import useUpload from "common/upload.js";
 // Json数据
-import JsonCity from "mock/city.json";
-import JsonData from "mock/data.json";
+// import JsonCity from "mock/city.json";
+// import JsonData from "mock/data.json";
 // 工具
-import { strToArr, arrToStr, compareDate } from "utils";
+import { compareDate } from "utils";
 import { docElmScrollTo } from "utils/scroll-to.js";
 import { validEmail, validMobile } from "utils/validate";
 // Api
-import Api from "api/account-manage/index.js";
+import Api from "api/account-manage";
+import PublicApi from "api/public";
 
-export default {
-  name: "AccountStore",
-
-  props: {
-    // 弹窗可见性
-    visible: {
-      type: Boolean,
-      default: false
-    },
-    // 详情id
-    id: {
-      type: String,
-      default: null
-    },
-    // 类型
-    type: {
-      type: Number,
-      default: 1 // 1 新增, 2 编辑, 3 查看
-    }
+// eslint-disable-next-line
+const props = defineProps({
+  // 弹窗可见性
+  visible: {
+    type: Boolean,
+    default: false,
   },
+  // 详情id
+  id: {
+    type: String,
+    default: null,
+  },
+  // 类型
+  type: {
+    type: Number,
+    default: 1, // 1 新增, 2 编辑, 3 查看
+  },
+});
 
-  setup(props, context) {
-    // 默认头像
-    const defaultFaceImg = require("@/assets/images/head.jpg");
+// eslint-disable-next-line
+const emit = defineEmits(["close", "submit"]);
 
-    // 监听可见性
-    watch(
-      () => props.visible,
-      async val => {
-        if (val) {
-          await nextTick();
-          emailSuffixValue.value = "@qq.com";
-          submitForm.value.resetFields();
-          submitForm.value.clearValidate();
-          form.face = defaultFaceImg;
-          const doc = document.getElementsByClassName("ant-modal-body")[0];
-          docElmScrollTo(doc, 0);
+// 默认头像
+const defaultFaceImg = require("@/assets/images/head.jpg");
 
-          switch (props.type) {
-            case 1:
-              title.value = "新增账户";
-              break;
-            case 2:
-              title.value = "编辑账户";
-              getInfo(props.id);
-              break;
-            default:
-              console.log("type is error");
-          }
-        }
+// 监听可见性
+watch(
+  () => props.visible,
+  async (val) => {
+    if (val) {
+      await nextTick();
+      emailSuffixValue.value = "@qq.com";
+      submitForm.value.resetFields();
+      submitForm.value.clearValidate();
+      form.avatar = defaultFaceImg;
+      const doc = document.getElementsByClassName("ant-modal-body")[0];
+      docElmScrollTo(doc, 0);
+
+      switch (props.type) {
+        case 1:
+          title.value = "新增账户";
+          break;
+        case 2:
+          title.value = "编辑账户";
+          getInfo(props.id);
+          break;
+        default:
+          console.log("type is error");
       }
-    );
+    }
+  }
+);
 
-    // 标题
-    const title = ref("账户详情");
+// 标题
+const title = ref("账户详情");
 
-    // 职位
-    const jobList = JsonData.job;
+// 职位
+const jobList = ref([]);
 
-    // 参加工作时间
-    const workTimePH = ref("请选择日期");
+// 参加工作时间
+const workTimePH = ref("请选择日期");
 
-    // 勾选尚未毕业
-    const handleGraduateChange = e => {
-      const value = e.target.checked;
-      if (value) {
-        form.workTime = "";
-        workTimePH.value = "尚未毕业";
-      } else {
-        workTimePH.value = "请选择日期";
-      }
-    };
-
-    // 所在省市
-    const provinceList = JsonCity;
-
-    // 专业领域
-    const professionList = JsonData.profession.map(e => ({
-      label: e.name,
-      value: e.name
-    }));
-
-    // 邮箱后缀
-    const emailSuffixList = JsonData.emailSuffix;
-    const emailSuffixValue = ref("@qq.com");
-
-    const { fileAccept, beforeUpload, uploadFileDemo } = useUpload();
-
-    // 设置默认头像
-    const setDefaultHeadImg = e => {
-      e.currentTarget.src = defaultFaceImg;
-      e.currentTarget.onerror = null;
-    };
-
-    // 头像上传前
-    const handleBeforeUpload = file => {
-      return beforeUpload(file, function(file) {
-        // 双重检查，避免在“所有文件”中选择其他文件
-        if (
-          !(
-            file.type === "image/jpeg" ||
-            file.type === "image/png" ||
-            file.type === "image/gif"
-          )
-        ) {
-          message.warning("图片只能是 png 、jpg 、gif 格式");
-          return false;
-        }
-        return true;
-      });
-    };
-
-    const uploadLoading = ref(false);
-
-    // 上传状态改变
-    const handleUploadChange = info => {
-      if (info.file.status === "uploading") {
-        uploadLoading.value = true;
-        return;
-      }
-      if (info.file.status === "done") {
-        uploadLoading.value = false;
-      }
-      if (info.file.status === "error") {
-        uploadLoading.value = false;
-      }
-    };
-
-    // 上传头像
-    const uploadAvatar = params => {
-      // console.log("uploadFile", params);
-      const file = params.file;
-
-      uploadFileDemo(file)
-        .then(res => {
-          form.face = res.data.url;
-        })
-        .catch(err => console.log(err))
-        .finally(() => (uploadLoading.value = false));
-    };
-
-    // 默认表单
-    const defaultForm = {
-      face: defaultFaceImg,
-      realname: null,
-      province: [],
-      birthdate: null,
-      gender: null,
-      mobile: null,
-      email: null,
-      address: null,
-      companyName: null,
-      job: null,
-      workTime: null,
-      isGraduate: null,
-      profession: []
-    };
-
-    // 表单
-    const form = reactive({ ...defaultForm });
-
-    // 校验
-    const validBirthDate = (rule, value) => {
-      if (!value) {
-        return Promise.reject("请选择出生日期");
-      }
-      let nowDate = new Date();
-      const compare = compareDate(value, nowDate);
-      if (!compare) return Promise.reject("出生日期不能大于当前日期");
-      else {
-        return Promise.resolve();
-      }
-    };
-    const validateMobile = (rule, value) => {
-      if (!value) {
-        return Promise.reject(new Error("请输入手机号码"));
-      } else if (!validMobile(value)) {
-        return Promise.reject(new Error("手机号码格式不正确"));
-      } else {
-        return Promise.resolve();
-      }
-    };
-    const validateEmail = (rule, value) => {
-      if (!value) {
-        return Promise.reject(new Error("请输入邮箱地址"));
-      } else if (!validEmail(value + emailSuffixValue.value)) {
-        return Promise.reject(new Error("邮箱格式不正确"));
-      } else {
-        return Promise.resolve();
-      }
-    };
-    const validateWorkTime = (rule, value) => {
-      if (form.isGraduate) return Promise.resolve();
-      if (!value) return Promise.reject(new Error("请选择工作时间"));
-      else {
-        // 日期比较
-        let nowDate = new Date();
-        const compare = compareDate(value, nowDate);
-        if (!compare)
-          return Promise.reject(new Error("工作时间不能大于当前日期"));
-        else return Promise.resolve();
-      }
-    };
-
-    // 表单规则
-    const rules = reactive({
-      realname: [
-        { required: true, message: "请输入真实姓名", trigger: "blur" }
-      ],
-      province: [
-        {
-          type: "array",
-          required: true,
-          message: "请选择所在省市",
-          trigger: "change"
-        }
-      ],
-      birthdate: [
-        {
-          type: "object",
-          required: true,
-          validator: validBirthDate,
-          trigger: "change"
-        }
-      ],
-      gender: [{ required: true, message: "请选择性别", trigger: "change" }],
-      mobile: [{ required: true, validator: validateMobile, trigger: "blur" }],
-      email: [{ required: true, validator: validateEmail, trigger: "blur" }],
-      companyName: [
-        { required: true, message: "请输入工作单位名称", trigger: "blur" }
-      ],
-      job: [
-        {
-          required: true,
-          message: "请选择职位",
-          trigger: "change"
-        }
-      ],
-      workTime: [
-        {
-          type: "object",
-          required: true,
-          validator: validateWorkTime,
-          trigger: "change"
-        }
-      ],
-      profession: [
-        {
-          type: "array",
-          required: true,
-          message: "请选择专业领域",
-          trigger: "change"
-        }
-      ]
-    });
-
-    // 提交loading
-    const submitLoading = ref(false);
-
-    const submitForm = ref(null);
-
-    // 确认弹窗
-    const handleOk = () => {
-      submitForm.value
-        .validate()
-        .then(async () => {
-          const data = toRaw(form);
-
-          submitLoading.value = true;
-
-          let params = { ...data };
-          params.email = data.email ? data.email + emailSuffixValue.value : "";
-          params.province = data.province[0];
-          params.city = data.province[1] ? data.province[1] : "";
-          params.area = data.province[2] ? data.province[2] : "";
-          params.profession = arrToStr(data.profession, ",");
-          params.birthdate = data.birthdate.format("YYYY-MM-DD");
-          params.workTime = data.isGraduate
-            ? null
-            : data.workTime.format("YYYY-MM-DD");
-          params.isGraduate = data.isGraduate ? true : false;
-
-          // 新增
-          if (props.type === 1) {
-            Api.AddAccount(params)
-              .then(res => {
-                if (res.code == 200) {
-                  message.success("添加成功");
-                  context.emit("submit", 1);
-                  handleCancel();
-                } else message.error(res.msg);
-              })
-              .catch(() => message.error("操作失败"))
-              .finally(() => (submitLoading.value = false));
-          }
-          // 编辑
-          else {
-            Api.EditAccount(params, props.id)
-              .then(res => {
-                if (res.code == 200) {
-                  message.success("编辑成功");
-                  context.emit("submit", 2);
-                  handleCancel();
-                } else message.error(res.msg);
-              })
-              .catch(() => message.error("操作失败"))
-              .finally(() => (submitLoading.value = false));
-          }
-        })
-        .catch(err => {
-          console.log("error", err);
-          message.warning("请检查是否填写正确");
-        });
-    };
-
-    // 取消弹窗
-    const handleCancel = () => {
-      context.emit("close", false);
-    };
-
-    // loading
-    const infoLoading = ref(false);
-
-    // 获取信息
-    const getInfo = () => {
-      infoLoading.value = true;
-
-      Api.GetAccInfo(props.id)
-        .then(res => {
-          const { code, data } = res;
-          // 获取到数据
-          if (code == 200) {
-            const {
-              face,
-              realname,
-              province,
-              city,
-              area,
-              birthdate,
-              gender,
-              mobile,
-              email,
-              address,
-              companyName,
-              job,
-              workTime,
-              isGraduate,
-              profession,
-              remark
-            } = data;
-
-            form.face = face ? face : defaultFaceImg;
-            form.realname = realname;
-            form.province = [province, city, area];
-            form.birthdate = moment(birthdate, "YYYY-MM-DD");
-            form.gender = gender;
-            form.mobile = mobile;
-            form.remark = remark;
-
-            if (email) {
-              const emailSplit = email.split("@");
-              form.email = emailSplit[0];
-              emailSuffixValue.value = `@${emailSplit[1]}`;
-            }
-
-            form.address = address;
-            form.companyName = companyName;
-            form.job = job;
-            form.workTime = isGraduate ? null : moment(workTime, "YYYY-MM-DD");
-            form.isGraduate = isGraduate;
-            form.profession = profession ? strToArr(profession, ",") : [];
-
-            workTimePH.value = isGraduate ? "尚未毕业" : "请选择日期";
-          } else {
-            message.error("无法获取账户信息!");
-          }
-        })
-        .catch(err => console.log(err))
-        .finally(() => (infoLoading.value = false));
-    };
-
-    // 提交loading
-    const confirmLoading = ref(false);
-
-    return {
-      title,
-      infoLoading,
-      confirmLoading,
-      handleOk,
-      handleCancel,
-      form,
-      rules,
-      professionList,
-      provinceList,
-      defaultFaceImg,
-      setDefaultHeadImg,
-      workTimePH,
-      jobList,
-      handleGraduateChange,
-      submitLoading,
-      emailSuffixList,
-      emailSuffixValue,
-      fileAccept,
-      handleBeforeUpload,
-      uploadAvatar,
-      uploadLoading,
-      handleUploadChange,
-      submitForm
-    };
+// 勾选尚未毕业
+const handleGraduateChange = (e) => {
+  const value = e.target.checked;
+  if (value) {
+    form.workTime = "";
+    workTimePH.value = "尚未毕业";
+  } else {
+    workTimePH.value = "请选择日期";
   }
 };
+
+// 所在省市
+const provinceList = ref([]);
+
+// 专业领域
+const professionList = ref([]);
+
+// 邮箱后缀
+const emailSuffixList = ref(["@qq.com"]);
+const emailSuffixValue = ref("@qq.com");
+
+const { fileAccept, beforeUpload, uploadFileDemo } = useUpload();
+
+// 设置默认头像
+const setDefaultHeadImg = (e) => {
+  e.currentTarget.src = defaultFaceImg;
+  e.currentTarget.onerror = null;
+};
+
+// 头像上传前
+const handleBeforeUpload = (file) => {
+  return beforeUpload(file, function (file) {
+    // 双重检查，避免在“所有文件”中选择其他文件
+    if (
+      !(
+        file.type === "image/jpeg" ||
+        file.type === "image/png" ||
+        file.type === "image/gif"
+      )
+    ) {
+      message.warning("图片只能是 png 、jpg 、gif 格式");
+      return false;
+    }
+    return true;
+  });
+};
+
+const uploadLoading = ref(false);
+
+// 上传状态改变
+const handleUploadChange = (info) => {
+  if (info.file.status === "uploading") {
+    uploadLoading.value = true;
+    return;
+  }
+  if (info.file.status === "done") {
+    uploadLoading.value = false;
+  }
+  if (info.file.status === "error") {
+    uploadLoading.value = false;
+  }
+};
+
+// 上传头像
+const uploadAvatar = (params) => {
+  // console.log("uploadFile", params);
+  const file = params.file;
+
+  uploadFileDemo(file)
+    .then((res) => {
+      form.avatar = res.data.url;
+    })
+    .catch((err) => console.log(err))
+    .finally(() => (uploadLoading.value = false));
+};
+
+// 默认表单
+const defaultForm = {
+  avatar: defaultFaceImg,
+  realname: null,
+  province: [],
+  birthdate: null,
+  gender: null,
+  mobile: null,
+  email: null,
+  address: null,
+  companyName: null,
+  job: null,
+  workTime: null,
+  isGraduate: null,
+  profession: [],
+};
+
+// 表单
+const form = reactive({ ...defaultForm });
+
+// 校验
+const validBirthDate = (rule, value) => {
+  if (!value) {
+    return Promise.reject("请选择出生日期");
+  }
+  let nowDate = new Date();
+  const compare = compareDate(value, nowDate);
+  if (!compare) return Promise.reject("出生日期不能大于当前日期");
+  else {
+    return Promise.resolve();
+  }
+};
+const validateMobile = (rule, value) => {
+  if (!value) {
+    return Promise.reject(new Error("请输入手机号码"));
+  } else if (!validMobile(value)) {
+    return Promise.reject(new Error("手机号码格式不正确"));
+  } else {
+    return Promise.resolve();
+  }
+};
+const validateEmail = (rule, value) => {
+  if (!value) {
+    return Promise.reject(new Error("请输入邮箱地址"));
+  } else if (!validEmail(value + emailSuffixValue.value)) {
+    return Promise.reject(new Error("邮箱格式不正确"));
+  } else {
+    return Promise.resolve();
+  }
+};
+const validateWorkTime = (rule, value) => {
+  if (form.isGraduate) return Promise.resolve();
+  if (!value) return Promise.reject(new Error("请选择工作时间"));
+  else {
+    // 日期比较
+    let nowDate = new Date();
+    const compare = compareDate(value, nowDate);
+    if (!compare) return Promise.reject(new Error("工作时间不能大于当前日期"));
+    else return Promise.resolve();
+  }
+};
+
+// 表单规则
+const rules = reactive({
+  realname: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
+  province: [
+    {
+      type: "array",
+      required: true,
+      message: "请选择所在省市",
+      trigger: "change",
+    },
+  ],
+  birthdate: [
+    {
+      type: "object",
+      required: true,
+      validator: validBirthDate,
+      trigger: "change",
+    },
+  ],
+  gender: [{ required: true, message: "请选择性别", trigger: "change" }],
+  mobile: [{ required: true, validator: validateMobile, trigger: "blur" }],
+  email: [{ required: true, validator: validateEmail, trigger: "blur" }],
+  companyName: [
+    { required: true, message: "请输入工作单位名称", trigger: "blur" },
+  ],
+  job: [
+    {
+      required: true,
+      message: "请选择职位",
+      trigger: "change",
+    },
+  ],
+  workTime: [
+    {
+      type: "object",
+      required: true,
+      validator: validateWorkTime,
+      trigger: "change",
+    },
+  ],
+  profession: [
+    {
+      type: "array",
+      required: true,
+      message: "请选择专业领域",
+      trigger: "change",
+    },
+  ],
+});
+
+// 提交loading
+const submitLoading = ref(false);
+
+const submitForm = ref(null);
+
+// 确认弹窗
+const handleOk = () => {
+  submitForm.value
+    .validate()
+    .then(async () => {
+      const data = toRaw(form);
+
+      submitLoading.value = true;
+
+      let params = { ...data };
+      params.email = data.email ? data.email + emailSuffixValue.value : "";
+      params.province = data.province[0];
+      params.city = data.province[1] ? data.province[1] : "";
+      params.area = data.province[2] ? data.province[2] : "";
+      params.profession = profession;
+      params.birthdate = data.birthdate.format("YYYY-MM-DD");
+      params.workTime = data.isGraduate
+        ? null
+        : data.workTime.format("YYYY-MM-DD");
+      params.isGraduate = data.isGraduate ? true : false;
+
+      // 新增
+      if (props.type === 1) {
+        Api.AddAccount(params)
+          .then((res) => {
+            if (res.code == 200) {
+              message.success("添加成功");
+              emit("submit", 1);
+              handleCancel();
+            } else message.error(res.msg);
+          })
+          .catch(() => message.error("操作失败"))
+          .finally(() => (submitLoading.value = false));
+      }
+      // 编辑
+      else {
+        Api.EditAccount(params, props.id)
+          .then((res) => {
+            if (res.code == 200) {
+              message.success("编辑成功");
+              emit("submit", 2);
+              handleCancel();
+            } else message.error(res.msg);
+          })
+          .catch(() => message.error("操作失败"))
+          .finally(() => (submitLoading.value = false));
+      }
+    })
+    .catch((err) => {
+      console.log("error", err);
+      message.warning("请检查是否填写正确");
+    });
+};
+
+// 取消弹窗
+const handleCancel = () => {
+  emit("close", false);
+};
+
+// loading
+const infoLoading = ref(false);
+
+onMounted(async () => {
+  try {
+    const jobRes = await PublicApi.GetJobList();
+    if (jobRes.code === 200) {
+      jobList.value = jobRes.data;
+    }
+
+    const cityRes = await PublicApi.GetCityList();
+    if (cityRes.code === 200) {
+      provinceList.value = cityRes.data;
+    }
+
+    const professionRes = await PublicApi.GetCityList();
+    if (professionRes.code === 200) {
+      professionList.value = professionRes.data.map((e) => ({
+        label: e.name,
+        value: e.name,
+      }));
+    }
+
+    const emailSuffixRes = await PublicApi.GetEmailSuffix();
+    if (emailSuffixRes.code === 200) {
+      emailSuffixList.value = emailSuffixRes.data;
+      emailSuffixValue.value = emailSuffixRes.data[0];
+    }
+  } catch (err) {
+    message.warning(err);
+  }
+});
+
+// 获取信息
+const getInfo = () => {
+  infoLoading.value = true;
+
+  Api.GetAccInfo(props.id)
+    .then((res) => {
+      const { code, data, message: msg } = res;
+      // 获取到数据
+      if (code == 200) {
+        for (let i in data) {
+          form[i] = data[i];
+        }
+
+        form.avatar = data.avatar || defaultFaceImg;
+        form.province = [data.province, data.city, data.area];
+        form.birthdate = data.birthdate
+          ? moment(birthdate, "YYYY-MM-DD")
+          : null;
+
+        if (data.email) {
+          const emailSplit = email.split("@");
+          form.email = emailSplit[0];
+          emailSuffixValue.value = `@${emailSplit[1]}`;
+        }
+
+        form.workTime = isGraduate ? null : moment(workTime, "YYYY-MM-DD");
+
+        workTimePH.value = isGraduate ? "尚未毕业" : "请选择日期";
+
+        console.log(form);
+      } else message.error(msg);
+    })
+    .catch((err) => console.log(err))
+    .finally(() => (infoLoading.value = false));
+};
+
+// 提交loading
+const confirmLoading = ref(false);
 </script>
 
 <style lang="less" scoped>

@@ -62,4 +62,13 @@ export default {
       method: "get",
     });
   },
+  /**
+   * 获取邮箱后缀名
+   */
+   GetEmailSuffix: () => {
+    return request({
+      url: "/api/list/emailSuffix",
+      method: "get",
+    });
+  },
 };
