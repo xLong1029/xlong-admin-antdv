@@ -129,7 +129,7 @@ xlong-admin-antdv 是一套基于 Vue3 + Ant Design Vue + Bmob 开发的单页�
 │  ├─utils // 通用工具函数
 │  │    index.js
 │  │    auth.js // 读写token
-│  │    request.js // 请求配置，因用了bmob，所以没用到requrest请求
+│  │    request.js // 请求配置
 │  │    scroll-to.js // 页面滚动
 │  │    validate.js // 验证
 │  │
