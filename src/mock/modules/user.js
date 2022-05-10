@@ -5,20 +5,20 @@ const users = [
     username: 18376686974,
     password: 123456,
     token: "admin-token",
-    id: "ozdUQQQe"
+    id: "ozdUQQQe",
   },
   {
     username: 17777075292,
     password: 123456,
     token: "editor-token",
-    id: "aDKHTTTk"
+    id: "aDKHTTTk",
   },
   {
     username: 18888888888,
     password: 666666,
     token: "user-token",
-    id: "LKdsAAAF"
-  }
+    id: "LKdsAAAF",
+  },
 ];
 
 const infos = [
@@ -29,7 +29,8 @@ const infos = [
     username: 18376686974,
     realName: "小六子",
     nickName: "xLong",
-    roles: "admin"
+    roles: "admin",
+    companyId: "McCq1119"
   },
   {
     id: "aDKHTTTk",
@@ -39,7 +40,8 @@ const infos = [
     username: 17777075292,
     realName: "Lio.Huang",
     nickName: "琛小黑",
-    roles: "manage"
+    roles: "manage",
+    companyId: "McCq1119"
   },
   {
     id: "LKdsAAAF",
@@ -49,59 +51,73 @@ const infos = [
     username: 18888888888,
     realName: "夏普",
     nickName: "小朋友",
-    roles: "user"
-  }
+    roles: "user",
+    companyId: "McCq1119"
+  },
+];
+
+const companys = [
+  {
+    id: "McCq1119",
+    companyName: "XLONG家里蹲有限责任公司",
+    companyNature: "股份制企业",
+    companyAddress: "广西柳州市XX区XX路XXX号",
+    creditCode: "1245010033075599XL",
+    legalPersonName: "夏普",
+    legalPersonNumber: "45020519991025022X",
+    contacter: "小六子",
+    contacterPhone: "18376686999",
+    createTime: '@date("yyyy-MM-dd hh:mm:ss")',
+    updateTime: null,
+  },
 ];
 
 export default [
   {
     url: "/api/user/login",
     method: "post",
-    response: config =>
+    response: (config) =>
       handleMock(config, ({ config }) => {
         const { username, password } = config.body;
 
-        const user = users.find(
-          e => e.username == username
-        );
+        const user = users.find((e) => e.username == username);
 
         if (user) {
-          if(user.password == password){
+          if (user.password == password) {
             const { token, id } = user;
-            const info = infos.find(e => e.id === id);
+            const info = infos.find((e) => e.id === id);
             return handleResponse(200, "success", { ...info, token });
-          }
-          else{
+          } else {
             return handleResponse(400, "密码错误，请重新输入");
-          }         
+          }
         } else {
           return handleResponse(404, "该用户不存在");
         }
-      })
+      }),
   },
   {
     url: "/api/user/info",
     method: "get",
-    response: config =>
+    response: (config) =>
       handleMock(config, ({ token }) => {
-        const user = users.find(e => e.token == token);
+        const user = users.find((e) => e.token == token);
 
         if (user) {
-          const info = infos.find(e => e.id === user.id);
+          const info = infos.find((e) => e.id === user.id);
           return handleResponse(200, "success", info);
         } else {
           return handleResponse(404, "找不到该用户");
         }
-      })
+      }),
   },
   {
     url: "/api/user/info/edit",
     method: "post",
-    response: config =>
+    response: (config) =>
       handleMock(config, ({ token }) => {
-        const user = users.find(e => e.token == token);
+        const user = users.find((e) => e.token == token);
         if (user) {
-          const index = infos.findIndex(e => e.id === user.id);
+          const index = infos.findIndex((e) => e.id === user.id);
           for (let i in config.body) {
             infos[index][i] = config.body[i];
           }
@@ -109,16 +125,16 @@ export default [
         } else {
           return handleResponse(404, "找不到该用户");
         }
-      })
+      }),
   },
   {
     url: "/api/user/password/edit",
     method: "post",
-    response: config =>
+    response: (config) =>
       handleMock(config, ({ token }) => {
         const { oldPassword, newPassword } = config.body;
 
-        const index = users.findIndex(e => e.token == token);
+        const index = users.findIndex((e) => e.token == token);
 
         if (index >= 0) {
           if (users[index].password == oldPassword) {
@@ -130,11 +146,11 @@ export default [
         } else {
           return handleResponse(404, "密码修改失败");
         }
-      })
+      }),
   },
   {
     url: "/api/user/logout",
     method: "post",
-    response: () => handleResponse(200, "success")
-  }
+    response: () => handleResponse(200, "success"),
+  },
 ];

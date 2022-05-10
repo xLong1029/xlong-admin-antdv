@@ -73,6 +73,7 @@ let account = Mock.mock({
       birthdate: null,
       // 一个 yyyy-MM-dd hh:mm:ss 的随机时间
       createTime: '@date("yyyy-MM-dd hh:mm:ss")',
+      updateTime: null,
       workTime: '@date("yyyy-MM-dd")',
       remark: "@paragraph()",
       address: null,

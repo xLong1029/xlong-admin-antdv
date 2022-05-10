@@ -4,7 +4,7 @@ import { strToArr } from "utils";
 import { getToken, removeToken, setToken } from "utils/auth";
 
 const defaultUser = {
-  userId: 0,
+  id: 0,
   avatar: "",
   gender: "",
   username: "",
@@ -47,30 +47,10 @@ const actions = {
           const { code, data } = res;
           // 登录成功
           if (code == 200) {
-            const {
-              realName,
-              username,
-              nickName,
-              gender,
-              objectId,
-              companyId,
-              userFace,
-              role
-            } = data;
+            data.roles = data.roles ? strToArr(data.roles, ",") : null
 
-            const info = {
-              avatar: userFace ? userFace : null,
-              roles: role ? strToArr(role, ",") : null,
-              realName,
-              username,
-              nickName,
-              gender,
-              userId: objectId,
-              companyId
-            };
-
-            commit("SET_USER", info);
-            resolve(info);
+            commit("SET_USER", data);
+            resolve(data);
           }
           // 登录失败
           else {

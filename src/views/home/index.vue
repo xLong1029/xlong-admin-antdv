@@ -84,7 +84,7 @@
                       class="password-remember"
                       >记住密码</a-checkbox
                     >
-                    <span class="password-forget" @click="forgetPassword()"
+                    <span class="password-forget" @click="showDevModal()"
                       >忘记密码？</span
                     >
                   </div>
@@ -154,12 +154,11 @@ import {
   watch,
   createVNode,
   onMounted,
-  h
 } from "vue";
 import { message, Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 // 通用模块
-import useCommon from "common";
+import common from "common";
 // 工具
 import {
   setLocalS,
@@ -170,10 +169,28 @@ import {
   strToArr,
 } from "utils";
 
-const { toPage, store, router } = useCommon();
+const { showDevModal, toPage, store, router } = common();
 
 // 是否记住密码
 const remeberPwd = ref(false);
+
+// 监听记住密码与token的改变
+watch(
+  () => [remeberPwd.value, store.getters.token],
+  ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
+    console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
+    if (!newRemeberPwd && getLocalS("username")) {
+      delLocalS("username");
+      delLocalS("password");
+    }
+
+    // 退出登录
+    if (!newRemeberPwd && !newToken) {
+      form.username = "";
+      form.password = "";
+    }
+  }
+);
 
 // 提交loading
 const submitLoading = ref(false);
@@ -211,24 +228,6 @@ const rules = reactive({
   password: [{ required: true, message: "请输入密码", trigger: "blur" }],
 });
 
-// 监听记住密码与token的改变
-watch(
-  () => [remeberPwd.value, store.getters.token],
-  ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
-    console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
-    if (!newRemeberPwd && getLocalS("username")) {
-      delLocalS("username");
-      delLocalS("password");
-    }
-
-    // 退出登录
-    if (!newRemeberPwd && !newToken) {
-      form.username = "";
-      form.password = "";
-    }
-  }
-);
-
 onMounted(() => {
   // 判断本地存储用户名是否存在
   if (getLocalS("username")) {
@@ -247,52 +246,31 @@ const onSubmit = () => {
       const params = toRaw(form);
       try {
         submitLoading.value = true;
-        const userInfo = await store.dispatch("user/login", params);
+        const data = await store.dispatch("user/login", params);
+
         if (remeberPwd.value) {
           // 本地存储用户名和密码
           setLocalS("username", params.username);
           setLocalS("password", AESEncrypt(params.password));
         }
 
-        const {
-          nickName,
-          username,
-          realName,
-          gender,
-          objectId,
-          companyId,
-          userFace,
-          role,
-        } = userInfo;
-
-        const info = {
-          avatar: userFace ? userFace : null,
-          roles: role ? strToArr(role, ",") : null,
-          nickName,
-          username,
-          realName,
-          gender,
-          userId: objectId,
-          companyId,
-        };
+        data.roles = data.roles ? strToArr(data.roles, ",") : null;
 
         // 获取可通过的路由
-        await store.dispatch("permission/generateRoutes", info.roles);
+        await store.dispatch("permission/generateRoutes", data.roles);
 
         // 更新用户信息
-        store.commit("user/SET_USER", info);
+        store.commit("user/SET_USER", data);
 
-        message.success(`尊敬的${userInfo.nickName}，欢迎使用${systemTitle}`);
+        message.success(`尊敬的${data.nickName}，欢迎使用${systemTitle}`);
         submitLoading.value = false;
 
         router.push({ name: "UserCenter" });
       } catch (err) {
-        if (err.code === 101) {
-          message.error("用户名或密码不正确");
-        } else {
-          message.error(err.error ? err.error : err);
+        console.log(err);
+        if (err.message) {
+          message.error(message);
         }
-
         submitLoading.value = false;
       }
     })
@@ -335,21 +313,6 @@ const logout = () => {
       }
     },
     onCancel() {},
-  });
-};
-
-const forgetPassword = () => {
-  Modal.info({
-    title: "测试账号",
-    centered: true,
-    content: h("div", {}, [
-      h("p", "普通用户登录账号: 18888888888 密码: 666666"),
-      h("p", "管理员登录账号: 17777075292 密码: 123456"),
-      h("p", "超级管理员登录账号: 18376686974 密码: 123456"),
-    ]),
-    onOk() {
-      console.log("ok");
-    },
   });
 };
 </script>
@@ -449,6 +412,9 @@ const forgetPassword = () => {
     .operation-guide {
       width: 900px;
       margin: auto;
+      // ::v-deep(.ant-col) {
+      //   justify-content: center;
+      // }
 
       &__item {
         display: flex;
