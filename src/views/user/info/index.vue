@@ -80,9 +80,6 @@ const { imgPreviewModal, handleImgPreview, handleCancelImgPreview } =
 const labelColSpan = 6;
 const wrapperColSpan = 18;
 
-// 当前用户信息和系统配置
-const token = computed(() => store.getters.token);
-
 const userId = computed(() => store.getters.userId);
 
 // 表单
@@ -116,7 +113,7 @@ const handleUploadSuccess = (file) => {
 
 // 删除上传的图片
 const handleUploadImgDelete = ({ file, index, list }) => {
-  // console.log(file, index);
+  console.log(file, index);
   form.avatar = list;
 };
 

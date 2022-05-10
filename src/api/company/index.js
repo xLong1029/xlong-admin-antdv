@@ -1,38 +1,39 @@
 /*
- * 功能 : 封装数据交互api接口(数据使用的是bmob云数据，请求方法使用bmob云规定方法)。
+ * 功能 : 封装数据交互api接口(mock.js请求)。
  * 用处 : 企业信息操作相关api
  * 作者 : 罗永梅（381612175@qq.com）
- * 日期 : 2020-11-19
+ * 日期 : 2022-05-10
+ * 版本 : version 3.0
  */
-/* eslint-disable */
-// import BmobServer from "bmob/bmob-server.js";
+import request from "utils/request.js";
 
 export default {
-  // /**
-  //  * 获取单位信息
-  //  *
-  //  * @param {*} id 企业id
-  //  */
-  // GetCompanyInfo: (id) => {
-  //   return new Promise((resolve, reject) => {
-  //     BmobServer.GetOne("CompanyInfo", id)
-  //       .then((res) => resolve(res))
-  //       .catch((err) => reject(err));
-  //   });
-  // },
-  // /**
-  //  * 变单位信息
-  //  *
-  //  * @param {*} params 新增的参数对象
-  //  * @param {*} id 查询的objectId
-  //  */
-  // EditCompanyInfo: (params, id) => {
-  //   return new Promise((resolve, reject) => {
-  //     BmobServer.EditOne("CompanyInfo", id, params)
-  //       .then((res) => resolve(res))
-  //       .catch((err) => reject(err));
-  //   });
-  // },
+  /**
+   * 获取单位信息
+   *
+   * @param {*} id 企业id
+   */
+  GetCompanyInfo: (id) => {
+    return request({
+      url: `/api/company/info`,
+      method: "get",
+      params: {
+        id
+      },
+    });
+  },
+  /**
+   * 变单位信息
+   *
+   * @param {*} data 编辑的参数对象
+   */
+  EditCompanyInfo: (data) => {
+    return request({
+      url: `/api/company/edit`,
+      method: "post",
+      data
+    });
+  },
   // /**
   //  * 获取人员列表
   //  *

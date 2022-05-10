@@ -132,7 +132,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { reactive, computed, watch, ref, toRaw } from "vue";
 import { message } from "ant-design-vue";
 import { useStore } from "vuex";
@@ -141,193 +141,161 @@ import { validBusinessLicence, validIDcard, validPhone } from "utils/validate";
 // Api
 import Api from "api/company";
 
-export default {
-  name: "BaseInfo",
-
-  props: {
-    // 当前激活类型
-    activeTabName: {
-      type: String,
-      default: "base"
-    },
-    // 数据
-    data: {
-      type: Object,
-      default: () => ({})
-    },
-    // 加载
-    loading: {
-      type: Boolean,
-      default: true
-    },
-    // 禁止编辑
-    disableEdit: {
-      type: Boolean,
-      default: true
-    }
+// eslint-disable-next-line
+const props = defineProps({
+  // 当前激活类型
+  activeTabName: {
+    type: String,
+    default: "base",
   },
+  // 数据
+  data: {
+    type: Object,
+    default: () => ({}),
+  },
+  // 加载
+  loading: {
+    type: Boolean,
+    default: true,
+  },
+  // 禁止编辑
+  disableEdit: {
+    type: Boolean,
+    default: true,
+  },
+});
 
-  setup(props, context) {
-    const store = useStore();
+// eslint-disable-next-line
+const emit = defineEmits(["change"]);
 
-    // 监听data的变化
-    watch(
-      () => props.data,
-      val => {
-        let data =
-          val && Object.keys(val).length ? { ...val } : { ...defaultForm };
+const store = useStore();
 
-        const {
-          companyName,
-          creditCode,
-          companyNature,
-          companyAddress,
-          legalPersonName,
-          legalPersonNumber,
-          contacter,
-          contacterPhone
-        } = data;
+// 监听data的变化
+watch(
+  () => props.data,
+  (val) => {
+    let data = val && Object.keys(val).length ? { ...val } : { ...defaultForm };
 
-        form.companyName = companyName;
-        form.creditCode = creditCode;
-        form.companyNature = companyNature;
-        form.companyAddress = companyAddress;
-        form.legalPersonName = legalPersonName;
-        form.legalPersonNumber = legalPersonNumber;
-        form.contacter = contacter;
-        form.contacterPhone = contacterPhone;
-      }
-    );
-
-    const labelColSpan = 5;
-    const wrapperColSpan = 19;
-
-    // 单位id
-    const companyId = computed(() => store.getters.companyId);
-
-    // 提交loading
-    const submitLoading = ref(false);
-
-    const submitForm = ref(null);
-
-    const companyNatureList = [
-      "事业单位",
-      "国有企业",
-      "集体所有制企业",
-      "私营企业",
-      "股份制企业",
-      "外资企业"
-    ];
-
-    const defaultForm = {
-      companyName: null,
-      creditCode: null,
-      companyNature: null,
-      companyAddress: null,
-      legalPersonName: null,
-      legalPersonNumber: null,
-      contacter: null,
-      contacterPhone: null
-    };
-
-    const form = reactive({ ...defaultForm });
-
-    const validateBusinessLicence = (rule, value) => {
-      if (!value) {
-        return Promise.reject(new Error("请输入统一社会信用代码"));
-      } else if (!validBusinessLicence(value)) {
-        return Promise.reject(new Error("统一社会信用代码格式错误"));
-      } else {
-        return Promise.resolve();
-      }
-    };
-
-    const validateIDcard = (rule, value) => {
-      if (!value) {
-        return Promise.reject(new Error("请输入法人身份证号码"));
-      } else if (!validIDcard(value)) {
-        return Promise.reject(new Error("身份证号格式错误"));
-      } else {
-        return Promise.resolve();
-      }
-    };
-
-    const validatePhone = (rule, value) => {
-      if (!value) {
-        return Promise.reject(new Error("请输入联系人手机号码"));
-      } else if (!validPhone(value)) {
-        return Promise.reject(new Error("手机号码格式错误"));
-      } else {
-        return Promise.resolve();
-      }
-    };
-
-    const rules = reactive({
-      companyName: [
-        { required: true, message: "请输入企业名称", trigger: "blur" }
-      ],
-      creditCode: [
-        { required: true, validator: validateBusinessLicence, trigger: "blur" }
-      ],
-      companyNature: [
-        { required: true, message: "请选择企业类型", trigger: "change" }
-      ],
-      companyAddress: [
-        { required: true, message: "请输入单位地址", trigger: "blur" }
-      ],
-      legalPersonName: [
-        { required: true, message: "请输入法人姓名", trigger: "blur" }
-      ],
-      legalPersonNumber: [
-        { required: true, validator: validateIDcard, trigger: "blur" }
-      ],
-      contacter: [
-        { required: true, message: "请输入单位联系人姓名", trigger: "blur" }
-      ],
-      contacterPhone: [
-        { required: true, validator: validatePhone, trigger: "blur" }
-      ]
-    });
-
-    // 提交修改
-    const onSubmit = () => {
-      submitForm.value
-        .validate()
-        .then(async () => {
-          submitLoading.value = true;
-          const params = toRaw(form);
-
-          Api.EditCompanyInfo(params, companyId.value)
-            .then(res => {
-              if (res.code == 200) {
-                context.emit("change", "变更基本信息");
-                message.success("基本信息变更成功！");
-              } else message.error("基本信息变更失败！");
-            })
-            .catch(err => console.log(err))
-            .finally(() => (submitLoading.value = false));
-        })
-        .catch(err => {
-          console.log("error", err);
-        });
-    };
-
-    // 取消变更
-    const cancelChange = () => {
-      context.emit("change", "取消变更基本信息");
-    };
-
-    return {
-      labelColSpan,
-      wrapperColSpan,
-      form,
-      rules,
-      companyNatureList,
-      submitLoading,
-      onSubmit,
-      cancelChange,
-      submitForm
-    };
+    for (let i in data) {
+      form[i] = data[i];
+    }
   }
+);
+
+const labelColSpan = 5;
+const wrapperColSpan = 19;
+
+// 单位id
+const companyId = computed(() => store.getters.companyId);
+
+// 提交loading
+const submitLoading = ref(false);
+
+const submitForm = ref(null);
+
+const companyNatureList = [
+  "事业单位",
+  "国有企业",
+  "集体所有制企业",
+  "私营企业",
+  "股份制企业",
+  "外资企业",
+];
+
+const defaultForm = {
+  companyName: null,
+  creditCode: null,
+  companyNature: null,
+  companyAddress: null,
+  legalPersonName: null,
+  legalPersonNumber: null,
+  contacter: null,
+  contacterPhone: null,
+};
+
+const form = reactive({ ...defaultForm });
+
+const validateBusinessLicence = (rule, value) => {
+  if (!value) {
+    return Promise.reject(new Error("请输入统一社会信用代码"));
+  } else if (!validBusinessLicence(value)) {
+    return Promise.reject(new Error("统一社会信用代码格式错误"));
+  } else {
+    return Promise.resolve();
+  }
+};
+
+const validateIDcard = (rule, value) => {
+  if (!value) {
+    return Promise.reject(new Error("请输入法人身份证号码"));
+  } else if (!validIDcard(value)) {
+    return Promise.reject(new Error("身份证号格式错误"));
+  } else {
+    return Promise.resolve();
+  }
+};
+
+const validatePhone = (rule, value) => {
+  if (!value) {
+    return Promise.reject(new Error("请输入联系人手机号码"));
+  } else if (!validPhone(value)) {
+    return Promise.reject(new Error("手机号码格式错误"));
+  } else {
+    return Promise.resolve();
+  }
+};
+
+const rules = reactive({
+  companyName: [{ required: true, message: "请输入企业名称", trigger: "blur" }],
+  creditCode: [
+    { required: true, validator: validateBusinessLicence, trigger: "blur" },
+  ],
+  companyNature: [
+    { required: true, message: "请选择企业类型", trigger: "change" },
+  ],
+  companyAddress: [
+    { required: true, message: "请输入单位地址", trigger: "blur" },
+  ],
+  legalPersonName: [
+    { required: true, message: "请输入法人姓名", trigger: "blur" },
+  ],
+  legalPersonNumber: [
+    { required: true, validator: validateIDcard, trigger: "blur" },
+  ],
+  contacter: [
+    { required: true, message: "请输入单位联系人姓名", trigger: "blur" },
+  ],
+  contacterPhone: [
+    { required: true, validator: validatePhone, trigger: "blur" },
+  ],
+});
+
+// 提交修改
+const onSubmit = () => {
+  submitForm.value
+    .validate()
+    .then(async () => {
+      submitLoading.value = true;
+      const params = toRaw(form);
+
+      Api.EditCompanyInfo(params, companyId.value)
+        .then((res) => {
+          const { code } = res;
+          if (code == 200) {
+            emit("change", "变更基本信息");
+            message.success("基本信息变更成功！");
+          } else message.error("基本信息变更失败！");
+        })
+        .catch((err) => console.log(err))
+        .finally(() => (submitLoading.value = false));
+    })
+    .catch((err) => {
+      console.log("error", err);
+    });
+};
+
+// 取消变更
+const cancelChange = () => {
+  emit("change", "取消变更基本信息");
 };
 </script>

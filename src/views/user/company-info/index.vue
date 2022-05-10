@@ -80,13 +80,11 @@ const getCompnayInfo = () => {
   setPageLoding(true);
   Api.GetCompanyInfo(companyId.value)
     .then((res) => {
-      const { code, data } = res;
+      const { code, data, message: msg } = res;
       // 获取到数据
       if (code == 200) {
         tabDatas.value.companyBaseInfo = { ...data };
-      } else {
-        message.error("数据获取失败，请稍后重试");
-      }
+      } else message.error(msg)
     })
     .catch((err) => console.log(err))
     .finally(() => setPageLoding(false));

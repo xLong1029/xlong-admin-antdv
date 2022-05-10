@@ -56,22 +56,6 @@ const infos = [
   },
 ];
 
-const companys = [
-  {
-    id: "McCq1119",
-    companyName: "XLONG家里蹲有限责任公司",
-    companyNature: "股份制企业",
-    companyAddress: "广西柳州市XX区XX路XXX号",
-    creditCode: "1245010033075599XL",
-    legalPersonName: "夏普",
-    legalPersonNumber: "45020519991025022X",
-    contacter: "小六子",
-    contacterPhone: "18376686999",
-    createTime: '@date("yyyy-MM-dd hh:mm:ss")',
-    updateTime: null,
-  },
-];
-
 export default [
   {
     url: "/api/user/login",
