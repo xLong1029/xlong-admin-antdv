@@ -1,0 +1,13 @@
+.ant-layout-footer {
+  padding: 0;
+}
+.ant-alert-close-icon[type="button"] {
+  -webkit-appearance: none;
+}
+.ant-modal-body {
+  max-height: calc(100vh - 149px);
+  overflow-y: auto;
+}
+.ant-modal {
+  padding: 20px 0;
+}

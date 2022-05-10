@@ -84,7 +84,7 @@
                       class="password-remember"
                       >记住密码</a-checkbox
                     >
-                    <span class="password-forget" @click="showDevModal()"
+                    <span class="password-forget" @click="forgetPassword()"
                       >忘记密码？</span
                     >
                   </div>
@@ -154,6 +154,7 @@ import {
   watch,
   createVNode,
   onMounted,
+  h
 } from "vue";
 import { message, Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
@@ -173,24 +174,6 @@ const { toPage, store, router } = useCommon();
 
 // 是否记住密码
 const remeberPwd = ref(false);
-
-// 监听记住密码与token的改变
-watch(
-  () => [remeberPwd.value, store.getters.token],
-  ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
-    console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
-    if (!newRemeberPwd && getLocalS("username")) {
-      delLocalS("username");
-      delLocalS("password");
-    }
-
-    // 退出登录
-    if (!newRemeberPwd && !newToken) {
-      form.username = "";
-      form.password = "";
-    }
-  }
-);
 
 // 提交loading
 const submitLoading = ref(false);
@@ -226,6 +209,34 @@ const form = reactive({
 const rules = reactive({
   username: [{ required: true, message: "请输入手机号码", trigger: "blur" }],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+});
+
+// 监听记住密码与token的改变
+watch(
+  () => [remeberPwd.value, store.getters.token],
+  ([newRemeberPwd, newToken], [oldRemeberPwd, oldToken]) => {
+    console.log(newRemeberPwd, newToken, oldRemeberPwd, oldToken);
+    if (!newRemeberPwd && getLocalS("username")) {
+      delLocalS("username");
+      delLocalS("password");
+    }
+
+    // 退出登录
+    if (!newRemeberPwd && !newToken) {
+      form.username = "";
+      form.password = "";
+    }
+  }
+);
+
+onMounted(() => {
+  // 判断本地存储用户名是否存在
+  if (getLocalS("username")) {
+    // 获取本地存储的用户名和密码
+    form.username = getLocalS("username");
+    form.password = AESDecrypt(getLocalS("password"));
+    remeberPwd.value = true;
+  }
 });
 
 // 登录
@@ -327,15 +338,20 @@ const logout = () => {
   });
 };
 
-onMounted(() => {
-  // 判断本地存储用户名是否存在
-  if (getLocalS("username")) {
-    // 获取本地存储的用户名和密码
-    form.username = getLocalS("username");
-    form.password = AESDecrypt(getLocalS("password"));
-    remeberPwd.value = true;
-  }
-});
+const forgetPassword = () => {
+  Modal.info({
+    title: "测试账号",
+    centered: true,
+    content: h("div", {}, [
+      h("p", "普通用户登录账号: 18888888888 密码: 666666"),
+      h("p", "管理员登录账号: 17777075292 密码: 123456"),
+      h("p", "超级管理员登录账号: 18376686974 密码: 123456"),
+    ]),
+    onOk() {
+      console.log("ok");
+    },
+  });
+};
 </script>
 
 <style lang="less" scoped>
