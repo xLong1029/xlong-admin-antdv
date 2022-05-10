@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@ant-design-vue/use": "0.0.1-alpha.7",
-    "ant-design-vue": "2.0.0-rc.1",
+    "ant-design-vue": "3.2.3",
     "axios": "^0.27.2",
     "babel-polyfill": "^6.26.0",
     "crypto-js": "^4.1.1",

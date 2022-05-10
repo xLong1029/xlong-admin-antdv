@@ -116,7 +116,7 @@ const companyId = computed(() => store.getters.companyId);
 const roles = computed(() => store.getters.roles);
 
 // 表格配置
-const { listLoading, listData, pageConfig, rowSelection, getList, search } =
+const { listLoading, listData, pageConfig, rowSelection, getList } =
   useTable();
 
 // 表格列

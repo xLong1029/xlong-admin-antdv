@@ -84,7 +84,7 @@
                       class="password-remember"
                       >记住密码</a-checkbox
                     >
-                    <span class="password-forget" @click="showDevModal()"
+                    <span class="password-forget" @click="forgetPassword()"
                       >忘记密码？</span
                     >
                   </div>
@@ -154,6 +154,7 @@ import {
   watch,
   createVNode,
   onMounted,
+  h,
 } from "vue";
 import { message, Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
@@ -312,6 +313,22 @@ const logout = () => {
       }
     },
     onCancel() {},
+  });
+};
+
+// 忘记密码
+const forgetPassword = () => {
+  Modal.info({
+    title: "测试账号",
+    centered: true,
+    content: h("div", {}, [
+      h("p", "普通用户登录账号: 18888888888 密码: 666666"),
+      h("p", "管理员登录账号: 17777075292 密码: 123456"),
+      h("p", "超级管理员登录账号: 18376686974 密码: 123456"),
+    ]),
+    onOk() {
+      console.log("ok");
+    },
   });
 };
 </script>

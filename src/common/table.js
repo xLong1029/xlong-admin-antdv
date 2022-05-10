@@ -65,7 +65,7 @@ export default function() {
           pageConfig.current = page.page;
           pageConfig.pageSize = page.size;
           pageConfig.total = page.count;
-        } else message.error(msg)
+        } else message.error(msg);
       })
       .catch((err) => console.log(err));
   }

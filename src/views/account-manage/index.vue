@@ -124,7 +124,7 @@ export default {
         title: "真实姓名",
         dataIndex: "realname",
         key: "realname",
-        width: 200,
+        width: 150,
         fixed: "left"
       },
       {
@@ -197,10 +197,16 @@ export default {
       },
       {
         title: "创建时间",
-        dataIndex: "createdAt",
-        key: "createdAt",
-        width: 200,
-        sorter: (a, b) => moment(a.createdAt).isBefore(b.createdAt)
+        dataIndex: "createTime",
+        key: "createTime",
+        width: 150,
+        sorter: (a, b) => moment(a.createTime).isBefore(b.createTime)
+      },
+      {
+        title: "更新时间",
+        dataIndex: "updateTime",
+        key: "updateTime",
+        width: 150,
       },
       {
         title: "操作",
@@ -268,35 +274,28 @@ export default {
 
     // 删除loading
     const delLoading = ref(false);
-    // 删除id
-    const delIds = ref(null);
 
     // 删除账户
     const handleDelelteAccount = id => {
       if (!id && !rowSelection.selectedRowKeys.length) {
-        message.warning("无可操作的对象，请刷新页面重试");
+        message.warning("请勾选要删除的账户");
       }
 
-      delIds.value = id ? [id] : rowSelection.selectedRowKeys;
+      const ids = id ? [id] : rowSelection.selectedRowKeys
 
       delLoading.value = id ? false : true;
 
-      Api.DeleteAcc(delIds.value)
+      Api.DeleteAcc(ids)
         .then(res => {
-          if (res.code == 200) {
+          const { code, message: msg } = res;
+          if (code == 200) {
             message.success("删除成功!");
             getList(pageConfig.current, pageConfig.pageSize, apiGetList);
             clearSelect();
-          } else console.log(res);
+          } else message.error(msg);
         })
-        .catch(err => {
-          console.log(err);
-          message.error("删除失败！");
-        })
-        .finally(() => {
-          delLoading.value = false;
-          delIds.value = null;
-        });
+        .catch(err => console.log(err))
+        .finally(() => (delLoading.value = false));
     };
 
     // 启/禁用loading
@@ -313,12 +312,13 @@ export default {
 
       Api.EnableAcc({ enabledState }, rowSelection.selectedRowKeys)
         .then(res => {
-          if (res.code == 200) {
+          const { code, message: msg } = res;
+          if (code == 200) {
             message.success("操作成功!");
             getList(pageConfig.current, pageConfig.pageSize, apiGetList);
-          } else message.warning(res.msg);
+          } else message.warning(msg);
         })
-        .catch(() => message.error("操作失败！"))
+        .catch((err) => console.log(err))
         .finally(() => {
           enabledState === 1
             ? (enableLoading.value = false)
