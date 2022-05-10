@@ -182,7 +182,6 @@ const closeMemberStoreModal = (val) => {
 // 表格改变事件
 const handleTableChange = (pagination, filters, sorter) => {
   console.log(pagination, filters, sorter);
-
   getList(pagination.current, pagination.pageSize, apiGetList);
 };
 

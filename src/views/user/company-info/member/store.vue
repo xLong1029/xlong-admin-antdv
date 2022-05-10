@@ -23,11 +23,11 @@
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
             <a-form-item label="角色">
-              <a-tag v-if="form.roles.indexOf('admin') >= 0" color="blue">超级管理员</a-tag>
-              <a-tag v-if="form.roles.indexOf('manage') >= 0" color="green"
+              <a-tag v-if="form.roles?.indexOf('admin') >= 0" color="blue">超级管理员</a-tag>
+              <a-tag v-if="form.roles?.indexOf('manage') >= 0" color="green"
                 >系统管理员</a-tag
               >
-              <a-tag v-if="form.roles.indexOf('user') >= 0" color="orange">普通用户</a-tag>
+              <a-tag v-if="form.roles?.indexOf('user') >= 0" color="orange">普通用户</a-tag>
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -209,12 +209,11 @@ const handleCancel = () => {
 // 获取信息
 const getInfo = () => {
   infoLoading.value = true;
-  console.log(props.id);
+  
   Api.GetMemberInfo(props.id)
     .then((res) => {
       const { code, data } = res;
-      console.log(res);
-      
+
       // 获取到数据
       if (code == 200) {
         for(let i in data){
