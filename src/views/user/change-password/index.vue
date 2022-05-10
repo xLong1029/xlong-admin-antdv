@@ -52,9 +52,7 @@ import { validPassword, isEqual } from "utils/validate";
 // Api
 import Api from "api/user";
 // 工具
-import {
-  delLocalS
-} from "utils";
+import { delLocalS } from "utils";
 
 const { store, router } = useCommon();
 
@@ -157,6 +155,7 @@ const onSubmit = () => {
     })
     .catch((err) => {
       console.log("error", err);
+      message.warning("请检查是否填写正确");
     });
 };
 

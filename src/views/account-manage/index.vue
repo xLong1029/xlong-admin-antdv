@@ -44,13 +44,13 @@
       :loading="listLoading"
       :columns="columns"
       :data-source="listData"
-      :row-key="record => record.objectId"
+      :row-key="record => record.id"
       :pagination="pageConfig"
       :row-selection="rowSelection"
       @change="handleTableChange"
     >
       <template #enabledStateText="{ record }">
-        <a-tag v-if="record.enabledState === 1" color="green">启用</a-tag>
+        <a-tag v-if="record.enabledState == 1" color="green">启用</a-tag>
         <a-tag v-else color="red">禁用</a-tag>
       </template>
       <template #provinceAndCity="{ record }">
@@ -64,7 +64,7 @@
         <a-divider type="vertical" />
         <a-popconfirm
           title="确认删除?"
-          @confirm="handleDelelteAccount(record.objectId)"
+          @confirm="handleDelelteAccount(record.id)"
         >
           <a> <delete-outlined class="mr-5" />删除 </a>
         </a-popconfirm>
@@ -226,7 +226,7 @@ export default {
     // 打开账户存储弹窗
     const openAccountStoreMoadl = (record, type) => {
       accountStoreModal.visible = true;
-      accountStoreModal.id = record ? record.objectId : null;
+      accountStoreModal.id = record?.id;
       accountStoreModal.type = type;
     };
 
@@ -283,7 +283,7 @@ export default {
 
       const ids = id ? [id] : rowSelection.selectedRowKeys
 
-      delLoading.value = id ? false : true;
+      delLoading.value = !id;
 
       Api.DeleteAcc(ids)
         .then(res => {
@@ -310,7 +310,7 @@ export default {
         ? (enableLoading.value = true)
         : (disableLoading.value = true);
 
-      Api.EnableAcc({ enabledState }, rowSelection.selectedRowKeys)
+      Api.EnableAcc(enabledState, rowSelection.selectedRowKeys)
         .then(res => {
           const { code, message: msg } = res;
           if (code == 200) {
