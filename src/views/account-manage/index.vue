@@ -111,7 +111,7 @@ const columns = [
     title: "真实姓名",
     dataIndex: "realname",
     key: "realname",
-    width: 150,
+    width: 120,
     fixed: "left",
   },
   {

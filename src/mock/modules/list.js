@@ -55,7 +55,7 @@ export const professionList = [
   },
 ];
 
-export const cityList =[
+export const cityList = [
   {
     "code": 11,
     "name": "北京市",
@@ -14841,122 +14841,122 @@ export const cityList =[
 
 export const expressCompanys = [
   {
-      "id": 1,
-      "name": "顺丰速运"
+    "id": 1,
+    "name": "顺丰速运"
   },
   {
-      "id": 2,
-      "name": "EMS邮政特快"
+    "id": 2,
+    "name": "EMS邮政特快"
   },
   {
-      "id": 3,
-      "name": "申通快递"
+    "id": 3,
+    "name": "申通快递"
   },
   {
-      "id": 4,
-      "name": "圆通快递"
+    "id": 4,
+    "name": "圆通快递"
   },
   {
-      "id": 5,
-      "name": "中通快递"
+    "id": 5,
+    "name": "中通快递"
   },
   {
-      "id": 6,
-      "name": "韵达快递"
+    "id": 6,
+    "name": "韵达快递"
   },
   {
-      "id": 7,
-      "name": "百世快递"
+    "id": 7,
+    "name": "百世快递"
   },
   {
-      "id": 8,
-      "name": "中国邮政"
+    "id": 8,
+    "name": "中国邮政"
   },
   {
-      "id": 9,
-      "name": "天天快递"
+    "id": 9,
+    "name": "天天快递"
   },
   {
-      "id": 10,
-      "name": "宅急送"
+    "id": 10,
+    "name": "宅急送"
   },
   {
-      "id": 11,
-      "name": "德邦快递"
+    "id": 11,
+    "name": "德邦快递"
   }
 ];
 
 export const companyNames = [
   {
-      "id": 1,
-      "name": "xLong设计工作室"
+    "id": 1,
+    "name": "xLong设计工作室"
   },
   {
-      "id": 2,
-      "name": "华蓝集团"
+    "id": 2,
+    "name": "华蓝集团"
   },
   {
-      "id": 3,
-      "name": "百度网络有限公司"
+    "id": 3,
+    "name": "百度网络有限公司"
   },
   {
-      "id": 4,
-      "name": "上海建筑设计有限公司"
+    "id": 4,
+    "name": "上海建筑设计有限公司"
   },
   {
-      "id": 5,
-      "name": "设计通有限责任公司"
+    "id": 5,
+    "name": "设计通有限责任公司"
   },
   {
-      "id": 6,
-      "name": "爱美达设计公司"
+    "id": 6,
+    "name": "爱美达设计公司"
   },
   {
-      "id": 7,
-      "name": "康众畅想信息科技有限公司"
+    "id": 7,
+    "name": "康众畅想信息科技有限公司"
   },
   {
-      "id": 8,
-      "name": "华建信息科技有限公司"
+    "id": 8,
+    "name": "华建信息科技有限公司"
   },
   {
-      "id": 9,
-      "name": "杭州雁行信息科技有限公司"
+    "id": 9,
+    "name": "杭州雁行信息科技有限公司"
   },
   {
-      "id": 10,
-      "name": "南宁云海风网络科技有限公司"
+    "id": 10,
+    "name": "南宁云海风网络科技有限公司"
   },
   {
-      "id": 11,
-      "name": "南宁风生水传媒有限公司"
+    "id": 11,
+    "name": "南宁风生水传媒有限公司"
   }
 ]
 
 export const articleTags = [
   {
-      "id": 1,
-      "name": "设计"
+    "id": 1,
+    "name": "设计"
   },
   {
-      "id": 2,
-      "name": "IT技术"
+    "id": 2,
+    "name": "IT技术"
   },
   {
-      "id": 3,
-      "name": "故事"
+    "id": 3,
+    "name": "故事"
   },
   {
-      "id": 4,
-      "name": "星座"
+    "id": 4,
+    "name": "星座"
   },
   {
-      "id": 5,
-      "name": "其他"
+    "id": 5,
+    "name": "其他"
   },
   {
-      "id": 6,
-      "name": "科学"
+    "id": 6,
+    "name": "科学"
   }
 ]
 
@@ -14973,6 +14973,29 @@ export const avatars = [
   "https://img2.baidu.com/it/u=3391243472,2077858391&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500",
   "https://img0.baidu.com/it/u=1040843630,4036288707&fm=253&fmt=auto&app=138&f=JPEG?w=400&h=400",
   "https://img2.baidu.com/it/u=3684583854,4246651056&fm=253&fmt=auto&app=138&f=JPEG?w=400&h=400"
+]
+
+export const emailSuffix = [
+  {
+    "value": "@qq.com",
+    "name": "@qq.com"
+  },
+  {
+    "value": "@163.com",
+    "name": "@163.com"
+  },
+  {
+    "value": "@115.com",
+    "name": "@115.com"
+  },
+  {
+    "value": "@dingtalk.com",
+    "name": "@dingtalk.com"
+  },
+  {
+    "value": "@sina.com",
+    "name": "@sina.com"
+  }
 ]
 
 export default [
@@ -15046,15 +15069,10 @@ export default [
     url: "/api/list/emailSuffix",
     method: "get",
     response: () => {
-      const emailList = account.list.map(e => e.email);
-      emailList.forEach(e => {
-        const arr = strToArr(e, "@");
-        e = arr.length > 1 ? arr[1] : arr[0]
-      });
       return {
         code: 200,
         message: "success",
-        data: emailList,
+        data: emailSuffix,
       };
     },
   },

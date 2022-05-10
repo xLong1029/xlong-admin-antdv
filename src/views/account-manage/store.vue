@@ -134,7 +134,7 @@
                         <a-select-option
                           v-for="(item, index) in emailSuffixList"
                           :key="'emailSuffix' + index"
-                          :value="item.name"
+                          :value="item.value"
                           >{{ item.name }}</a-select-option
                         >
                       </a-select>
@@ -249,9 +249,6 @@ import { message } from "ant-design-vue";
 import moment from "moment";
 // 通用模块
 import useUpload from "common/upload.js";
-// Json数据
-// import JsonCity from "mock/city.json";
-// import JsonData from "mock/data.json";
 // 工具
 import { compareDate } from "utils";
 import { docElmScrollTo } from "utils/scroll-to.js";
@@ -340,8 +337,8 @@ const provinceList = ref([]);
 const professionList = ref([]);
 
 // 邮箱后缀
-const emailSuffixList = ref(["@qq.com"]);
-const emailSuffixValue = ref("@qq.com");
+const emailSuffixList = ref([]);
+const emailSuffixValue = ref(null);
 
 const { fileAccept, beforeUpload, uploadFileDemo } = useUpload();
 
@@ -529,12 +526,13 @@ const handleOk = () => {
       params.province = data.province[0];
       params.city = data.province[1] ? data.province[1] : "";
       params.area = data.province[2] ? data.province[2] : "";
-      params.profession = profession;
       params.birthdate = data.birthdate.format("YYYY-MM-DD");
       params.workTime = data.isGraduate
         ? null
         : data.workTime.format("YYYY-MM-DD");
-      params.isGraduate = data.isGraduate ? true : false;
+      params.isGraduate = Boolean(data.isGraduate);
+
+      console.log(params);
 
       // 新增
       if (props.type === 1) {
@@ -551,7 +549,7 @@ const handleOk = () => {
       }
       // 编辑
       else {
-        Api.EditAccount(params, props.id)
+        Api.EditAccount(params)
           .then((res) => {
             if (res.code == 200) {
               message.success("编辑成功");
@@ -589,7 +587,7 @@ onMounted(async () => {
       provinceList.value = cityRes.data;
     }
 
-    const professionRes = await PublicApi.GetCityList();
+    const professionRes = await PublicApi.GetProfessionList();
     if (professionRes.code === 200) {
       professionList.value = professionRes.data.map((e) => ({
         label: e.name,
@@ -600,7 +598,7 @@ onMounted(async () => {
     const emailSuffixRes = await PublicApi.GetEmailSuffix();
     if (emailSuffixRes.code === 200) {
       emailSuffixList.value = emailSuffixRes.data;
-      emailSuffixValue.value = emailSuffixRes.data[0];
+      emailSuffixValue.value = emailSuffixRes.data[0].value;
     }
   } catch (err) {
     message.warning(err);
@@ -623,20 +621,16 @@ const getInfo = () => {
         form.avatar = data.avatar || defaultFaceImg;
         form.province = [data.province, data.city, data.area];
         form.birthdate = data.birthdate
-          ? moment(birthdate, "YYYY-MM-DD")
+          ? moment(data.birthdate, "YYYY-MM-DD")
           : null;
 
-        if (data.email) {
-          const emailSplit = email.split("@");
-          form.email = emailSplit[0];
-          emailSuffixValue.value = `@${emailSplit[1]}`;
-        }
+        const emailSplit = data.email.split("@");
+        form.email = emailSplit[0];
+        emailSuffixValue.value = `@${emailSplit[1]}`;
 
-        form.workTime = isGraduate ? null : moment(workTime, "YYYY-MM-DD");
+        form.workTime = data.isGraduate ? null : data.workTime ? moment(data.workTime, "YYYY-MM-DD") : null;
 
-        workTimePH.value = isGraduate ? "尚未毕业" : "请选择日期";
-
-        console.log(form);
+        workTimePH.value = data.isGraduate ? "尚未毕业" : "请选择日期";
       } else message.error(msg);
     })
     .catch((err) => console.log(err))

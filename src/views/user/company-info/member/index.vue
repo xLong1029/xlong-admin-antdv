@@ -125,7 +125,7 @@ const columns = [
     title: "账号",
     dataIndex: "username",
     key: "username",
-    width: 150,
+    width: 200,
     fixed: "left",
   },
   {

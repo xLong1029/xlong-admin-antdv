@@ -5,6 +5,7 @@ import {
   companyNames,
   cityList,
   avatars,
+  emailSuffix
 } from "./list.js";
 import { compareDate, deepClone } from "utils";
 import Mock from "mockjs";
@@ -65,7 +66,7 @@ let account = Mock.mock({
       // 取数组当中的一个值
       "gender|1": ["男", "女"],
       // 随机email
-      email: "@email",
+      // email: "@email",
       "job|1": jobList.map((e) => e.name),
       "companyName|1": companyNames.map((e) => e.name),
       "avatar|1": avatars,
@@ -86,6 +87,7 @@ let account = Mock.mock({
 });
 
 account.list.forEach((e) => {
+  e.email = Random.string('lower', 5) + emailSuffix[Math.floor(Math.random() * emailSuffix.length)].value
   // 随机guid
   e.id = Random.guid();
   // 随机身份证
