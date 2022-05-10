@@ -1,10 +1,10 @@
 <template>
   <a-layout>
-    <a-layout-header :style="{ position: 'fixed', zIndex: 1, width: '100%' }">
+    <a-layout-header :style="{ position: 'fixed', zIndex: 1, width: '100%', background: '#fff' }">
       <app-top />
       <app-nav-bar />
     </a-layout-header>
-    <a-layout-content :style="{ marginTop: '121px' }">
+    <a-layout-content :style="{ paddingTop: '121px' }">
       <breadcrumb />
       <app-main />
     </a-layout-content>
