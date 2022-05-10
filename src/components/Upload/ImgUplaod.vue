@@ -5,7 +5,7 @@
       list-type="picture-card"
       :file-list="fileList"
       :custom-request="uploadImg"
-      :remove="removeFile"
+      @remove="removeFile"
       @preview="handlePreview"
       @change="handleUploadChange"
     >
